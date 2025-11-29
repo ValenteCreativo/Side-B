@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { registerSessionAsIp } from '@/lib/story'
-import { ContentType } from '@prisma/client'
+import { ContentType } from '@/lib/types'
 import { parseMoodTags, stringifyMoodTags } from '@/lib/utils'
 
 /**

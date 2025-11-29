@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { UserRole } from '@prisma/client'
+import { UserRole } from '@/lib/types'
 import { Address } from 'viem'
 
 /**

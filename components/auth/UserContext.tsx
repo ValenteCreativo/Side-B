@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { UserRole } from '@prisma/client'
+import { UserRole } from '@/lib/types'
 import { Address } from 'viem'
 
 interface User {

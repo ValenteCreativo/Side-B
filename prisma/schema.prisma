@@ -10,21 +10,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  MUSICIAN
-  CREATOR
-}
-
-enum ContentType {
-  JAM
-  REHEARSAL
-  PRODUCED
-}
+// Note: SQLite doesn't support enums, so we use String with validation in the app layer
+// For PostgreSQL, these can be converted back to proper enums
 
 model User {
   id            String    @id @default(cuid())
   walletAddress String    @unique
-  role          UserRole  @default(MUSICIAN)
+  role          String    @default("MUSICIAN") // "MUSICIAN" | "CREATOR"
   displayName   String?
   createdAt     DateTime  @default(now())
 
@@ -56,7 +48,7 @@ model Session {
   // Session details
   title        String
   description  String
-  contentType  ContentType
+  contentType  String      // "JAM" | "REHEARSAL" | "PRODUCED"
   moodTags     String      // JSON string array for SQLite compatibility
   durationSec  Int?
   audioUrl     String
