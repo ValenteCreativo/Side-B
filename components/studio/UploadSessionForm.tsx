@@ -1,0 +1,219 @@
+'use client'
+
+import { useState } from 'react'
+import { useUser } from '@/components/auth/UserContext'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useToast } from '@/components/ui/use-toast'
+import { Loader2, Upload } from 'lucide-react'
+
+interface UploadSessionFormProps {
+  onSuccess?: () => void
+}
+
+export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
+  const { user } = useUser()
+  const { toast } = useToast()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    contentType: 'PRODUCED' as 'JAM' | 'REHEARSAL' | 'PRODUCED',
+    moodTags: '',
+    priceUsd: '',
+    audioUrl: '',
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!user) {
+      toast({
+        title: 'Authentication required',
+        description: 'Please sign in to upload sessions',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      // For hackathon: Use a placeholder audio URL or simple upload simulation
+      // In production, implement proper file upload to cloud storage
+      const audioUrl = formData.audioUrl || `https://example.com/audio/${Date.now()}.mp3`
+
+      const response = await fetch('/api/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ownerId: user.id,
+          title: formData.title,
+          description: formData.description,
+          contentType: formData.contentType,
+          moodTags: formData.moodTags,
+          audioUrl,
+          priceUsd: parseFloat(formData.priceUsd),
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.details || error.error || 'Failed to create session')
+      }
+
+      const session = await response.json()
+
+      toast({
+        title: '✅ Session created!',
+        description: `"${session.title}" has been registered on Story Protocol`,
+      })
+
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        contentType: 'PRODUCED',
+        moodTags: '',
+        priceUsd: '',
+        audioUrl: '',
+      })
+
+      onSuccess?.()
+    } catch (error) {
+      console.error('Upload failed:', error)
+      toast({
+        title: 'Upload failed',
+        description: error instanceof Error ? error.message : 'Please try again',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Upload New Session</CardTitle>
+        <CardDescription>
+          Each track will be registered as IP on Story Protocol
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="title">Title *</Label>
+            <Input
+              id="title"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              placeholder="My Awesome Track"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description *</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Tell us about this session..."
+              className="min-h-[100px]"
+              required
+            />
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="contentType">Content Type *</Label>
+              <Select
+                value={formData.contentType}
+                onValueChange={(value: 'JAM' | 'REHEARSAL' | 'PRODUCED') =>
+                  setFormData({ ...formData, contentType: value })
+                }
+              >
+                <SelectTrigger id="contentType">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="JAM">Jam Session</SelectItem>
+                  <SelectItem value="REHEARSAL">Rehearsal</SelectItem>
+                  <SelectItem value="PRODUCED">Produced Track</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="price">Price (USD) *</Label>
+              <Input
+                id="price"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.priceUsd}
+                onChange={(e) => setFormData({ ...formData, priceUsd: e.target.value })}
+                placeholder="9.99"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="moodTags">Mood Tags</Label>
+            <Input
+              id="moodTags"
+              value={formData.moodTags}
+              onChange={(e) => setFormData({ ...formData, moodTags: e.target.value })}
+              placeholder="ambient, dark, hopeful (comma separated)"
+            />
+            <p className="text-xs text-muted-foreground">
+              Add mood keywords separated by commas
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="audioUrl">Audio URL (Optional for demo)</Label>
+            <Input
+              id="audioUrl"
+              value={formData.audioUrl}
+              onChange={(e) => setFormData({ ...formData, audioUrl: e.target.value })}
+              placeholder="https://example.com/audio.mp3"
+            />
+            <p className="text-xs text-muted-foreground">
+              For hackathon demo: provide a URL or leave empty for placeholder
+            </p>
+          </div>
+
+          <div className="flex gap-4">
+            <Button type="submit" disabled={isSubmitting} className="flex-1">
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Registering IP on Story...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload & Register
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
