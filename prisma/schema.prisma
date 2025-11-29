@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  MUSICIAN
+  CREATOR
+}
+
+enum ContentType {
+  JAM
+  REHEARSAL
+  PRODUCED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  walletAddress String    @unique
+  role          UserRole  @default(MUSICIAN)
+  displayName   String?
+  createdAt     DateTime  @default(now())
+
+  // Relations
+  sessions      Session[]
+  collections   Collection[]
+  licenses      License[]    @relation("UserLicenses")
+}
+
+model Collection {
+  id          String    @id @default(cuid())
+  ownerId     String
+  owner       User      @relation(fields: [ownerId], references: [id])
+  title       String
+  description String?
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  sessions    Session[]
+}
+
+model Session {
+  id           String      @id @default(cuid())
+  ownerId      String
+  owner        User        @relation(fields: [ownerId], references: [id])
+  collectionId String?
+  collection   Collection? @relation(fields: [collectionId], references: [id])
+
+  // Session details
+  title        String
+  description  String
+  contentType  ContentType
+  moodTags     String      // JSON string array for SQLite compatibility
+  durationSec  Int?
+  audioUrl     String
+  priceUsd     Float
+
+  // Story Protocol IP registration
+  storyAssetId String?     // IP Asset ID from Story Protocol
+  storyTxHash  String?     // Transaction hash of IP registration
+
+  createdAt    DateTime    @default(now())
+
+  // Relations
+  licenses     License[]
+}
+
+model License {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id])
+  buyerId   String
+  buyer     User     @relation("UserLicenses", fields: [buyerId], references: [id])
+
+  // License details
+  createdAt DateTime @default(now())
+  txHash    String?  // Transaction hash for on-chain license (future)
+
+  @@unique([sessionId, buyerId]) // Prevent duplicate licenses
+}
