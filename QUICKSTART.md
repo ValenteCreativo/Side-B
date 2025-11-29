@@ -7,18 +7,19 @@ Get **Side B Sessions** running in 5 minutes!
 ## ⚡ Fastest Path to Running
 
 ```bash
-# 1. Install dependencies
+# Install dependencies (includes automatic Prisma generation)
 npm install
 
-# 2. Set up database
-npx prisma generate
+# Set up database
 npx prisma db push
 
-# 3. Run the app
+# Run the app
 npm run dev
 ```
 
 **That's it!** Open [http://localhost:3000](http://localhost:3000)
+
+> **Note**: `npm install` automatically runs `prisma generate` via the postinstall script
 
 The app works in **mock mode** - you can test all features without any API keys.
 
