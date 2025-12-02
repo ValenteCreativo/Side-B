@@ -1,290 +1,144 @@
+"use client"
+
+import { useRef } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Music, Film, Shield, Coins, Users, Sparkles } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Music, Film, Shield, Coins, Users, Sparkles, ArrowRight } from 'lucide-react'
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 
 export default function HomePage() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  })
+
+  // Smooth spring physics for parallax
+  const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 }
+  const yHero = useSpring(useTransform(scrollYProgress, [0, 0.2], [0, 200]), springConfig)
+  const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0])
+  const scaleHero = useTransform(scrollYProgress, [0, 0.2], [1, 1.1])
+
+  const yVideo = useSpring(useTransform(scrollYProgress, [0.1, 0.4], [100, 0]), springConfig)
+  const opacityVideo = useTransform(scrollYProgress, [0.1, 0.3], [0, 1])
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
-      {/* Hero Section - Simple layout for custom scroll effects */}
-      <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20 text-center">
-        <div className="mx-auto max-w-4xl space-y-8">
-          <div className="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-            Powered by Story Protocol & Coinbase
+    <div ref={containerRef} className="relative min-h-[300vh] bg-background overflow-hidden selection:bg-primary/30">
+
+      {/* Background Ambient Particles (CSS Animation) */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-drift" />
+        <div className="absolute bottom-1/3 right-1/4 w-64 h-64 bg-secondary/10 rounded-full blur-3xl animate-breathe animation-delay-2000" />
+      </div>
+
+      {/* Hero Section */}
+      <section className="fixed top-0 left-0 w-full h-screen flex flex-col items-center justify-center z-10 pointer-events-none">
+        <motion.div
+          style={{ y: yHero, opacity: opacityHero, scale: scaleHero }}
+          className="text-center space-y-8 px-4"
+        >
+          <div className="inline-block rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary tracking-wide backdrop-blur-sm">
+            SIDE B SESSIONS
           </div>
 
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
-            Side B Sessions
+          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter text-foreground mix-blend-difference">
+            The Analog <br />
+            <span className="text-primary font-serif italic">Sanctuary</span>
           </h1>
 
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
-            A marketplace for independent music—rehearsals and finished tracks registered as IP.
-            <br />
-            Where musicians own their work and creators find authentic sounds.
+          <p className="max-w-xl mx-auto text-lg md:text-xl text-muted-foreground/80 font-light leading-relaxed">
+            A weightless studio for independent musicians to register their work as IP
+            and creators to find authentic sounds.
           </p>
 
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8 pointer-events-auto">
             <Link href="/studio">
-              <Button size="lg" className="w-full sm:w-auto gap-2">
-                <Music className="h-5 w-5" />
-                I'm a Musician
+              <Button size="lg" className="rounded-full px-8 py-6 text-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-105 shadow-[0_0_20px_-5px_hsl(var(--primary)/0.5)]">
+                Enter Studio
               </Button>
             </Link>
-
             <Link href="/catalog">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2">
-                <Film className="h-5 w-5" />
-                I'm a Creator
+              <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-lg border-primary/20 hover:bg-primary/10 hover:border-primary/50 transition-all hover:scale-105 backdrop-blur-sm">
+                Browse Catalog
               </Button>
             </Link>
           </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 animate-bounce">
-          <div className="h-8 w-0.5 bg-muted-foreground/30 rounded-full" />
-        </div>
+        </motion.div>
       </section>
 
-      {/* How It Works */}
-      <section className="px-4 py-20">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="mb-12 text-center text-3xl font-bold sm:text-4xl">
-            How It Works
-          </h2>
+      {/* Video Placeholder Section (Scrolls into view) */}
+      <div className="relative z-20 mt-[100vh] min-h-screen flex items-center justify-center px-4">
+        <motion.div
+          style={{ y: yVideo, opacity: opacityVideo }}
+          className="w-full max-w-5xl aspect-video rounded-3xl overflow-hidden shadow-2xl border border-white/5 bg-black/40 backdrop-blur-md relative group"
+        >
+          {/* Faux Video UI */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 group-hover:scale-110 transition-transform duration-500 cursor-pointer">
+              <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-white border-b-[10px] border-b-transparent ml-1" />
+            </div>
+          </div>
 
-          <div className="grid gap-8 md:grid-cols-2">
-            {/* For Musicians */}
-            <Card>
-              <CardHeader>
-                <div className="mb-2 inline-block rounded-lg bg-primary/10 p-3">
-                  <Music className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle>For Musicians</CardTitle>
-                <CardDescription>
-                  Turn your rehearsals and tracks into registered IP
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex gap-3">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-medium">
-                      1
-                    </div>
-                    <div>
-                      <p className="font-medium">Connect Your Wallet</p>
-                      <p className="text-sm text-muted-foreground">
-                        Sign in with Coinbase Embedded Wallets
-                      </p>
-                    </div>
-                  </div>
+          <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/80 to-transparent">
+            <h3 className="text-2xl font-medium text-white mb-2">The Session</h3>
+            <p className="text-white/60">Recorded in zero-gravity. Registered on Story Protocol.</p>
+          </div>
 
-                  <div className="flex gap-3">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-medium">
-                      2
-                    </div>
-                    <div>
-                      <p className="font-medium">Upload Your Sessions</p>
-                      <p className="text-sm text-muted-foreground">
-                        Jams, rehearsals, or finished tracks with metadata
-                      </p>
-                    </div>
-                  </div>
+          {/* Grain Overlay */}
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none mix-blend-overlay" />
+        </motion.div>
+      </div>
 
-                  <div className="flex gap-3">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-medium">
-                      3
-                    </div>
-                    <div>
-                      <p className="font-medium">Automatic IP Registration</p>
-                      <p className="text-sm text-muted-foreground">
-                        Each track is registered on Story Protocol
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* For Creators */}
-            <Card>
-              <CardHeader>
-                <div className="mb-2 inline-block rounded-lg bg-primary/10 p-3">
-                  <Film className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle>For Creators</CardTitle>
-                <CardDescription>
-                  License authentic music for your projects
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex gap-3">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-medium">
-                      1
-                    </div>
-                    <div>
-                      <p className="font-medium">Browse the Catalog</p>
-                      <p className="text-sm text-muted-foreground">
-                        Filter by mood, content type, and style
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-medium">
-                      2
-                    </div>
-                    <div>
-                      <p className="font-medium">Preview Tracks</p>
-                      <p className="text-sm text-muted-foreground">
-                        Listen to sessions before licensing
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-medium">
-                      3
-                    </div>
-                    <div>
-                      <p className="font-medium">License & Use</p>
-                      <p className="text-sm text-muted-foreground">
-                        Non-exclusive licenses for your creative projects
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+      {/* Features Grid */}
+      <div className="relative z-20 min-h-screen bg-background py-32 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { icon: Shield, title: "IP Protection", desc: "Every track is registered on Story Protocol, ensuring your work is protected and traceable." },
+              { icon: Coins, title: "Fair Licensing", desc: "Non-exclusive licensing means multiple creators can use your music while you retain ownership." },
+              { icon: Users, title: "Direct Connection", desc: "No middlemen. Musicians and creators connect directly on a transparent platform." },
+              { icon: Music, title: "All Content Types", desc: "From raw jams to polished productions—all your creative output has value." },
+              { icon: Sparkles, title: "Easy Onboarding", desc: "Coinbase Embedded Wallets make Web3 accessible—no crypto expertise required." },
+              { icon: Film, title: "Creator Friendly", desc: "Find unique sounds for films, games, podcasts, and content that stand out." },
+            ].map((feature, i) => (
+              <FeatureCard key={i} {...feature} index={i} />
+            ))}
           </div>
         </div>
-      </section>
-
-      {/* Features */}
-      <section className="px-4 py-20 bg-muted/30">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="mb-12 text-center text-3xl font-bold sm:text-4xl">
-            Why Side B Sessions?
-          </h2>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <Shield className="h-8 w-8 mb-2 text-primary" />
-                <CardTitle>IP Protection</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Every track is registered on Story Protocol, ensuring your work is protected and traceable.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Coins className="h-8 w-8 mb-2 text-primary" />
-                <CardTitle>Fair Licensing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Non-exclusive licensing means multiple creators can use your music while you retain ownership.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Users className="h-8 w-8 mb-2 text-primary" />
-                <CardTitle>Direct Connection</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  No middlemen. Musicians and creators connect directly on a transparent platform.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Music className="h-8 w-8 mb-2 text-primary" />
-                <CardTitle>All Content Types</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  From raw jams to polished productions—all your creative output has value.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Sparkles className="h-8 w-8 mb-2 text-primary" />
-                <CardTitle>Easy Onboarding</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Coinbase Embedded Wallets make Web3 accessible—no crypto expertise required.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Film className="h-8 w-8 mb-2 text-primary" />
-                <CardTitle>Creator Friendly</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Find unique sounds for films, games, podcasts, and content that stand out.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="px-4 py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-4 text-3xl font-bold sm:text-4xl">
-            Ready to Get Started?
-          </h2>
-          <p className="mb-8 text-lg text-muted-foreground">
-            Join the independent music revolution. Register your work or find your next soundtrack.
-          </p>
-
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Link href="/studio">
-              <Button size="lg" className="w-full sm:w-auto">
-                Upload Your First Track
-              </Button>
-            </Link>
-
-            <Link href="/catalog">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                Explore the Catalog
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      </div>
 
       {/* Footer */}
-      <footer className="border-t px-4 py-8">
-        <div className="mx-auto max-w-6xl text-center text-sm text-muted-foreground">
-          <p>
-            Built for Story Buildathon with{' '}
-            <a href="https://www.story.foundation/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">
-              Story Protocol
-            </a>{' '}
-            &{' '}
-            <a href="https://www.coinbase.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">
-              Coinbase Embedded Wallets
-            </a>
+      <footer className="relative z-20 border-t border-white/5 bg-background/50 backdrop-blur-xl py-12">
+        <div className="max-w-6xl mx-auto px-4 text-center text-muted-foreground">
+          <p className="text-sm">
+            Built for Story Buildathon with <span className="text-primary">Story Protocol</span> & <span className="text-primary">Coinbase Embedded Wallets</span>
           </p>
         </div>
       </footer>
     </div>
+  )
+}
+
+function FeatureCard({ icon: Icon, title, desc, index }: { icon: any, title: string, desc: string, index: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.21, 0.47, 0.32, 0.98] }}
+      viewport={{ once: true }}
+    >
+      <Card className="h-full bg-card/50 border-white/5 backdrop-blur-sm hover:bg-card/80 transition-colors group">
+        <CardHeader>
+          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
+            <Icon className="w-6 h-6 text-primary" />
+          </div>
+          <CardTitle className="text-xl font-light tracking-wide">{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground leading-relaxed">{desc}</p>
+        </CardContent>
+      </Card>
+    </motion.div>
   )
 }

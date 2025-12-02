@@ -28,7 +28,7 @@ export function CoinbaseAuth({ onSuccess }: CoinbaseAuthProps) {
   const { signInWithEmail } = useSignInWithEmail()
   const { verifyEmailOTP } = useVerifyEmailOTP()
   const { isSignedIn } = useIsSignedIn()
-  const { user } = useCurrentUser()
+  const { currentUser } = useCurrentUser()
   const { evmAddress } = useEvmAddress()
   const { toast } = useToast()
 

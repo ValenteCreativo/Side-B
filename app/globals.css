@@ -4,48 +4,67 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    /* Deep Espresso / Analog Studio Palette */
+    --background: 20 12% 9%; /* Deep Espresso */
+    --foreground: 36 30% 90%; /* Antique White */
+    
+    --card: 0 0% 7%; /* Charcoal */
+    --card-foreground: 36 30% 90%;
+    
+    --popover: 20 12% 9%;
+    --popover-foreground: 36 30% 90%;
+    
+    --primary: 36 41% 63%; /* Antique Gold */
+    --primary-foreground: 20 12% 9%;
+    
+    --secondary: 20 10% 15%; /* Soft Brown */
+    --secondary-foreground: 36 30% 90%;
+    
+    --muted: 20 10% 15%;
+    --muted-foreground: 28 13% 60%; /* Muted Bronze */
+    
+    --accent: 36 41% 63%;
+    --accent-foreground: 20 12% 9%;
+    
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.5rem;
+    
+    --border: 20 10% 20%;
+    --input: 20 10% 20%;
+    --ring: 36 41% 63%;
+    
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 5%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    /* Same as root because we are enforcing dark mode aesthetic */
+    --background: 20 12% 9%;
+    --foreground: 36 30% 90%;
+    
+    --card: 0 0% 7%;
+    --card-foreground: 36 30% 90%;
+    
+    --popover: 20 12% 9%;
+    --popover-foreground: 36 30% 90%;
+    
+    --primary: 36 41% 63%;
+    --primary-foreground: 20 12% 9%;
+    
+    --secondary: 20 10% 15%;
+    --secondary-foreground: 36 30% 90%;
+    
+    --muted: 20 10% 15%;
+    --muted-foreground: 28 13% 60%;
+    
+    --accent: 36 41% 63%;
+    --accent-foreground: 20 12% 9%;
+    
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    
+    --border: 20 10% 20%;
+    --input: 20 10% 20%;
+    --ring: 36 41% 63%;
   }
 }
 

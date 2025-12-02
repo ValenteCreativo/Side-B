@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-outfit)", "var(--font-inter)", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -67,10 +70,20 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "drift": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "breathe": {
+          "0%, 100%": { opacity: "0.8", transform: "scale(1)" },
+          "50%": { opacity: "1", transform: "scale(1.02)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "drift": "drift 6s ease-in-out infinite",
+        "breathe": "breathe 4s ease-in-out infinite",
       },
     },
   },
