@@ -174,7 +174,7 @@ function CatalogPage() {
 
 export default function CatalogPageWithAuth() {
   return (
-    <AuthGate requiredRole="CREATOR" redirectTo="/studio">
+    <AuthGate>
       <AppShell>
         <CatalogPage />
       </AppShell>

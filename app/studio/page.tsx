@@ -69,7 +69,7 @@ function StudioPage() {
 
 export default function StudioPageWithAuth() {
   return (
-    <AuthGate requiredRole="MUSICIAN" redirectTo="/catalog">
+    <AuthGate>
       <AppShell>
         <StudioPage />
       </AppShell>

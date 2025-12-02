@@ -24,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <PlayerProvider>
               {children}
               <GlobalPlayer />
+              <Toaster />
             </PlayerProvider>
           </UserProvider>
         </CoinbaseProvider>
