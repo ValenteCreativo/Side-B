@@ -183,34 +183,16 @@ export async function registerSessionAsIp(
 /**
  * Retrieve IP asset details from Story Protocol
  *
+ * For now, this returns basic explorer info. In production, you can use
+ * client.ipAsset.ipAssetRegistryClient to query on-chain IP asset data.
+ *
  * Reference: https://docs.story.foundation/developers/typescript-sdk/read-ip-data
  */
 export async function getIpAssetDetails(ipId: string) {
-  if (!process.env.STORY_PRIVATE_KEY) {
-    console.warn('⚠️  Story Protocol not configured. Using mock data.')
-    return {
-      ipId: ipId,
-      owner: '0xmock',
-      chainId: 'aeneid',
-      explorerUrl: `https://aeneid.storyscan.io/address/${ipId}`,
-    }
-  }
-
-  try {
-    const client = getStoryClient()
-
-    // Get IP asset details
-    const ipAsset = await client.ipAsset.ipId(ipId as Address)
-
-    return {
-      ipId: ipId,
-      owner: ipAsset,
-      chainId: 'aeneid',
-      explorerUrl: `https://aeneid.storyscan.io/address/${ipId}`,
-    }
-  } catch (error) {
-    console.error('Failed to retrieve IP asset:', error)
-    throw error
+  return {
+    ipId: ipId,
+    chainId: 'aeneid',
+    explorerUrl: `https://aeneid.storyscan.io/address/${ipId}`,
   }
 }
 

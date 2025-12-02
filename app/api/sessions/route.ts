@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db'
 import { registerSessionAsIp } from '@/lib/story'
 import { ContentType } from '@/lib/types'
 import { parseMoodTags, stringifyMoodTags } from '@/lib/utils'
+import { Address } from 'viem'
 
 /**
  * GET /api/sessions
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
       title,
       description,
       audioUrl,
-      ownerWallet: owner.walletAddress,
+      ownerWallet: owner.walletAddress as Address,
       contentType,
       moodTags: Array.isArray(moodTags) ? moodTags : parseMoodTags(moodTags || ''),
     })
