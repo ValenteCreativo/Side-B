@@ -31,6 +31,8 @@ interface Session {
   licenseCount?: number
 }
 
+import { AppShell } from '@/components/layout/AppShell'
+
 function CatalogPage() {
   const { user, logout } = useUser()
   const [sessions, setSessions] = useState<Session[]>([])
@@ -89,11 +91,6 @@ function CatalogPage() {
     setMoodTag('')
   }
 
-  const handleLogout = async () => {
-    await logout()
-    window.location.href = '/'
-  }
-
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background Ambient Particles */}
@@ -101,30 +98,6 @@ function CatalogPage() {
         <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-3xl animate-drift animation-delay-1000" />
         <div className="absolute bottom-[-20%] left-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-3xl animate-breathe" />
       </div>
-
-      {/* Header */}
-      <header className="relative z-10 border-b border-white/5 bg-background/50 backdrop-blur-md sticky top-0">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight hover:opacity-80 transition-opacity">
-            <Music className="h-5 w-5 text-primary" />
-            <span>Side B Sessions</span>
-          </Link>
-
-          <div className="flex items-center gap-6">
-            <div className="hidden sm:block text-right">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Signed in as</p>
-              <p className="font-medium font-mono text-sm text-foreground/80">
-                {user?.displayName || truncateAddress(user?.walletAddress || '')}
-              </p>
-            </div>
-
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground hover:text-foreground">
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </header>
 
       {/* Main Content */}
       <main className="relative z-10 container mx-auto px-4 py-12">
@@ -202,7 +175,9 @@ function CatalogPage() {
 export default function CatalogPageWithAuth() {
   return (
     <AuthGate requiredRole="CREATOR" redirectTo="/studio">
-      <CatalogPage />
+      <AppShell>
+        <CatalogPage />
+      </AppShell>
     </AuthGate>
   )
 }

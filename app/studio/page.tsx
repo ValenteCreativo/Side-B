@@ -10,6 +10,8 @@ import { truncateAddress } from '@/lib/utils'
 import { LogOut, Music } from 'lucide-react'
 import Link from 'next/link'
 
+import { AppShell } from '@/components/layout/AppShell'
+
 function StudioPage() {
   const { user, logout } = useUser()
   const [refreshKey, setRefreshKey] = useState(0)
@@ -31,30 +33,6 @@ function StudioPage() {
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl animate-drift" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-secondary/10 rounded-full blur-3xl animate-breathe animation-delay-2000" />
       </div>
-
-      {/* Header */}
-      <header className="relative z-10 border-b border-white/5 bg-background/50 backdrop-blur-md sticky top-0">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight hover:opacity-80 transition-opacity">
-            <Music className="h-5 w-5 text-primary" />
-            <span>Side B Sessions</span>
-          </Link>
-
-          <div className="flex items-center gap-6">
-            <div className="hidden sm:block text-right">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Signed in as</p>
-              <p className="font-medium font-mono text-sm text-foreground/80">
-                {user?.displayName || truncateAddress(user?.walletAddress || '')}
-              </p>
-            </div>
-
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground hover:text-foreground">
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </header>
 
       {/* Main Content */}
       <main className="relative z-10 container mx-auto px-4 py-12">
@@ -92,7 +70,9 @@ function StudioPage() {
 export default function StudioPageWithAuth() {
   return (
     <AuthGate requiredRole="MUSICIAN" redirectTo="/catalog">
-      <StudioPage />
+      <AppShell>
+        <StudioPage />
+      </AppShell>
     </AuthGate>
   )
 }
