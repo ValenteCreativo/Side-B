@@ -7,8 +7,8 @@
  * Users sign in with email/OTP and automatically get an Ethereum wallet
  */
 
-import { useState } from 'react'
-import { useSignInWithEmail, useVerifyEmailOTP, useIsSignedIn, useUser } from '@coinbase/cdp-hooks'
+import { useState, useEffect } from 'react'
+import { useSignInWithEmail, useVerifyEmailOTP, useIsSignedIn, useCurrentUser, useEvmAddress } from '@coinbase/cdp-hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -28,7 +28,8 @@ export function CoinbaseAuth({ onSuccess }: CoinbaseAuthProps) {
   const { signInWithEmail } = useSignInWithEmail()
   const { verifyEmailOTP } = useVerifyEmailOTP()
   const { isSignedIn } = useIsSignedIn()
-  const { user } = useUser()
+  const { user } = useCurrentUser()
+  const { evmAddress } = useEvmAddress()
   const { toast } = useToast()
 
   const handleSendOTP = async (e: React.FormEvent) => {
@@ -87,10 +88,10 @@ export function CoinbaseAuth({ onSuccess }: CoinbaseAuthProps) {
         description: 'Your wallet has been created',
       })
 
-      // Get wallet address from user object
-      if (user?.wallets?.[0]?.address) {
-        onSuccess(user.wallets[0].address)
-      }
+      // Wait a moment for the wallet address to be available
+      setTimeout(() => {
+        // The address will be available via useEvmAddress hook
+      }, 1000)
     } catch (error) {
       console.error('Error verifying OTP:', error)
       toast({
@@ -103,19 +104,26 @@ export function CoinbaseAuth({ onSuccess }: CoinbaseAuthProps) {
     }
   }
 
+  // Use effect to trigger onSuccess when wallet address becomes available
+  useEffect(() => {
+    if (isSignedIn && evmAddress) {
+      onSuccess(evmAddress)
+    }
+  }, [isSignedIn, evmAddress, onSuccess])
+
   // If already signed in, show success
-  if (isSignedIn && user?.wallets?.[0]?.address) {
+  if (isSignedIn && evmAddress) {
     return (
       <Card className="border-green-500/20 bg-green-500/5">
         <CardHeader>
           <CardTitle className="text-green-500">Wallet Connected</CardTitle>
           <CardDescription>
-            {user.wallets[0].address.slice(0, 6)}...{user.wallets[0].address.slice(-4)}
+            {evmAddress.slice(0, 6)}...{evmAddress.slice(-4)}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Button
-            onClick={() => onSuccess(user.wallets[0].address)}
+            onClick={() => onSuccess(evmAddress)}
             className="w-full"
           >
             Continue
