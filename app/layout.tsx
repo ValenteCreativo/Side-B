@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from "@/components/auth/UserContext";
 import { Toaster } from "@/components/ui/toaster";
+import { CDPReactProvider } from "@coinbase/cdp-react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,13 +17,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const projectId = process.env.NEXT_PUBLIC_COINBASE_PROJECT_ID || '';
+
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
-        <UserProvider>
-          {children}
-          <Toaster />
-        </UserProvider>
+        <CDPReactProvider
+          config={{
+            projectId: projectId,
+            ethereum: { createOnLogin: "eoa" },
+            appName: "Side B Sessions"
+          }}
+        >
+          <UserProvider>
+            {children}
+            <Toaster />
+          </UserProvider>
+        </CDPReactProvider>
       </body>
     </html>
   );

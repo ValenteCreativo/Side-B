@@ -13,6 +13,9 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@coinbase/cdp-core": "^0.0.69",
+    "@coinbase/cdp-hooks": "^0.0.69",
+    "@coinbase/cdp-react": "^0.0.69",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-label": "^2.1.0",
