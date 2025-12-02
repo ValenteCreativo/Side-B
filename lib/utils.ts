@@ -1,4 +1,4 @@
-import { type ClassValue, clsx } from "clsx"
+import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -14,8 +14,9 @@ export function truncateAddress(address: string, chars = 4): string {
 
 // Format duration in seconds to MM:SS
 export function formatDuration(seconds: number): string {
+  if (!seconds || isNaN(seconds)) return '0:00'
   const mins = Math.floor(seconds / 60)
-  const secs = seconds % 60
+  const secs = Math.floor(seconds % 60)
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 

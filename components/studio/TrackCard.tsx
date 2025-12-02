@@ -3,27 +3,35 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, Clock, Calendar } from "lucide-react"
-import { useState, useRef } from "react"
+import { Play, Pause, ExternalLink } from "lucide-react"
+import { useRef } from "react"
 import { cn } from "@/lib/utils"
+import { usePlayer } from "@/components/player/PlayerContext"
 
 interface TrackCardProps {
+    id: string
     title: string
     type: string
     createdAt: string
-    duration?: string
-    status: "REGISTERED" | "PENDING" | "FAILED"
+    status: "REGISTERED" | "PENDING"
     txHash?: string
-    onPlay?: () => void
+    audioUrl: string
+    artist: string
 }
 
-export function TrackCard({ title, type, createdAt, duration, status, txHash, onPlay }: TrackCardProps) {
+export function TrackCard({ id, title, type, createdAt, status, txHash, audioUrl, artist }: TrackCardProps) {
     const ref = useRef<HTMLDivElement>(null)
-    const [isPlaying, setIsPlaying] = useState(false)
-
-    // Mouse position for tilt effect
     const x = useMotionValue(0)
     const y = useMotionValue(0)
+
+    const { currentTrack, isPlaying, playTrack } = usePlayer()
+
+    const isCurrentTrack = currentTrack?.id === id
+    const isThisPlaying = isCurrentTrack && isPlaying
+
+    const handlePlay = () => {
+        playTrack({ id, title, artist, audioUrl })
+    }
 
     const mouseXSpring = useSpring(x)
     const mouseYSpring = useSpring(y)
@@ -87,26 +95,20 @@ export function TrackCard({ title, type, createdAt, duration, status, txHash, on
                 <CardContent className="relative z-10 space-y-4">
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
                             {new Date(createdAt).toLocaleDateString()}
                         </div>
-                        {duration && (
-                            <div className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {duration}
-                            </div>
-                        )}
                     </div>
 
                     <div className="pt-4 flex items-center justify-between">
                         <button
-                            onClick={() => {
-                                setIsPlaying(!isPlaying)
-                                onPlay?.()
-                            }}
-                            className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary hover:scale-110 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                            onClick={handlePlay}
+                            className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 border border-primary/30 flex items-center justify-center transition-all duration-300 hover:scale-110 group-hover:border-primary/50"
                         >
-                            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+                            {isThisPlaying ? (
+                                <Pause className="w-4 h-4 text-primary fill-current" />
+                            ) : (
+                                <Play className="w-4 h-4 text-primary fill-current ml-0.5" />
+                            )}
                         </button>
 
                         {txHash && (

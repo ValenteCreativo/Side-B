@@ -184,13 +184,11 @@ function CatalogPage() {
               {filteredSessions.map((session) => (
                 <VinylTrack
                   key={session.id}
+                  id={session.id}
                   title={session.title}
                   artist={session.owner.displayName || truncateAddress(session.owner.walletAddress)}
                   price={formatPrice(session.priceUsd)}
-                  onPlay={() => {
-                    const audio = new Audio(session.audioUrl)
-                    audio.play()
-                  }}
+                  audioUrl={session.audioUrl}
                 />
               ))}
             </div>

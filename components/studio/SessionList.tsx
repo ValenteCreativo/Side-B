@@ -19,6 +19,10 @@ interface Session {
   storyAssetId: string | null
   storyTxHash?: string | null
   createdAt: string
+  owner?: {
+    id: string
+    displayName: string | null
+  }
   collection?: {
     id: string
     title: string
@@ -100,16 +104,14 @@ export function SessionList() {
         {sessions.map((session) => (
           <div key={session.id} className="h-[280px]">
             <TrackCard
+              id={session.id}
               title={session.title}
               type={session.contentType}
               createdAt={session.createdAt}
               status={session.storyAssetId ? "REGISTERED" : "PENDING"}
               txHash={session.storyTxHash || undefined}
-              onPlay={() => {
-                // Simple audio toggle for now - in a real app this would use a global player context
-                const audio = new Audio(session.audioUrl)
-                audio.play()
-              }}
+              audioUrl={session.audioUrl}
+              artist={session.owner?.displayName || "Unknown Artist"}
             />
           </div>
         ))}

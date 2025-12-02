@@ -7,18 +7,27 @@ import { Play, Pause, Disc } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { AnalogWaveform } from "./AnalogWaveform"
+import { usePlayer } from "@/components/player/PlayerContext"
 
 interface VinylTrackProps {
+    id: string
     title: string
     artist: string
     price: string
+    audioUrl: string
     image?: string
-    onPlay?: () => void
 }
 
-export function VinylTrack({ title, artist, price, image, onPlay }: VinylTrackProps) {
-    const [isPlaying, setIsPlaying] = useState(false)
+export function VinylTrack({ id, title, artist, price, audioUrl, image }: VinylTrackProps) {
     const [isHovered, setIsHovered] = useState(false)
+    const { currentTrack, isPlaying, playTrack } = usePlayer()
+
+    const isCurrentTrack = currentTrack?.id === id
+    const isThisPlaying = isCurrentTrack && isPlaying
+
+    const handlePlay = () => {
+        playTrack({ id, title, artist, audioUrl, imageUrl: image, price })
+    }
 
     return (
         <motion.div
@@ -72,20 +81,17 @@ export function VinylTrack({ title, artist, price, image, onPlay }: VinylTrackPr
 
                         <div className="h-[60px] flex items-end">
                             {isHovered ? (
-                                <AnalogWaveform isPlaying={isPlaying} />
+                                <AnalogWaveform isPlaying={isThisPlaying} />
                             ) : (
                                 <div className="w-full h-px bg-white/10" />
                             )}
                         </div>
 
                         <button
-                            onClick={() => {
-                                setIsPlaying(!isPlaying)
-                                onPlay?.()
-                            }}
+                            onClick={handlePlay}
                             className="w-full py-3 rounded-full bg-primary text-primary-foreground font-medium flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
                         >
-                            {isPlaying ? (
+                            {isThisPlaying ? (
                                 <>
                                     <Pause className="w-4 h-4" /> Pause Session
                                 </>
