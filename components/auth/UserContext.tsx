@@ -9,6 +9,8 @@ interface User {
   walletAddress: Address
   role: UserRole
   displayName?: string | null
+  avatarUrl?: string | null
+  bio?: string | null
 }
 
 interface UserContextType {
@@ -17,6 +19,7 @@ interface UserContextType {
   login: (walletAddress: Address, role: UserRole) => Promise<void>
   logout: () => Promise<void>
   updateRole: (role: UserRole) => Promise<void>
+  refreshUser: () => Promise<void>
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
@@ -101,6 +104,24 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function refreshUser() {
+    if (!user) return
+
+    try {
+      const response = await fetch(`/api/users/${user.id}`)
+      if (!response.ok) {
+        throw new Error('Failed to refresh user data')
+      }
+
+      const updatedUser = await response.json()
+      setUser(updatedUser)
+      localStorage.setItem('user_session', JSON.stringify(updatedUser))
+    } catch (error) {
+      console.error('Failed to refresh user:', error)
+      throw error
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -109,6 +130,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         updateRole,
+        refreshUser,
       }}
     >
       {children}
