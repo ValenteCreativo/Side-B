@@ -89,6 +89,6 @@ export async function uploadFileToIPFS(file: File): Promise<PinataUploadResult> 
  * Get IPFS gateway URL for viewing content
  */
 export function getIPFSGatewayURL(ipfsHash: string): string {
-  // Use Pinata's dedicated gateway
-  return `https://gateway.pinata.cloud/ipfs/${ipfsHash.replace('ipfs://', '')}`
+  // Use custom Pinata gateway
+  return `https://red-causal-armadillo-397.mypinata.cloud/ipfs/${ipfsHash.replace('ipfs://', '')}`
 }
