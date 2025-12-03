@@ -11,6 +11,21 @@ import { Music, Users, MessageCircle, ExternalLink, Calendar } from "lucide-reac
 import { useUser } from "@/components/auth/UserContext"
 import { useToast } from "@/hooks/use-toast"
 
+interface Session {
+    id: string
+    title: string
+    description: string
+    contentType: string
+    moodTags: string[]
+    priceUsd: number
+    audioUrl: string
+    storyAssetId: string | null
+    createdAt: string
+    _count: {
+        licenses: number
+    }
+}
+
 interface ProfileData {
     id: string
     walletAddress: string
@@ -21,6 +36,7 @@ interface ProfileData {
     instagram: string | null
     website: string | null
     createdAt: string
+    sessions?: Session[]
     _count: {
         sessions: number
         followers: number
@@ -242,18 +258,68 @@ export default function ProfilePage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Music className="h-5 w-5" />
-                                Tracks
+                                Tracks ({profile._count.sessions})
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {profile._count.sessions === 0 ? (
+                            {!profile.sessions || profile.sessions.length === 0 ? (
                                 <p className="text-center text-muted-foreground py-8">
                                     No tracks uploaded yet
                                 </p>
                             ) : (
-                                <p className="text-center text-muted-foreground py-8">
-                                    Track list coming soon...
-                                </p>
+                                <div className="space-y-4">
+                                    {profile.sessions.map((session) => (
+                                        <div
+                                            key={session.id}
+                                            className="p-4 border border-white/10 rounded-lg hover:border-white/20 transition-colors"
+                                        >
+                                            <div className="flex items-start justify-between gap-4 mb-3">
+                                                <div className="flex-1">
+                                                    <h3 className="font-semibold text-lg mb-1">{session.title}</h3>
+                                                    <p className="text-sm text-muted-foreground line-clamp-2">
+                                                        {session.description}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <Badge variant="outline" className="mb-2">
+                                                        {session.contentType.replace('_', ' ')}
+                                                    </Badge>
+                                                    <p className="text-sm font-semibold">${session.priceUsd}</p>
+                                                    {session._count.licenses > 0 && (
+                                                        <p className="text-xs text-muted-foreground">
+                                                            {session._count.licenses} {session._count.licenses === 1 ? 'license' : 'licenses'}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Mood Tags */}
+                                            {session.moodTags.length > 0 && (
+                                                <div className="flex flex-wrap gap-2 mb-3">
+                                                    {session.moodTags.map((tag, idx) => (
+                                                        <Badge key={idx} variant="secondary" className="text-xs">
+                                                            {tag}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {/* Audio Player */}
+                                            <audio controls className="w-full" preload="metadata">
+                                                <source src={session.audioUrl} type="audio/mpeg" />
+                                                Your browser does not support the audio element.
+                                            </audio>
+
+                                            {/* Story Protocol Badge */}
+                                            {session.storyAssetId && (
+                                                <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                                    <ExternalLink className="h-3 w-3" />
+                                                    <span>Registered IP: {session.storyAssetId.substring(0, 10)}...</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </CardContent>
                     </Card>
