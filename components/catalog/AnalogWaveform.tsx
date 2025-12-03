@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 
-export function AnalogWaveform({ isPlaying }: { isPlaying: boolean }) {
+export function AnalogWaveform({ isPlaying, color = "rgba(198, 168, 124, 0.8)" }: { isPlaying: boolean; color?: string }) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
@@ -11,6 +11,13 @@ export function AnalogWaveform({ isPlaying }: { isPlaying: boolean }) {
 
         const ctx = canvas.getContext("2d")
         if (!ctx) return
+
+        // Resolve color if it is "currentColor"
+        let strokeColor = color
+        if (color === "currentColor") {
+            const style = getComputedStyle(canvas)
+            strokeColor = style.color
+        }
 
         let animationId: number
         let time = 0
@@ -21,7 +28,7 @@ export function AnalogWaveform({ isPlaying }: { isPlaying: boolean }) {
 
             ctx.clearRect(0, 0, width, height)
             ctx.lineWidth = 2
-            ctx.strokeStyle = "rgba(198, 168, 124, 0.8)" // Antique Gold
+            ctx.strokeStyle = strokeColor
             ctx.lineCap = "round"
             ctx.lineJoin = "round"
 
@@ -45,8 +52,9 @@ export function AnalogWaveform({ isPlaying }: { isPlaying: boolean }) {
 
             // Add a "glow" effect by drawing a wider, more transparent line
             ctx.lineWidth = 6
-            ctx.strokeStyle = "rgba(198, 168, 124, 0.2)"
+            ctx.globalAlpha = 0.2
             ctx.stroke()
+            ctx.globalAlpha = 1.0
 
             time += 0.1
             animationId = requestAnimationFrame(draw)
@@ -57,7 +65,7 @@ export function AnalogWaveform({ isPlaying }: { isPlaying: boolean }) {
         return () => {
             cancelAnimationFrame(animationId)
         }
-    }, [isPlaying])
+    }, [isPlaying, color])
 
     return (
         <canvas
