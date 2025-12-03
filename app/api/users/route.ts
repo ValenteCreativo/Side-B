@@ -4,6 +4,59 @@ import { UserRole } from '@/lib/types'
 import { Address } from 'viem'
 
 /**
+ * GET /api/users
+ * Get all users (musicians) for community page
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams
+    const currentUserId = searchParams.get('currentUserId')
+
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        walletAddress: true,
+        displayName: true,
+        bio: true,
+        _count: {
+          select: {
+            sessions: true,
+            followers: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    // If currentUserId is provided, check if they follow each user
+    if (currentUserId) {
+      const followedIds = await prisma.follow.findMany({
+        where: { followerId: currentUserId },
+        select: { followingId: true },
+      })
+      const followedSet = new Set(followedIds.map((f) => f.followingId))
+
+      const usersWithFollowStatus = users.map((user) => ({
+        ...user,
+        isFollowing: followedSet.has(user.id),
+      }))
+
+      return NextResponse.json(usersWithFollowStatus)
+    }
+
+    return NextResponse.json(users)
+  } catch (error) {
+    console.error('Failed to fetch users:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch users' },
+      { status: 500 }
+    )
+  }
+}
+
+/**
  * POST /api/users
  * Create or retrieve a user by wallet address
  */
@@ -49,10 +102,14 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json()
-    const { userId, role, displayName } = body as {
+    const { userId, role, displayName, bio, twitter, instagram, website } = body as {
       userId: string
       role?: UserRole
       displayName?: string
+      bio?: string
+      twitter?: string
+      instagram?: string
+      website?: string
     }
 
     if (!userId) {
@@ -67,6 +124,10 @@ export async function PATCH(request: NextRequest) {
       data: {
         ...(role && { role }),
         ...(displayName !== undefined && { displayName }),
+        ...(bio !== undefined && { bio }),
+        ...(twitter !== undefined && { twitter }),
+        ...(instagram !== undefined && { instagram }),
+        ...(website !== undefined && { website }),
       },
     })
 
