@@ -26,7 +26,7 @@ export function PageHero({
             <div className="absolute inset-0 bg-grain opacity-20 pointer-events-none" />
 
             {/* Side Label */}
-            <div className="absolute top-8 right-8 flex items-center gap-4">
+            <div className="absolute top-8 right-8 lg:top-8 lg:right-[420px] flex items-center gap-4">
                 <div className="h-[2px] w-24 bg-foreground" />
                 <span className="font-mono text-sm tracking-widest font-bold">{sideText}</span>
             </div>
@@ -49,7 +49,7 @@ export function PageHero({
                             initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2, duration: 0.8, ease: [0.2, 1, 0.3, 1] }}
-                            className="text-massive leading-[0.85] mb-6 break-words"
+                            className="text-display leading-[0.85] mb-6 break-words"
                         >
                             {title}
                         </motion.h1>
