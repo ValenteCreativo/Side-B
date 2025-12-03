@@ -25,10 +25,10 @@ export default function Home() {
             </div>
             <h1 className="text-massive mb-8 leading-[0.8]">
               SIDE <br />
-              <span className="text-muted-foreground">B</span>
+              <span className="accent-bronze">B</span>
             </h1>
-            <p className="text-xl md:text-2xl font-light tracking-wide max-w-md mb-12 border-l-4 border-foreground pl-6">
-              The sanctuary for independent sound. <br />
+            <p className="text-xl md:text-2xl font-light tracking-wide max-w-md mb-12 border-l-4 border-bronze pl-6">
+              A sanctuary for independent sound. <br />
               Register. License. Create.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -104,7 +104,7 @@ export default function Home() {
 
       {/* Features Grid */}
       <section className="py-0 border-b-2 border-foreground">
-        <div className="grid md:grid-cols-3">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4">
           <FeatureCard
             icon={<Disc className="h-12 w-12" />}
             title="THE CATALOG"
@@ -117,6 +117,13 @@ export default function Home() {
             title="THE STUDIO"
             description="Upload your sessions. Register your IP. Manage your rights."
             link="/studio"
+            borderRight
+          />
+          <FeatureCard
+            icon={<Radio className="h-12 w-12" />}
+            title="FOR CREATORS"
+            description="License authentic music for your projects. Support independent artists directly."
+            link="/licenses"
             borderRight
           />
           <FeatureCard
