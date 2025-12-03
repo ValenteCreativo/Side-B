@@ -105,7 +105,7 @@ export default function Home() {
               icon={<Globe className="h-10 w-10" />}
               title="Global Rights"
               description="Powered by Story Protocol. Your music, your rules, everywhere."
-              link="#"
+              link="/rights"
             />
           </div>
         </div>
@@ -115,12 +115,11 @@ export default function Home() {
       <footer className="py-12 border-t border-border">
         <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-sm font-mono text-muted-foreground">
-            © 2024 SIDE B SESSIONS.
+            © 2025 SIDE B SESSIONS.
           </div>
           <div className="flex gap-8">
-            <Link href="#" className="text-sm uppercase tracking-widest hover:underline underline-offset-4">Twitter</Link>
-            <Link href="#" className="text-sm uppercase tracking-widest hover:underline underline-offset-4">Instagram</Link>
-            <Link href="#" className="text-sm uppercase tracking-widest hover:underline underline-offset-4">Manifesto</Link>
+            <Link href="/about" className="text-sm uppercase tracking-widest hover:underline underline-offset-4">About</Link>
+            <Link href="https://github.com/ValenteCreativo/Side-B" target="_blank" rel="noopener noreferrer" className="text-sm uppercase tracking-widest hover:underline underline-offset-4">GitHub</Link>
           </div>
         </div>
       </footer>
