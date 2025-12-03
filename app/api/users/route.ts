@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
         walletAddress: true,
         displayName: true,
         bio: true,
+        avatarUrl: true,
         _count: {
           select: {
             sessions: true,

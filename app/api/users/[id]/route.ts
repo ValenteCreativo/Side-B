@@ -21,10 +21,32 @@ export async function GET(
         walletAddress: true,
         displayName: true,
         bio: true,
+        avatarUrl: true,
         twitter: true,
         instagram: true,
         website: true,
         createdAt: true,
+        sessions: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            contentType: true,
+            moodTags: true,
+            priceUsd: true,
+            audioUrl: true,
+            storyAssetId: true,
+            createdAt: true,
+            _count: {
+              select: {
+                licenses: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
         _count: {
           select: {
             sessions: true,
