@@ -6,7 +6,11 @@
  */
 
 const HALLIDAY_API_BASE = 'https://v2.prod.halliday.xyz'
-const HALLIDAY_API_KEY = process.env.HALLIDAY_API_KEY || 'pk_2f77d0ce-6fb7-4ff2-9f23-0c305d2fc990'
+const HALLIDAY_API_KEY = process.env.HALLIDAY_API_KEY
+
+if (!HALLIDAY_API_KEY) {
+  throw new Error('HALLIDAY_API_KEY environment variable is required')
+}
 
 export interface HallidayQuoteRequest {
   inputAmount: string // USD amount
