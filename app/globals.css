@@ -4,11 +4,11 @@
 
 @layer base {
   :root {
-    /* Nano Minimalist / Awwward Winner Palette */
+    /* Quantum Leap / Brutalist Palette */
     --background: 0 0% 100%;
-    /* Paper White */
+    /* Pure White */
     --foreground: 0 0% 0%;
-    /* True Black */
+    /* Pure Black */
 
     --card: 0 0% 100%;
     --card-foreground: 0 0% 0%;
@@ -17,76 +17,60 @@
     --popover-foreground: 0 0% 0%;
 
     --primary: 0 0% 0%;
-    /* True Black */
     --primary-foreground: 0 0% 100%;
-    /* Paper White */
 
-    --secondary: 0 0% 96%;
-    /* Ultra Light Gray */
+    --secondary: 0 0% 90%;
+    /* Light Gray for hover states */
     --secondary-foreground: 0 0% 0%;
 
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 40%;
-    /* Medium Gray */
 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 0 0% 0%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 0% 0%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    /* Light Gray Border */
-    --input: 0 0% 90%;
+    --border: 0 0% 0%;
+    /* Black borders */
+    --input: 0 0% 100%;
     --ring: 0 0% 0%;
 
     --radius: 0rem;
-    /* Sharp corners for minimalist feel */
-
-    --chart-1: 0 0% 20%;
-    --chart-2: 0 0% 40%;
-    --chart-3: 0 0% 60%;
-    --chart-4: 0 0% 80%;
-    --chart-5: 0 0% 90%;
+    /* Strict sharp corners */
   }
 
   .dark {
-    /* Pure Black Background */
-    --background: 0 0% 0%;
-    /* True Black */
-    --foreground: 0 0% 98%;
-    /* Off White */
+    /* Inverted Quantum Leap */
+    --background: 0 0% 3%;
+    /* Almost Black */
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 0%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 3%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 0%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 3%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 0 0% 10%;
     --muted-foreground: 0 0% 60%;
 
-    --accent: 0 0% 10%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 0 0% 100%;
+    --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 0% 100%;
+    --destructive-foreground: 0 0% 0%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 0 0% 83.1%;
-
-    --chart-1: 0 0% 80%;
-    --chart-2: 0 0% 60%;
-    --chart-3: 0 0% 40%;
-    --chart-4: 0 0% 20%;
-    --chart-5: 0 0% 10%;
+    --border: 0 0% 20%;
+    --input: 0 0% 10%;
+    --ring: 0 0% 100%;
   }
 }
 
@@ -97,12 +81,39 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Massive Typography Utilities */
+  h1 {
+    @apply font-bold tracking-tighter;
   }
 }
 
-/* Dark studio aesthetic */
-body {
-  font-feature-settings: "rlig" 1, "calt" 1;
+@layer utilities {
+  .text-massive {
+    font-size: clamp(3rem, 10vw, 8rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    font-weight: 900;
+  }
+
+  .text-display {
+    font-size: clamp(2rem, 6vw, 4rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+
+  /* Brutalist Borders */
+  .border-brutal {
+    @apply border-2 border-black dark:border-white;
+  }
+
+  /* Grain Effect */
+  .bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  }
 }
 
 /* Smooth scrolling */
@@ -110,9 +121,9 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar for dark theme */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -120,30 +131,9 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/20 rounded-md;
+  @apply bg-foreground rounded-none;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground/30;
-}
-
-/* Audio player styling */
-audio {
-  @apply w-full;
-}
-
-audio::-webkit-media-controls-panel {
-  @apply bg-muted;
-}
-
-/* Smooth transitions */
-* {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-/* Focus rings */
-*:focus-visible {
-  @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  @apply bg-foreground/80;
 }
