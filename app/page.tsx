@@ -2,15 +2,15 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Play, Disc, Mic2, Globe } from "lucide-react"
+import { ArrowRight, Disc, Mic2, Globe, Radio } from "lucide-react"
 import { motion } from "framer-motion"
-import Image from "next/image"
+import { VinylFlip } from "@/components/ui/VinylFlip"
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-foreground selection:text-background">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center pt-20">
+      <section className="relative min-h-screen flex items-center pt-20 border-b-2 border-foreground">
         <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -18,41 +18,58 @@ export default function Home() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="z-10"
           >
-            <h1 className="text-7xl md:text-9xl font-bold tracking-tighter leading-[0.9] mb-8">
+            <div className="inline-block border-2 border-foreground px-4 py-1 mb-6">
+              <span className="font-mono text-sm font-bold tracking-widest uppercase">
+                The B-Side of the Music Industry
+              </span>
+            </div>
+            <h1 className="text-massive mb-8 leading-[0.8]">
               SIDE <br />
               <span className="text-muted-foreground">B</span>
             </h1>
-            <p className="text-xl md:text-2xl font-light tracking-wide max-w-md mb-12 border-l-2 border-foreground pl-6">
+            <p className="text-xl md:text-2xl font-light tracking-wide max-w-md mb-12 border-l-4 border-foreground pl-6">
               The sanctuary for independent sound. <br />
               Register. License. Create.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/catalog">
-                <Button size="lg" className="rounded-none text-lg px-8 py-6 bg-foreground text-background hover:bg-foreground/90 transition-all">
-                  Explore Catalog <ArrowRight className="ml-2 h-5 w-5" />
+                <Button size="lg" className="rounded-none text-lg px-8 py-6 border-2 border-foreground bg-foreground text-background hover:bg-background hover:text-foreground transition-all">
+                  EXPLORE CATALOG <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/studio">
-                <Button variant="outline" size="lg" className="rounded-none text-lg px-8 py-6 border-foreground hover:bg-foreground hover:text-background transition-all">
-                  Enter Studio
+                <Button variant="outline" size="lg" className="rounded-none text-lg px-8 py-6 border-2 border-foreground hover:bg-foreground hover:text-background transition-all">
+                  ENTER STUDIO
                 </Button>
               </Link>
             </div>
           </motion.div>
 
-          {/* Hero Art */}
+          {/* Hero Art / Vinyl Flip */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="relative h-[60vh] w-full"
+            className="relative h-[50vh] w-full flex items-center justify-center"
           >
-            <Image
-              src="/assets/hero-art.png"
-              alt="Abstract Sound Waves"
-              fill
-              className="object-contain dark:invert"
-              priority
+            <VinylFlip
+              className="w-80 h-80 md:w-96 md:h-96"
+              front={
+                <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
+                  <Disc className="w-48 h-48 animate-spin-slow" />
+                </div>
+              }
+              back={
+                <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-4 border-foreground p-8 text-center">
+                  <span className="font-mono text-xl font-bold tracking-widest leading-relaxed">
+                    MUSIC
+                    <br />
+                    IS
+                    <br />
+                    ART
+                  </span>
+                </div>
+              }
             />
           </motion.div>
         </div>
@@ -62,22 +79,22 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pb-8"
         >
-          <span className="text-xs uppercase tracking-[0.3em]">Scroll</span>
-          <div className="w-px h-12 bg-foreground/20" />
+          <span className="text-xs uppercase tracking-[0.3em] font-bold">Scroll</span>
+          <div className="w-0.5 h-12 bg-foreground" />
         </motion.div>
       </section>
 
       {/* Manifesto Section */}
-      <section className="py-32 border-t border-border">
+      <section className="py-32 border-b-2 border-foreground bg-foreground text-background">
         <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-12">
-              MUSIC IS NOT CONTENT. <br />
-              IT IS ART.
+          <div className="max-w-5xl mx-auto text-center">
+            <h2 className="text-display mb-12">
+              NOT CONTENT. <br />
+              ART.
             </h2>
-            <p className="text-xl md:text-2xl font-light leading-relaxed text-muted-foreground">
+            <p className="text-xl md:text-3xl font-light leading-relaxed opacity-90 max-w-3xl mx-auto">
               We are building a future where music is valued as intellectual property, not just a stream.
               Side B is a minimalist marketplace powered by Story Protocol, designed to give power back to the creators.
             </p>
@@ -86,40 +103,40 @@ export default function Home() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-32 border-t border-border">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-px bg-border border border-border">
-            <FeatureCard
-              icon={<Disc className="h-10 w-10" />}
-              title="The Catalog"
-              description="Discover and license raw, unpolished gems from independent artists."
-              link="/catalog"
-            />
-            <FeatureCard
-              icon={<Mic2 className="h-10 w-10" />}
-              title="The Studio"
-              description="Upload your sessions. Register your IP. Manage your rights."
-              link="/studio"
-            />
-            <FeatureCard
-              icon={<Globe className="h-10 w-10" />}
-              title="Global Rights"
-              description="Powered by Story Protocol. Your music, your rules, everywhere."
-              link="/rights"
-            />
-          </div>
+      <section className="py-0 border-b-2 border-foreground">
+        <div className="grid md:grid-cols-3">
+          <FeatureCard
+            icon={<Disc className="h-12 w-12" />}
+            title="THE CATALOG"
+            description="Discover and license raw, unpolished gems from independent artists."
+            link="/catalog"
+            borderRight
+          />
+          <FeatureCard
+            icon={<Mic2 className="h-12 w-12" />}
+            title="THE STUDIO"
+            description="Upload your sessions. Register your IP. Manage your rights."
+            link="/studio"
+            borderRight
+          />
+          <FeatureCard
+            icon={<Globe className="h-12 w-12" />}
+            title="GLOBAL INTELLECTUAL PROPERTY"
+            description="Powered by Story Protocol. Your music, your rules, everywhere."
+            link="/rights"
+          />
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-border">
+      <footer className="py-12 bg-background">
         <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-sm font-mono text-muted-foreground">
             © 2025 SIDE B SESSIONS.
           </div>
           <div className="flex gap-8">
-            <Link href="/about" className="text-sm uppercase tracking-widest hover:underline underline-offset-4">About</Link>
-            <Link href="https://github.com/ValenteCreativo/Side-B" target="_blank" rel="noopener noreferrer" className="text-sm uppercase tracking-widest hover:underline underline-offset-4">GitHub</Link>
+            <Link href="/about" className="text-sm uppercase tracking-widest hover:bg-foreground hover:text-background px-2 py-1 transition-colors">About</Link>
+            <Link href="https://github.com/ValenteCreativo/Side-B" target="_blank" rel="noopener noreferrer" className="text-sm uppercase tracking-widest hover:bg-foreground hover:text-background px-2 py-1 transition-colors">GitHub</Link>
           </div>
         </div>
       </footer>
@@ -127,14 +144,14 @@ export default function Home() {
   )
 }
 
-function FeatureCard({ icon, title, description, link }: { icon: React.ReactNode, title: string, description: string, link: string }) {
+function FeatureCard({ icon, title, description, link, borderRight }: { icon: React.ReactNode, title: string, description: string, link: string, borderRight?: boolean }) {
   return (
-    <Link href={link} className="group bg-background p-12 hover:bg-foreground hover:text-background transition-colors duration-500">
-      <div className="mb-8 opacity-50 group-hover:opacity-100 transition-opacity">{icon}</div>
-      <h3 className="text-2xl font-bold mb-4 tracking-tight">{title}</h3>
-      <p className="font-light leading-relaxed opacity-80">{description}</p>
-      <div className="mt-8 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0">
-        <ArrowRight className="h-6 w-6" />
+    <Link href={link} className={`group relative bg-background p-12 hover:bg-foreground hover:text-background transition-colors duration-300 border-b-2 md:border-b-0 border-foreground ${borderRight ? 'md:border-r-2' : ''}`}>
+      <div className="mb-8 transition-transform duration-300 group-hover:scale-110">{icon}</div>
+      <h3 className="text-3xl font-bold mb-4 tracking-tighter uppercase">{title}</h3>
+      <p className="font-light leading-relaxed text-lg opacity-80 mb-8">{description}</p>
+      <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+        <ArrowRight className="h-8 w-8" />
       </div>
     </Link>
   )
