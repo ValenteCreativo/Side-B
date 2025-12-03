@@ -18,12 +18,24 @@ model User {
   walletAddress String    @unique
   role          String    @default("MUSICIAN") // "MUSICIAN" | "CREATOR"
   displayName   String?
+  bio           String?
+  avatarUrl     String?
+  twitter       String?
+  instagram     String?
+  website       String?
   createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
 
   // Relations
   sessions      Session[]
   collections   Collection[]
   licenses      License[]    @relation("UserLicenses")
+
+  // Social features
+  followers     Follow[]     @relation("Following")
+  following     Follow[]     @relation("Followers")
+  sentMessages  Message[]    @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
 }
 
 model Collection {
@@ -76,4 +88,28 @@ model License {
   txHash    String?  // Transaction hash for on-chain license (future)
 
   @@unique([sessionId, buyerId]) // Prevent duplicate licenses
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower    User @relation("Followers", fields: [followerId], references: [id])
+  following   User @relation("Following", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  sender     User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User @relation("ReceivedMessages", fields: [receiverId], references: [id])
 }
