@@ -12,22 +12,27 @@ import {
     FileCheck,
     Settings,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    LogIn
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, truncateAddress } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { useUser } from "@/components/auth/UserContext"
+import { AuthModal } from "@/components/auth/AuthModal"
 
 const menuItems = [
     { icon: Disc, label: "Catalog", href: "/catalog" },
+    { icon: Users, label: "Community", href: "/community" },
     { icon: Mic2, label: "My Studio", href: "/studio" },
     { icon: FileCheck, label: "My Licenses", href: "/licenses" },
-    { icon: Users, label: "Community", href: "/community" },
     { icon: Settings, label: "Settings", href: "/settings" },
 ]
 
 export function AppSidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false)
+    const [showAuthModal, setShowAuthModal] = useState(false)
     const pathname = usePathname()
+    const { user } = useUser()
 
     return (
         <motion.div
@@ -92,6 +97,56 @@ export function AppSidebar() {
                 })}
             </nav>
 
+            {/* Auth Section */}
+            <div className="p-4 border-t border-border">
+                {!user ? (
+                    <Button
+                        variant="default"
+                        size={isCollapsed ? "icon" : "default"}
+                        onClick={() => setShowAuthModal(true)}
+                        className="w-full justify-center"
+                    >
+                        <LogIn className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
+                        <AnimatePresence>
+                            {!isCollapsed && (
+                                <motion.span
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -10 }}
+                                    className="whitespace-nowrap"
+                                >
+                                    SIGN UP / LOGIN
+                                </motion.span>
+                            )}
+                        </AnimatePresence>
+                    </Button>
+                ) : (
+                    <Link href="/settings">
+                        <div className={cn(
+                            "flex items-center gap-3 px-4 py-3 transition-colors hover:bg-secondary rounded-sm",
+                            isCollapsed && "justify-center px-0"
+                        )}>
+                            <User className="h-5 w-5 flex-shrink-0" />
+                            <AnimatePresence>
+                                {!isCollapsed && (
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -10 }}
+                                        className="flex flex-col overflow-hidden"
+                                    >
+                                        <span className="text-xs text-muted-foreground">Signed in as</span>
+                                        <span className="font-mono text-sm truncate">
+                                            {truncateAddress(user.walletAddress)}
+                                        </span>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </Link>
+                )}
+            </div>
+
             {/* Collapse Toggle */}
             <div className="p-4 border-t border-border">
                 <Button
@@ -103,6 +158,12 @@ export function AppSidebar() {
                     {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                 </Button>
             </div>
+
+            {/* Auth Modal */}
+            <AuthModal
+                open={showAuthModal}
+                onOpenChange={setShowAuthModal}
+            />
         </motion.div>
     )
 }
