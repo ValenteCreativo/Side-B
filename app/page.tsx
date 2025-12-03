@@ -108,7 +108,7 @@ export default function Home() {
           <FeatureCard
             icon={<Mic2 className="h-12 w-12" />}
             title="UPLOAD & EARN"
-            description="Register your sessions as IP. Set your terms. Monetize your craft."
+            description="Share your sessions, rehearsals, and raw recordings. Monetize your craft."
             link="/studio"
             borderRight
           />
@@ -122,7 +122,7 @@ export default function Home() {
           <FeatureCard
             icon={<Globe className="h-12 w-12" />}
             title="GLOBAL IP RIGHTS"
-            description="Protect your work with Story Protocol. Your music, your rules, worldwide."
+            description="Blockchain-verified ownership. License on your terms. Powered by Story Protocol."
             link="/rights"
           />
         </div>
