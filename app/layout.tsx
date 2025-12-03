@@ -13,6 +13,9 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 export const metadata: Metadata = {
   title: "Side B Sessions - Independent Music Marketplace",
   description: "A minimalist marketplace for independent musicians to register and license their music as IP on Story Protocol",
+  icons: {
+    icon: "/assets/catalog-art.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
