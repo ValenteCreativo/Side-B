@@ -27,7 +27,7 @@ export function PageHero({
 
             {/* Side Label */}
             <div className="absolute top-8 right-8 lg:top-8 lg:right-[420px] flex items-center gap-4">
-                <div className="h-[2px] w-24 bg-foreground" />
+                <div className="h-[2px] w-24 bg-bronze" />
                 <span className="font-mono text-sm tracking-widest font-bold">{sideText}</span>
             </div>
 

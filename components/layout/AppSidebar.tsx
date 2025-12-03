@@ -42,8 +42,8 @@ export function AppSidebar() {
             {/* Header */}
             <div className="h-20 flex items-center px-6 border-b border-border">
                 <Link href="/" className="flex items-center gap-3 overflow-hidden">
-                    <div className="w-8 h-8 bg-foreground flex items-center justify-center flex-shrink-0">
-                        <span className="font-bold text-background">B</span>
+                    <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                        <img src="/assets/catalog-art.png" alt="Side B" className="w-full h-full object-contain" />
                     </div>
                     <AnimatePresence>
                         {!isCollapsed && (
@@ -75,7 +75,7 @@ export function AppSidebar() {
                                 {isActive && (
                                     <motion.div
                                         layoutId="activeNav"
-                                        className="absolute left-0 top-0 bottom-0 w-1 bg-foreground"
+                                        className="absolute left-0 top-0 bottom-0 w-1 bg-bronze"
                                     />
                                 )}
                                 <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive && "fill-current")} />
