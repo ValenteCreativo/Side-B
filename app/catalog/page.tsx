@@ -185,10 +185,8 @@ function CatalogPage() {
 
 export default function CatalogPageWithAuth() {
   return (
-    <AuthGate>
-      <AppShell>
-        <CatalogPage />
-      </AppShell>
-    </AuthGate>
+    <AppShell>
+      <CatalogPage />
+    </AppShell>
   )
 }
