@@ -102,14 +102,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Grid */}
+      {/* Features Grid - For Musicians */}
       <section className="py-0 border-b-2 border-foreground">
         <div className="grid md:grid-cols-3">
           <FeatureCard
-            icon={<Disc className="h-12 w-12" />}
-            title="DISCOVER & LICENSE"
-            description="Browse authentic music from independent artists. License directly, support fairly."
-            link="/catalog"
+            icon={<Mic2 className="h-12 w-12" />}
+            title="UPLOAD & EARN"
+            description="Register your sessions as IP. Set your terms. Monetize your craft."
+            link="/studio"
             borderRight
           />
           <FeatureCard
@@ -120,11 +120,44 @@ export default function Home() {
             borderRight
           />
           <FeatureCard
-            icon={<Mic2 className="h-12 w-12" />}
-            title="UPLOAD & EARN"
-            description="Register your sessions as IP. Set your terms. Monetize your craft."
-            link="/studio"
+            icon={<Disc className="h-12 w-12" />}
+            title="DISCOVER & LICENSE"
+            description="Browse authentic music from independent artists. License directly, support fairly."
+            link="/catalog"
           />
+        </div>
+      </section>
+
+      {/* For Creators Section */}
+      <section className="py-24 border-b-2 border-foreground bg-background">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-12">
+              <span className="font-mono text-sm font-bold tracking-widest uppercase border-2 border-bronze px-4 py-1 inline-block mb-6">
+                For Creators
+              </span>
+              <h2 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+                Original music for <br />
+                <span className="accent-bronze">your vision.</span>
+              </h2>
+              <p className="text-xl md:text-2xl font-light leading-relaxed text-muted-foreground">
+                Films. Podcasts. Games. Videos. Find authentic, licensable music that elevates your work.
+                No stock libraries. No generic loops. Just real artists, real sound.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="/catalog">
+                <Button size="lg" className="rounded-none text-lg px-8 py-6 border-2 border-foreground bg-foreground text-background hover:bg-background hover:text-foreground transition-all">
+                  BROWSE CATALOG <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/about">
+                <Button variant="outline" size="lg" className="rounded-none text-lg px-8 py-6 border-2 border-foreground hover:bg-foreground hover:text-background transition-all">
+                  LEARN MORE
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
