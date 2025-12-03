@@ -4,82 +4,89 @@
 
 @layer base {
   :root {
-    /* Deep Espresso / Analog Studio Palette */
-    --background: 0 0% 100%; /* Deep Espresso */
-    --foreground: 0 0% 3.9%; /* Antique White */
-    
-    --card: 0 0% 100%; /* Charcoal */
-    --card-foreground: 0 0% 3.9%;
-    
+    /* Nano Minimalist / Awwward Winner Palette */
+    --background: 0 0% 100%;
+    /* Paper White */
+    --foreground: 0 0% 0%;
+    /* True Black */
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    
-    --primary: 0 0% 9%; /* Antique Gold */
-    --primary-foreground: 0 0% 98%;
-    
-    --secondary: 0 0% 96.1%; /* Soft Brown */
-    --secondary-foreground: 0 0% 9%;
-    
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%; /* Muted Bronze */
-    
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    
+    --popover-foreground: 0 0% 0%;
+
+    --primary: 0 0% 0%;
+    /* True Black */
+    --primary-foreground: 0 0% 100%;
+    /* Paper White */
+
+    --secondary: 0 0% 96%;
+    /* Ultra Light Gray */
+    --secondary-foreground: 0 0% 0%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    /* Medium Gray */
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 0%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    
-    --radius: 0.5rem;
-    
-    --chart-1: 12 76% 61%;
-    
-    --chart-2: 173 58% 39%;
-    
-    --chart-3: 197 37% 24%;
-    
-    --chart-4: 43 74% 66%;
-    
-    --chart-5: 27 87% 67%;
+
+    --border: 0 0% 90%;
+    /* Light Gray Border */
+    --input: 0 0% 90%;
+    --ring: 0 0% 0%;
+
+    --radius: 0rem;
+    /* Sharp corners for minimalist feel */
+
+    --chart-1: 0 0% 20%;
+    --chart-2: 0 0% 40%;
+    --chart-3: 0 0% 60%;
+    --chart-4: 0 0% 80%;
+    --chart-5: 0 0% 90%;
   }
 
   .dark {
-    /* Same as root because we are enforcing dark mode aesthetic */
-    --background: 0 0% 3.9%;
+    /* Inverted Nano Minimalist */
+    --background: 0 0% 3%;
+    /* Almost Black */
     --foreground: 0 0% 98%;
-    
-    --card: 0 0% 3.9%;
+    /* Off White */
+
+    --card: 0 0% 3%;
     --card-foreground: 0 0% 98%;
-    
-    --popover: 0 0% 3.9%;
+
+    --popover: 0 0% 3%;
     --popover-foreground: 0 0% 98%;
-    
+
     --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    
-    --secondary: 0 0% 14.9%;
+    --primary-foreground: 0 0% 3%;
+
+    --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 98%;
-    
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    
-    --accent: 0 0% 14.9%;
+
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 0 0% 10%;
     --accent-foreground: 0 0% 98%;
-    
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
     --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+
+    --chart-1: 0 0% 80%;
+    --chart-2: 0 0% 60%;
+    --chart-3: 0 0% 40%;
+    --chart-4: 0 0% 20%;
+    --chart-5: 0 0% 10%;
   }
 }
 
@@ -87,6 +94,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
