@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { AuthGate } from '@/components/auth/AuthGate'
 import { useUser } from '@/components/auth/UserContext'
 import { UploadSessionForm } from '@/components/studio/UploadSessionForm'
 import { SessionList } from '@/components/studio/SessionList'
@@ -24,6 +23,40 @@ function StudioPage() {
   const handleLogout = async () => {
     await logout()
     window.location.href = '/'
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
+        {/* Hero Section */}
+        <div className="relative pt-20 pb-12 border-b border-border">
+          <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="max-w-2xl">
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4">YOUR STUDIO</h1>
+              <p className="text-xl font-light text-muted-foreground max-w-lg">
+                Upload. Register. Monetize. <br />
+                Your creative command center.
+              </p>
+            </div>
+
+            {/* Abstract Art */}
+            <div className="relative w-48 h-48 md:w-64 md:h-64 opacity-80">
+              <Image
+                src="/assets/studio-art.png"
+                alt="Studio Art"
+                fill
+                className="object-contain dark:invert"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Sign In Message */}
+        <div className="container mx-auto px-4 py-12">
+          <p className="text-center text-muted-foreground">Please sign in to view your studio.</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -73,10 +106,8 @@ function StudioPage() {
 
 export default function StudioPageWithAuth() {
   return (
-    <AuthGate>
-      <AppShell>
-        <StudioPage />
-      </AppShell>
-    </AuthGate>
+    <AppShell>
+      <StudioPage />
+    </AppShell>
   )
 }
