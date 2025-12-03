@@ -13,7 +13,7 @@ export default function AboutPage() {
                 <PageHero
                     title="ABOUT SIDE B"
                     subtitle="MISSION"
-                    description="A minimalist marketplace for independent musicians to register and license their music as IP."
+                    description="An independent music marketplace for musicians to register and license their music as IP."
                     sideText="SIDE B"
                 >
                     <VinylFlip
@@ -48,7 +48,7 @@ export default function AboutPage() {
                                 productions.
                             </p>
                             <p>
-                                By combining Web3 technology with a minimalist user experience, we empower musicians to:
+                                By combining Web3 technology with a powerful user experience, we empower musicians to:
                             </p>
                             <ul className="list-disc list-inside space-y-2 ml-4 font-mono text-sm">
                                 <li>OWN THEIR INTELLECTUAL PROPERTY ON-CHAIN</li>
@@ -74,7 +74,7 @@ export default function AboutPage() {
                         <FeatureCard
                             icon={<Users className="h-6 w-6" />}
                             title="Community First"
-                            description="Connect with fellow musicians and creators. Follow, message, and discover new collaborators in a minimalist, distraction-free environment."
+                            description="Connect with fellow musicians and creators. Follow, message, and discover new collaborators in a distraction-free environment."
                         />
                         <FeatureCard
                             icon={<Zap className="h-6 w-6" />}
@@ -109,7 +109,7 @@ export default function AboutPage() {
                             <TechItem label="Database" value="Prisma, SQLite" />
                             <TechItem label="Auth" value="Coinbase Wallet" />
                             <TechItem label="IP Registry" value="Story Protocol" />
-                            <TechItem label="Design" value="Minimalist, Brutalist" />
+                            <TechItem label="Design" value="Brutalist" />
                         </div>
                     </div>
                 </div>

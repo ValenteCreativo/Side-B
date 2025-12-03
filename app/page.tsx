@@ -96,7 +96,7 @@ export default function Home() {
             </h2>
             <p className="text-xl md:text-3xl font-light leading-relaxed opacity-90 max-w-3xl mx-auto">
               We are building a future where music is valued as intellectual property, not just a stream.
-              Side B is a minimalist marketplace powered by Story Protocol, designed to give power back to the creators.
+              Side B is a marketplace powered by Story Protocol, designed to give power back to the creators.
             </p>
           </div>
         </div>
