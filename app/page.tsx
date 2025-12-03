@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Disc, Mic2, Globe, Radio } from "lucide-react"
+import { ArrowRight, Disc, Mic2, Users, Radio } from "lucide-react"
 import { motion } from "framer-motion"
 import { VinylFlip } from "@/components/ui/VinylFlip"
 
