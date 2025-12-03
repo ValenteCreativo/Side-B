@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { formatPrice, truncateAddress } from '@/lib/utils'
-import { ShoppingCart, Check, ExternalLink } from 'lucide-react'
+import { ShoppingCart, Check, ExternalLink, DollarSign } from 'lucide-react'
+import { HallidayOnrampButton } from '@/components/payments/HallidayOnrampButton'
 
 interface SessionCardProps {
   session: {
@@ -228,33 +229,48 @@ export function SessionCard({ session }: SessionCardProps) {
         </div>
 
         {/* Price and License Button */}
-        <div className="flex items-center justify-between gap-4 pt-2">
-          <div>
-            <p className="text-2xl font-bold">{formatPrice(session.priceUsd)}</p>
-            {session.licenseCount !== undefined && session.licenseCount > 0 && (
-              <p className="text-xs text-muted-foreground">
-                {session.licenseCount} {session.licenseCount === 1 ? 'license' : 'licenses'} sold
-              </p>
-            )}
+        <div className="space-y-3 pt-2">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-2xl font-bold">{formatPrice(session.priceUsd)}</p>
+              {session.licenseCount !== undefined && session.licenseCount > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  {session.licenseCount} {session.licenseCount === 1 ? 'license' : 'licenses'} sold
+                </p>
+              )}
+            </div>
+
+            <Button
+              onClick={handleLicense}
+              disabled={isLicensing || isLicensed}
+              className="shrink-0"
+            >
+              {isLicensed ? (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  Licensed
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  {isLicensing ? 'Processing...' : 'License'}
+                </>
+              )}
+            </Button>
           </div>
 
-          <Button
-            onClick={handleLicense}
-            disabled={isLicensing || isLicensed}
-            className="shrink-0"
-          >
-            {isLicensed ? (
-              <>
-                <Check className="h-4 w-4 mr-2" />
-                Licensed
-              </>
-            ) : (
-              <>
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                {isLicensing ? 'Processing...' : 'License'}
-              </>
-            )}
-          </Button>
+          {/* Halliday On-ramp Button */}
+          {!isLicensed && (
+            <HallidayOnrampButton
+              suggestedAmount={session.priceUsd}
+              variant="outline"
+              size="sm"
+              className="w-full rounded-none border-foreground text-xs uppercase tracking-wider"
+            >
+              <DollarSign className="h-3 w-3 mr-2" />
+              Need Crypto? Buy USDC
+            </HallidayOnrampButton>
+          )}
         </div>
 
         {/* Story Protocol Info */}
