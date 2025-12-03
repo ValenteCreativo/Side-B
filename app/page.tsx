@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Disc, Mic2, Users, Radio } from "lucide-react"
+import { ArrowRight, Disc, Mic2, Users, Globe } from "lucide-react"
 import { motion } from "framer-motion"
 import { VinylFlip } from "@/components/ui/VinylFlip"
 
@@ -120,10 +120,10 @@ export default function Home() {
             borderRight
           />
           <FeatureCard
-            icon={<Disc className="h-12 w-12" />}
-            title="DISCOVER & LICENSE"
-            description="Browse authentic music from independent artists. License directly, support fairly."
-            link="/catalog"
+            icon={<Globe className="h-12 w-12" />}
+            title="GLOBAL IP RIGHTS"
+            description="Protect your work with Story Protocol. Your music, your rules, worldwide."
+            link="/rights"
           />
         </div>
       </section>
