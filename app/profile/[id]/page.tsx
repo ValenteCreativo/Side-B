@@ -5,7 +5,7 @@ import { useParams } from "next/navigation"
 import { AppShell } from "@/components/layout/AppShell"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Music, Users, MessageCircle, ExternalLink, Calendar } from "lucide-react"
 import { useUser } from "@/components/auth/UserContext"
@@ -16,6 +16,7 @@ interface ProfileData {
     walletAddress: string
     displayName: string | null
     bio: string | null
+    avatarUrl: string | null
     twitter: string | null
     instagram: string | null
     website: string | null
@@ -138,6 +139,7 @@ export default function ProfilePage() {
                         <CardContent className="pt-6">
                             <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
                                 <Avatar className="h-24 w-24 border-2 border-white/10">
+                                    {profile.avatarUrl && <AvatarImage src={profile.avatarUrl} alt={profile.displayName || "User avatar"} />}
                                     <AvatarFallback className="bg-primary/20 text-primary text-2xl font-medium">
                                         {initials}
                                     </AvatarFallback>
