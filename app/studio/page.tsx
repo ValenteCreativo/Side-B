@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { truncateAddress } from '@/lib/utils'
 import { LogOut, Music } from 'lucide-react'
 import Link from 'next/link'
-
+import Image from 'next/image'
 import { AppShell } from '@/components/layout/AppShell'
 
 function StudioPage() {
@@ -27,33 +27,37 @@ function StudioPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background Ambient Particles */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl animate-drift" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-secondary/10 rounded-full blur-3xl animate-breathe animation-delay-2000" />
+    <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
+      {/* Hero Section */}
+      <div className="relative pt-20 pb-12 border-b border-border">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="max-w-2xl">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4">YOUR STUDIO</h1>
+            <p className="text-xl font-light text-muted-foreground max-w-lg">
+              Upload. Register. Monetize. <br />
+              Your creative command center.
+            </p>
+          </div>
+
+          {/* Abstract Art */}
+          <div className="relative w-48 h-48 md:w-64 md:h-64 opacity-80">
+            <Image
+              src="/assets/studio-art.png"
+              alt="Studio Art"
+              fill
+              className="object-contain dark:invert"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 container mx-auto px-4 py-12">
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Your Studio</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl font-light">
-            Upload your rehearsals and finished tracks. Each one is registered as IP on Story Protocol.
-          </p>
-        </div>
-
+      <main className="container mx-auto px-6 py-12">
         <div className="grid gap-12 lg:grid-cols-[400px_1fr]">
           {/* Upload Form - Floating Panel */}
           <div className="lg:sticky lg:top-24 h-fit">
-            <div className="relative">
-              {/* Tension Wire Visuals */}
-              <div className="absolute -top-12 left-8 w-px h-12 bg-gradient-to-b from-transparent to-white/20" />
-              <div className="absolute -top-12 right-8 w-px h-12 bg-gradient-to-b from-transparent to-white/20" />
-
-              <div className="bg-card/30 backdrop-blur-xl border border-white/10 rounded-2xl p-1 shadow-2xl">
-                <UploadSessionForm onSuccess={handleUploadSuccess} />
-              </div>
+            <div className="bg-background border border-border p-1 shadow-xl">
+              <UploadSessionForm onSuccess={handleUploadSuccess} />
             </div>
           </div>
 

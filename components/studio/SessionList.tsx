@@ -106,10 +106,10 @@ export function SessionList() {
             <TrackCard
               id={session.id}
               title={session.title}
-              type={session.contentType}
-              createdAt={session.createdAt}
-              status={session.storyAssetId ? "REGISTERED" : "PENDING"}
-              txHash={session.storyTxHash || undefined}
+              status={session.storyAssetId ? "registered" : "pending"}
+              date={formatDate(session.createdAt)}
+              duration="3:45"
+              storyTxHash={session.storyTxHash || undefined}
               audioUrl={session.audioUrl}
               artist={session.owner?.displayName || "Unknown Artist"}
             />
