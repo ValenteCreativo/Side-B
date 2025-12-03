@@ -51,16 +51,16 @@
   }
 
   .dark {
-    /* Inverted Nano Minimalist */
-    --background: 0 0% 3%;
-    /* Almost Black */
+    /* Pure Black Background */
+    --background: 0 0% 0%;
+    /* True Black */
     --foreground: 0 0% 98%;
     /* Off White */
 
-    --card: 0 0% 3%;
+    --card: 0 0% 0%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 3%;
+    --popover: 0 0% 0%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 0 0% 98%;
