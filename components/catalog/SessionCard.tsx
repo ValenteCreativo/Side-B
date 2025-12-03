@@ -61,34 +61,118 @@ export function SessionCard({ session }: SessionCardProps) {
     setIsLicensing(true)
 
     try {
-      const response = await fetch('/api/licenses', {
+      // Step 1: Get payment details (calculates 2% platform fee split)
+      const paymentResponse = await fetch('/api/payments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId: session.id,
           buyerId: user.id,
+          buyerWalletAddress: user.walletAddress,
         }),
       })
 
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to create license')
+      if (!paymentResponse.ok) {
+        const error = await paymentResponse.json()
+        throw new Error(error.error || 'Failed to get payment details')
       }
 
-      const license = await response.json()
+      const { paymentDetails } = await paymentResponse.json()
+
+      // Step 2: Request wallet transaction via Coinbase Wallet
+      // Note: This uses the Coinbase Wallet SDK to send transactions
+      // The user will see a confirmation in their wallet extension/app
+
+      if (!window.ethereum) {
+        throw new Error('Coinbase Wallet not found. Please install the wallet extension.')
+      }
+
+      toast({
+        title: 'Confirm in wallet',
+        description: `Sending ${formatPrice(paymentDetails.total.amount)} (${formatPrice(paymentDetails.artistPayment.amount)} to artist + ${formatPrice(paymentDetails.platformFee.amount)} platform fee)`,
+      })
+
+      // For now, we'll use a simplified single transaction to the artist
+      // In production, you might want to use a smart contract to split payments atomically
+      // or send two separate transactions
+
+      // Single transaction approach (artist receives full amount, platform fee handled off-chain):
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+
+      // Convert USD to wei (assuming 1 USD = some amount of ETH/token)
+      // NOTE: In production, you'll need proper price conversion
+      // For now, we'll use a placeholder that assumes direct USDC transfer
+      const amountInWei = '0x' + (paymentDetails.total.amount * 1e6).toString(16) // USDC has 6 decimals
+
+      const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [{
+          from: accounts[0],
+          to: paymentDetails.artistPayment.recipient,
+          value: amountInWei,
+          data: '0x', // No data needed for simple transfer
+        }],
+      })
+
+      toast({
+        title: 'Transaction sent',
+        description: 'Waiting for confirmation...',
+      })
+
+      // Step 3: Confirm payment and create license
+      const confirmResponse = await fetch('/api/payments/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: session.id,
+          buyerId: user.id,
+          txHash: txHash,
+        }),
+      })
+
+      if (!confirmResponse.ok) {
+        const error = await confirmResponse.json()
+        throw new Error(error.error || 'Failed to confirm payment')
+      }
+
+      const { license } = await confirmResponse.json()
 
       setIsLicensed(true)
       toast({
         title: '✅ License acquired!',
-        description: `You can now use "${session.title}" in your projects`,
+        description: `You can now use "${session.title}" in your projects. Check My Licenses to download.`,
       })
+
     } catch (error) {
       console.error('License creation failed:', error)
-      toast({
-        title: 'License failed',
-        description: error instanceof Error ? error.message : 'Please try again',
-        variant: 'destructive',
-      })
+
+      // Handle specific wallet errors
+      if (error instanceof Error) {
+        if (error.message.includes('User rejected')) {
+          toast({
+            title: 'Transaction cancelled',
+            description: 'You cancelled the transaction in your wallet',
+          })
+        } else if (error.message.includes('insufficient funds')) {
+          toast({
+            title: 'Insufficient funds',
+            description: 'You don\'t have enough funds to complete this purchase',
+            variant: 'destructive',
+          })
+        } else {
+          toast({
+            title: 'License failed',
+            description: error.message,
+            variant: 'destructive',
+          })
+        }
+      } else {
+        toast({
+          title: 'License failed',
+          description: 'Please try again',
+          variant: 'destructive',
+        })
+      }
     } finally {
       setIsLicensing(false)
     }
