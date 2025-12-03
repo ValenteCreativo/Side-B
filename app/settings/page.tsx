@@ -70,7 +70,28 @@ export default function ProfilePage() {
                         title="SETTINGS"
                         subtitle="CONFIGURATION"
                         description="Manage your account settings and profile information."
-                    />
+                        sideText="SIDE B"
+                    >
+                        <VinylFlip
+                            className="w-64 h-64 ml-auto"
+                            front={
+                                <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
+                                    <SettingsIcon className="w-32 h-32 animate-spin-slow" />
+                                </div>
+                            }
+                            back={
+                                <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
+                                    <span className="font-mono text-sm font-bold tracking-widest">
+                                        CONTROL
+                                        <br />
+                                        YOUR
+                                        <br />
+                                        IDENTITY
+                                    </span>
+                                </div>
+                            }
+                        />
+                    </PageHero>
                     <div className="container mx-auto px-4 py-12">
                         <p className="text-center text-muted-foreground font-mono">PLEASE_SIGN_IN_TO_VIEW_PROFILE</p>
                     </div>

@@ -94,7 +94,28 @@ export default function LicensesPage() {
                         title="MY LICENSES"
                         subtitle="ACCESS_GRANTED"
                         description="Your collection of licensed works and commercial rights."
-                    />
+                        sideText="SIDE B"
+                    >
+                        <VinylFlip
+                            className="w-64 h-64 ml-auto"
+                            front={
+                                <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
+                                    <FileCheck className="w-32 h-32" />
+                                </div>
+                            }
+                            back={
+                                <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
+                                    <span className="font-mono text-sm font-bold tracking-widest">
+                                        COMMERCIAL
+                                        <br />
+                                        RIGHTS
+                                        <br />
+                                        SECURED
+                                    </span>
+                                </div>
+                            }
+                        />
+                    </PageHero>
                     <div className="container mx-auto px-4 py-12">
                         <p className="text-center text-muted-foreground font-mono">PLEASE_SIGN_IN_TO_VIEW_LICENSES</p>
                     </div>

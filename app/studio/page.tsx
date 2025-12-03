@@ -34,7 +34,28 @@ function StudioPage() {
           title="YOUR STUDIO"
           subtitle="COMMAND_CENTER"
           description="Upload. Register. Monetize. Your creative command center."
-        />
+          sideText="SIDE B"
+        >
+          <VinylFlip
+            className="w-64 h-64 ml-auto"
+            front={
+              <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
+                <Mic2 className="w-32 h-32" />
+              </div>
+            }
+            back={
+              <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
+                <span className="font-mono text-sm font-bold tracking-widest">
+                  RECORD
+                  <br />
+                  UPLOAD
+                  <br />
+                  EARN
+                </span>
+              </div>
+            }
+          />
+        </PageHero>
         <div className="container mx-auto px-4 py-12">
           <p className="text-center text-muted-foreground font-mono">PLEASE_SIGN_IN_TO_VIEW_STUDIO</p>
         </div>
