@@ -9,8 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Camera, Save } from "lucide-react"
+import { Camera, Save, Settings as SettingsIcon } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { PageHero } from "@/components/ui/PageHero"
+import { VinylFlip } from "@/components/ui/VinylFlip"
 
 export default function ProfilePage() {
     const { user } = useUser()
@@ -63,8 +65,15 @@ export default function ProfilePage() {
     if (!user) {
         return (
             <AppShell>
-                <div className="container mx-auto px-4 py-12">
-                    <p className="text-center text-muted-foreground">Please sign in to view your profile.</p>
+                <div className="min-h-screen bg-background">
+                    <PageHero
+                        title="SETTINGS"
+                        subtitle="CONFIGURATION"
+                        description="Manage your account settings and profile information."
+                    />
+                    <div className="container mx-auto px-4 py-12">
+                        <p className="text-center text-muted-foreground font-mono">PLEASE_SIGN_IN_TO_VIEW_PROFILE</p>
+                    </div>
                 </div>
             </AppShell>
         )
@@ -77,134 +86,153 @@ export default function ProfilePage() {
     return (
         <AppShell>
             <div className="min-h-screen bg-background relative overflow-hidden">
-                {/* Background Ambient Particles */}
-                <div className="fixed inset-0 pointer-events-none z-0">
-                    <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl animate-drift" />
-                    <div className="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-secondary/10 rounded-full blur-3xl animate-breathe" />
-                </div>
+                <PageHero
+                    title="SETTINGS"
+                    subtitle="CONFIGURATION"
+                    description="Manage your account settings and profile information."
+                    sideText="SIDE B"
+                >
+                    <VinylFlip
+                        className="w-64 h-64 ml-auto"
+                        front={
+                            <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
+                                <SettingsIcon className="w-32 h-32 animate-spin-slow" />
+                            </div>
+                        }
+                        back={
+                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
+                                <span className="font-mono text-sm font-bold tracking-widest">
+                                    CONTROL
+                                    <br />
+                                    YOUR
+                                    <br />
+                                    IDENTITY
+                                </span>
+                            </div>
+                        }
+                    />
+                </PageHero>
 
                 <div className="relative z-10 container mx-auto px-4 py-12 max-w-3xl">
-                    <div className="mb-8">
-                        <h1 className="text-4xl font-bold mb-2 tracking-tight">Settings</h1>
-                        <p className="text-muted-foreground">Manage your account settings and profile information.</p>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-8">
                         {/* Avatar Section */}
-                        <Card className="bg-card/40 backdrop-blur-md border-white/5">
-                            <CardHeader>
-                                <CardTitle>Avatar</CardTitle>
-                                <CardDescription>Your profile picture</CardDescription>
-                            </CardHeader>
-                            <CardContent className="flex items-center gap-6">
-                                <Avatar className="h-24 w-24 border-2 border-white/10">
-                                    <AvatarFallback className="bg-primary/20 text-primary text-2xl font-medium">
+                        <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                            <div className="mb-6">
+                                <h3 className="text-xl font-bold uppercase tracking-tight">Avatar</h3>
+                                <p className="text-sm text-muted-foreground font-mono">YOUR_DIGITAL_FACE</p>
+                            </div>
+                            <div className="flex items-center gap-6">
+                                <Avatar className="h-24 w-24 border-2 border-foreground rounded-none">
+                                    <AvatarFallback className="bg-foreground text-background text-2xl font-bold rounded-none">
                                         {initials}
                                     </AvatarFallback>
                                 </Avatar>
-                                <Button type="button" variant="outline" disabled>
+                                <Button type="button" variant="outline" disabled className="rounded-none border-2 border-foreground">
                                     <Camera className="h-4 w-4 mr-2" />
-                                    Upload Image (Coming Soon)
+                                    UPLOAD_IMAGE (SOON)
                                 </Button>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
 
                         {/* Basic Info */}
-                        <Card className="bg-card/40 backdrop-blur-md border-white/5">
-                            <CardHeader>
-                                <CardTitle>Basic Information</CardTitle>
-                                <CardDescription>Your public artist name and bio</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
+                        <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                            <div className="mb-6">
+                                <h3 className="text-xl font-bold uppercase tracking-tight">Basic Information</h3>
+                                <p className="text-sm text-muted-foreground font-mono">PUBLIC_ARTIST_DATA</p>
+                            </div>
+                            <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="displayName">Artist Name</Label>
+                                    <Label htmlFor="displayName" className="font-mono uppercase text-xs">Artist Name</Label>
                                     <Input
                                         id="displayName"
                                         value={formData.displayName}
                                         onChange={(e) => handleChange("displayName", e.target.value)}
-                                        placeholder="Your artist or band name"
+                                        placeholder="YOUR_ARTIST_NAME"
+                                        className="rounded-none border-2 border-foreground focus-visible:ring-0"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="bio">Bio</Label>
+                                    <Label htmlFor="bio" className="font-mono uppercase text-xs">Bio</Label>
                                     <Textarea
                                         id="bio"
                                         value={formData.bio}
                                         onChange={(e) => handleChange("bio", e.target.value)}
-                                        placeholder="Tell us about your music and journey..."
+                                        placeholder="TELL_US_ABOUT_YOUR_MUSIC..."
                                         rows={5}
+                                        className="rounded-none border-2 border-foreground focus-visible:ring-0 resize-none"
                                     />
-                                    <p className="text-xs text-muted-foreground">
-                                        This will be displayed on your public artist profile.
+                                    <p className="text-xs text-muted-foreground font-mono">
+                                        DISPLAYED_ON_PUBLIC_PROFILE
                                     </p>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
 
                         {/* Social Links */}
-                        <Card className="bg-card/40 backdrop-blur-md border-white/5">
-                            <CardHeader>
-                                <CardTitle>Social Links</CardTitle>
-                                <CardDescription>Connect your social media profiles</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
+                        <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                            <div className="mb-6">
+                                <h3 className="text-xl font-bold uppercase tracking-tight">Social Links</h3>
+                                <p className="text-sm text-muted-foreground font-mono">CONNECT_YOUR_PRESENCE</p>
+                            </div>
+                            <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="twitter">Twitter / X</Label>
+                                    <Label htmlFor="twitter" className="font-mono uppercase text-xs">Twitter / X</Label>
                                     <Input
                                         id="twitter"
                                         value={formData.twitter}
                                         onChange={(e) => handleChange("twitter", e.target.value)}
-                                        placeholder="@yourusername"
+                                        placeholder="@USERNAME"
+                                        className="rounded-none border-2 border-foreground focus-visible:ring-0"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="instagram">Instagram</Label>
+                                    <Label htmlFor="instagram" className="font-mono uppercase text-xs">Instagram</Label>
                                     <Input
                                         id="instagram"
                                         value={formData.instagram}
                                         onChange={(e) => handleChange("instagram", e.target.value)}
-                                        placeholder="@yourusername"
+                                        placeholder="@USERNAME"
+                                        className="rounded-none border-2 border-foreground focus-visible:ring-0"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="website">Website</Label>
+                                    <Label htmlFor="website" className="font-mono uppercase text-xs">Website</Label>
                                     <Input
                                         id="website"
                                         value={formData.website}
                                         onChange={(e) => handleChange("website", e.target.value)}
-                                        placeholder="https://yourwebsite.com"
+                                        placeholder="HTTPS://YOURWEBSITE.COM"
                                         type="url"
+                                        className="rounded-none border-2 border-foreground focus-visible:ring-0"
                                     />
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
 
                         {/* Wallet Info (Read-only) */}
-                        <Card className="bg-card/40 backdrop-blur-md border-white/5">
-                            <CardHeader>
-                                <CardTitle>Wallet Address</CardTitle>
-                                <CardDescription>Your connected wallet (read-only)</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Input
-                                    value={user.walletAddress || ""}
-                                    readOnly
-                                    className="font-mono text-sm bg-muted/50"
-                                />
-                            </CardContent>
-                        </Card>
+                        <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                            <div className="mb-6">
+                                <h3 className="text-xl font-bold uppercase tracking-tight">Wallet Address</h3>
+                                <p className="text-sm text-muted-foreground font-mono">CONNECTED_WALLET (READ_ONLY)</p>
+                            </div>
+                            <Input
+                                value={user.walletAddress || ""}
+                                readOnly
+                                className="font-mono text-sm bg-muted/50 rounded-none border-2 border-foreground"
+                            />
+                        </div>
 
                         {/* Submit Button */}
-                        <div className="flex justify-end gap-4">
-                            <Button type="button" variant="outline" disabled={isLoading}>
-                                Cancel
+                        <div className="flex justify-end gap-4 pt-4">
+                            <Button type="button" variant="outline" disabled={isLoading} className="rounded-none border-2 border-foreground hover:bg-foreground hover:text-background">
+                                CANCEL
                             </Button>
-                            <Button type="submit" disabled={isLoading}>
+                            <Button type="submit" disabled={isLoading} className="rounded-none bg-foreground text-background hover:bg-foreground/90">
                                 <Save className="h-4 w-4 mr-2" />
-                                {isLoading ? "Saving..." : "Save Changes"}
+                                {isLoading ? "SAVING..." : "SAVE CHANGES"}
                             </Button>
                         </div>
                     </form>
