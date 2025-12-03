@@ -95,8 +95,8 @@ export default function Home() {
               ART.
             </h2>
             <p className="text-xl md:text-3xl font-light leading-relaxed opacity-90 max-w-3xl mx-auto">
-              We are building a future where music is valued as intellectual property, not just a stream.
-              Side B is a marketplace powered by Story Protocol, designed to give power back to the creators.
+              Streaming pays fractions. Fame is a lottery. But the hours you spend rehearsing, creating, dreaming—they have value.
+              Side B honors the craft. Register your IP. License your work. Earn from your art, not your follower count.
             </p>
           </div>
         </div>
@@ -104,33 +104,26 @@ export default function Home() {
 
       {/* Features Grid */}
       <section className="py-0 border-b-2 border-foreground">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid md:grid-cols-3">
           <FeatureCard
             icon={<Disc className="h-12 w-12" />}
-            title="THE CATALOG"
-            description="Discover and license raw, unpolished gems from independent artists."
+            title="DISCOVER & LICENSE"
+            description="Browse authentic music from independent artists. License directly, support fairly."
             link="/catalog"
             borderRight
           />
           <FeatureCard
+            icon={<Users className="h-12 w-12" />}
+            title="CONNECT & COLLABORATE"
+            description="Network with musicians and creators. Find collaborators, build community."
+            link="/community"
+            borderRight
+          />
+          <FeatureCard
             icon={<Mic2 className="h-12 w-12" />}
-            title="THE STUDIO"
-            description="Upload your sessions. Register your IP. Manage your rights."
+            title="UPLOAD & EARN"
+            description="Register your sessions as IP. Set your terms. Monetize your craft."
             link="/studio"
-            borderRight
-          />
-          <FeatureCard
-            icon={<Radio className="h-12 w-12" />}
-            title="FOR CREATORS"
-            description="License authentic music for your projects. Support independent artists directly."
-            link="/licenses"
-            borderRight
-          />
-          <FeatureCard
-            icon={<Globe className="h-12 w-12" />}
-            title="GLOBAL INTELLECTUAL PROPERTY"
-            description="Powered by Story Protocol. Your music, your rules, everywhere."
-            link="/rights"
           />
         </div>
       </section>
