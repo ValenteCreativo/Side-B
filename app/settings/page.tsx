@@ -30,8 +30,16 @@ export default function ProfilePage() {
         setIsLoading(true)
 
         try {
-            // TODO: Implement API call to update user profile
-            await new Promise(resolve => setTimeout(resolve, 1000)) // Mock delay
+            const response = await fetch("/api/users", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: user?.id,
+                    ...formData,
+                }),
+            })
+
+            if (!response.ok) throw new Error("Failed to update profile")
 
             toast({
                 title: "Profile updated",
@@ -77,8 +85,8 @@ export default function ProfilePage() {
 
                 <div className="relative z-10 container mx-auto px-4 py-12 max-w-3xl">
                     <div className="mb-8">
-                        <h1 className="text-4xl font-bold mb-2 tracking-tight">Profile</h1>
-                        <p className="text-muted-foreground">Manage your artist identity and public information.</p>
+                        <h1 className="text-4xl font-bold mb-2 tracking-tight">Settings</h1>
+                        <p className="text-muted-foreground">Manage your account settings and profile information.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
