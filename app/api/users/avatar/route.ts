@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { uploadFileToIPFS, getIPFSGatewayURL } from '@/lib/pinata'
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,9 +31,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Upload to IPFS via Pinata
-    const result = await uploadFileToIPFS(file)
-    const avatarUrl = getIPFSGatewayURL(result.IpfsHash)
+    // Convert file to base64 data URL
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    const base64 = buffer.toString('base64')
+    const avatarUrl = `data:${file.type};base64,${base64}`
 
     // Update user in database
     const updatedUser = await prisma.user.update({
@@ -45,7 +46,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       avatarUrl,
-      ipfsHash: result.IpfsHash,
     })
   } catch (error) {
     console.error('Avatar upload error:', error)

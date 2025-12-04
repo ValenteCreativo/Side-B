@@ -46,6 +46,22 @@ export default function ProfilePage() {
 
             if (!response.ok) throw new Error("Failed to update profile")
 
+            const updatedUser = await response.json()
+
+            // Refresh user context
+            if (refreshUser) {
+                await refreshUser()
+            }
+
+            // Update form data with the saved values to prevent reset
+            setFormData({
+                displayName: updatedUser.displayName || "",
+                bio: updatedUser.bio || "",
+                twitter: updatedUser.twitter || "",
+                instagram: updatedUser.instagram || "",
+                website: updatedUser.website || "",
+            })
+
             toast({
                 title: "Profile updated",
                 description: "Your profile has been saved successfully.",
