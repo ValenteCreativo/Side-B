@@ -19,6 +19,7 @@ interface Musician {
     walletAddress: string
     displayName: string | null
     bio: string | null
+    avatarUrl: string | null
     _count: {
         sessions: number
         followers: number
