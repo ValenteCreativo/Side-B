@@ -11,6 +11,9 @@ interface User {
   displayName?: string | null
   avatarUrl?: string | null
   bio?: string | null
+  twitter?: string | null
+  instagram?: string | null
+  website?: string | null
 }
 
 interface UserContextType {
