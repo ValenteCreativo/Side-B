@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUser } from '@/components/auth/UserContext'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { formatPrice, truncateAddress } from '@/lib/utils'
-import { ShoppingCart, Check, ExternalLink, DollarSign } from 'lucide-react'
+import { ShoppingCart, Check, ExternalLink, DollarSign, Download } from 'lucide-react'
 import { HallidayOnrampButton } from '@/components/payments/HallidayOnrampButton'
 
 interface SessionCardProps {
@@ -38,6 +38,35 @@ export function SessionCard({ session }: SessionCardProps) {
   const { toast } = useToast()
   const [isLicensing, setIsLicensing] = useState(false)
   const [isLicensed, setIsLicensed] = useState(false)
+
+  // Check if user has a license for this session
+  useEffect(() => {
+    const checkLicense = async () => {
+      if (!user) {
+        setIsLicensed(false)
+        return
+      }
+
+      // User owns the track
+      if (session.owner.id === user.id) {
+        setIsLicensed(true)
+        return
+      }
+
+      try {
+        const response = await fetch(`/api/licenses?buyerId=${user.id}`)
+        if (response.ok) {
+          const licenses = await response.json()
+          const hasLicense = licenses.some((l: any) => l.sessionId === session.id)
+          setIsLicensed(hasLicense)
+        }
+      } catch (error) {
+        console.error('Failed to check license:', error)
+      }
+    }
+
+    checkLicense()
+  }, [user, session.id, session.owner.id])
 
   const handleLicense = async () => {
     if (!user) {
@@ -220,12 +249,38 @@ export function SessionCard({ session }: SessionCardProps) {
           </div>
         )}
 
-        {/* Audio Player */}
-        <div className="flex-1">
+        {/* Audio Player - Free Preview for Everyone */}
+        <div className="flex-1 space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">
+              Free Preview
+            </p>
+            {isLicensed && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const link = document.createElement('a')
+                  link.href = session.audioUrl
+                  link.download = `${session.title}.mp3`
+                  link.click()
+                }}
+                className="h-7 text-xs"
+              >
+                <Download className="h-3 w-3 mr-1.5" />
+                Download
+              </Button>
+            )}
+          </div>
           <audio controls className="w-full" preload="metadata">
             <source src={session.audioUrl} type="audio/mpeg" />
             Your browser does not support the audio element.
           </audio>
+          {!isLicensed && (
+            <p className="text-xs text-muted-foreground italic">
+              License required for download & commercial use
+            </p>
+          )}
         </div>
 
         {/* Price and License Button */}
