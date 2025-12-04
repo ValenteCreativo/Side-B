@@ -6,7 +6,7 @@ import { AppShell } from "@/components/layout/AppShell"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Search, Users, Music, MessageCircle, Radio } from "lucide-react"
 import { useUser } from "@/components/auth/UserContext"
@@ -222,6 +222,9 @@ export default function CommunityPage() {
                                         <div className="absolute inset-0 bg-foreground translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300" />
                                         <div className="relative bg-background border-2 border-foreground p-6 hover:-translate-y-1 transition-transform duration-300 h-full flex flex-col items-center text-center">
                                             <Avatar className="h-24 w-24 mb-6 border-2 border-foreground rounded-none">
+                                                {musician.avatarUrl && (
+                                                    <AvatarImage src={musician.avatarUrl} alt={musician.displayName || "User"} className="rounded-none" />
+                                                )}
                                                 <AvatarFallback className="bg-foreground text-background text-2xl font-bold rounded-none">
                                                     {initials}
                                                 </AvatarFallback>
