@@ -38,7 +38,7 @@ export default function CommunityPage() {
 
     useEffect(() => {
         fetchMusicians()
-    }, [])
+    }, [user])
 
     useEffect(() => {
         if (searchQuery.trim() === "") {
@@ -57,7 +57,10 @@ export default function CommunityPage() {
 
     const fetchMusicians = async () => {
         try {
-            const response = await fetch("/api/users")
+            const url = user?.id
+                ? `/api/users?currentUserId=${user.id}`
+                : "/api/users"
+            const response = await fetch(url)
             if (!response.ok) throw new Error("Failed to fetch musicians")
             const data = await response.json()
             setMusicians(data)
