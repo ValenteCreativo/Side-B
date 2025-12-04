@@ -66,7 +66,7 @@ function CatalogPage() {
       setSessions(data)
 
       // Extract unique artists
-      const uniqueArtists = Array.from(
+      const uniqueArtists: { id: string; name: string }[] = Array.from(
         new Map(
           data.map((s: Session) => [
             s.owner.id,
