@@ -1,0 +1,5318 @@
+# Get asset details
+Source: https://docs.halliday.xyz/api-reference/assets/get-asset-details
+
+public/openapi.yaml get /assets
+Get detailed information about specific assets including metadata, symbols, and chain information.
+
+
+
+
+# Get available input assets for a given output asset
+Source: https://docs.halliday.xyz/api-reference/assets/get-available-input-assets-for-a-given-output-asset
+
+public/openapi.yaml get /assets/available-inputs
+Get a list of assets that can be used as inputs for the given output assets and providers.
+
+
+
+
+# Get available output assets for a given input asset
+Source: https://docs.halliday.xyz/api-reference/assets/get-available-output-assets-for-a-given-input-asset
+
+public/openapi.yaml get /assets/available-outputs
+Get a list of assets that can be received as outputs for the given input assets and providers.
+
+
+
+
+# Get supported chains
+Source: https://docs.halliday.xyz/api-reference/chains/get-supported-chains
+
+public/openapi.yaml get /chains
+Get a list of all supported blockchain networks with their configuration details.
+
+
+
+
+# Confirm a payment
+Source: https://docs.halliday.xyz/api-reference/payments/confirm-a-payment
+
+public/openapi.yaml post /payments/confirm
+Confirm a previously quoted payment and receive deposit instructions.
+Returns information on how to fund the payment (widget URL, contract address, etc.).
+
+
+
+
+# Confirm withdrawal request
+Source: https://docs.halliday.xyz/api-reference/payments/confirm-withdrawal-request
+
+public/openapi.yaml post /payments/withdraw/confirm
+Submit and execute the signed withdrawal request to return funds back to the owner or to a requoted processing address.
+
+
+
+
+# Get available payment methods
+Source: https://docs.halliday.xyz/api-reference/payments/get-available-payment-methods
+
+public/openapi.yaml get /payments/methods
+Get available payment methods for a specific input/output asset pair, grouped by provider.
+This endpoint returns the supported payment methods (ACH, credit card, etc.) for each provider
+that supports the requested asset conversion.
+
+
+
+
+# Get payment history
+Source: https://docs.halliday.xyz/api-reference/payments/get-payment-history
+
+public/openapi.yaml get /payments/history
+Retrieve a paginated list of payment statuses filtered by owner.
+Returns an array of payment status objects and a pagination key for fetching the next page.
+
+
+
+
+# Get payment quotes
+Source: https://docs.halliday.xyz/api-reference/payments/get-payment-quotes
+
+public/openapi.yaml post /payments/quotes
+Request quotes for payments, supporting both fixed input and fixed output scenarios.
+Returns multiple quote options with pricing, fees, and routing information.
+
+This endpoint can also be used to requote from an existing payment by providing a payment_id.
+When requoting, input amounts are automatically derived from
+the payment's current state, but you can optionally override the output asset.
+
+
+
+
+# Get payment status
+Source: https://docs.halliday.xyz/api-reference/payments/get-payment-status
+
+public/openapi.yaml get /payments
+Get the current status of a payment, including progress through onramp/swap/offramp stages.
+
+
+
+
+# Get wallet balances
+Source: https://docs.halliday.xyz/api-reference/payments/get-wallet-balances
+
+public/openapi.yaml post /payments/balances
+Retrieve balances for the wallets associated with a payment. You can optionally supply additional
+wallet and token pairs to check alongside the payment's primary wallet.
+
+
+
+
+# Return funds to owner or retry payment
+Source: https://docs.halliday.xyz/api-reference/payments/return-funds-to-owner-or-retry-payment
+
+public/openapi.yaml post /payments/withdraw
+Request a withdrawal to return funds back to the owner or to a requoted processing address.
+This endpoint should be used when a payment cannot be completed and funds need to be returned.
+
+
+
+
+# Payment Recoveries API Errors
+Source: https://docs.halliday.xyz/pages/api-error-recovery-withdrawal
+
+
+
+In the event that a payment fails to complete there are several options for a user to recover their assets.
+
+### Causes of payment interruptions
+
+Crypto deposits require orchestration of several independent protocols like bridges, DEXs, blockchains, onramp providers and more. Mid-workflow, an asset's price could change significantly, a fee could increase beyond the bounds of the quote, an onramp could experience an unexpected delay or other unforseen setbacks.
+
+Halliday Payments was built to be robust under all of these conditions within the ever-growing ecosystem of onchain protocols.
+
+The Halliday payments [OTWs](/pages/otw) are **self-custodial**. Users are always the sole controllers of these addresses through their wallet.
+
+## Recoveries
+
+Halliday Payments provides two options for recovering assets within an interrupted payment.
+
+### Retry a payment
+
+An interrupted payment can be retried with a new quote. The new output amount may differ from the original quote based on asset price changes.
+
+If a payment expires, and has not been funded, it is safe to abandon it and create a whole new payment.
+
+Effectively, a new payment is created and then funded using the interrupted payment by transferring tokens from the old deposit address to the new deposit address using an EIP-712 signature. An [example of this signature request](#example-withdrawal-signature-request) is shown below.
+
+**Retry a payment using the API**
+
+* A funded payment is not completing.
+* Query the [balances API endpoint](/api-reference/payments/get-wallet-balances) (`POST /payments/balances`) and pass the incomplete payment ID which we will call failed `payment_id`. This returns the deposit address (`address`) and the balance. Check that the balance is greater than zero. If so, a recovery can be performed.
+* [Get new quotes](/api-reference/payments/get-payment-quotes) using `POST /payments/quotes`. Provide the failed `payment_id` as `parent_payment_id` in the request body.
+* Once the user selects a quote, [confirm the new quote](/api-reference/payments/confirm-a-payment) using `POST /payments/confirm`. To do this, pass the new quote's payment ID, which we will call new `payment_id`, to the confirm endpoint.
+* Next call the [withdraw endpoint](/api-reference/payments/return-funds-to-owner-or-retry-payment) (`POST /payments/withdraw`) with the parameters:
+  * `payment_id`: The failed payment's ID.
+  * `token_amount`: The returned amount of token from the prior `POST /payments/balances` endpoint call.
+  * `recipient_address`: The address of the new payment's deposit address.
+* The owner wallet of the failed payment must sign an EIP-712 withdrawal transaction. This is returned from the `POST /payments/withdraw` call response object as the `withdraw_authorization` property.
+* Next call the [confirm withdraw endpoint](/api-reference/payments/confirm-withdrawal-request) (`POST /payments/withdraw/confirm`) with the same parameters passed to the prior API call along with the newly created `owner_signature`. The withdrawal will be executed onchain automatically and transfer the assets from the old deposit address to the new one.
+
+### Withdrawals
+
+Assets lingering in a deposit address can be withdrawn to any address specified in a withdrawal signature created by the owner wallet. In some situations, this may result in the asset being moved to a user-controlled wallet on a different chain than the intended destination.
+
+**Withdrawal steps using the API**
+
+* A funded payment is not completing.
+* Query the [balances API endpoint](/api-reference/payments/get-wallet-balances) (`POST /payments/balances`) and pass the incomplete payment ID which we will call failed `payment_id`. This returns the deposit address (`address`) and the balance. Check that the balance is greater than zero. If so, a recovery can be performed.
+* Next call the [withdraw endpoint](/api-reference/payments/return-funds-to-owner-or-retry-payment) (`POST /payments/withdraw`) with the parameters:
+  * `payment_id`: The failed payment's ID.
+  * `token_amount`: The returned amount of token from the prior `POST /payments/balances` endpoint call.
+  * `recipient_address`: The address to withdraw the tokens to, usually the owner's wallet.
+* The owner wallet of the failed payment must sign an EIP-712 withdrawal transaction. This is returned from the `POST /payments/withdraw` call response object as the `withdraw_authorization` property.
+* Next call the [confirm withdraw endpoint](/api-reference/payments/confirm-withdrawal-request) (`POST /payments/withdraw/confirm`) with the same parameters passed to the prior API call along with the newly created `owner_signature`. This signature will be executed onchain automatically and transfer the assets.
+
+### Example Withdrawal Signature Request
+
+The following is an example withdrawal signature request on EVM chains using EIP-712 which is returned from the `POST /payments/withdraw` API endpoint.
+
+The owner of the payment will generate a signature using their private key in order to confirm a withdrawal.
+
+```json  theme={null}
+{
+  "domain": { "name": "Halliday Workflow Protocol", "version": "1" },
+  "types": {
+    "EIP712Domain": [ { "type": "string", "name": "name" }, { "type": "string", "name": "version" } ],
+    "Call": [ { "type": "address", "name": "target" }, { "type": "bytes", "name": "data" }, { "type": "uint256", "name": "value" } ],
+    "HallidayAccount": [ { "type": "string", "name": "description" }, { "type": "Call[]", "name": "actions" }, { "name": "nonce", "type": "uint256" }, { "type": "bytes32", "name": "signatory_declaration_hash" }, { "type": "uint256", "name": "chain_id" }, { "type": "bool", "name": "accept_blame" } ]
+  },
+  "primaryType": "HallidayAccount",
+  "message": {
+    "description": "Transfer 50 USDC on Base to address 0x...",
+    "actions": [
+      {
+        "target": "0xrecipient",
+        "data": "0xdata",
+        "value": "0"
+      }
+    ],
+    "nonce": "0",
+    "signatory_declaration_hash": "0x123...",
+    "chain_id": "8453",
+    "accept_blame": true
+  }
+}
+```
+
+## API Errors
+
+The REST API returns formatted errors with a corresponding error code, such as 400 for bad request and 401 for unauthorized.
+
+**Example 401 response**
+
+```json  theme={null}
+{
+  "errors": [
+    {
+      "kind": "other",
+      "message": "Invalid public api key"
+    }
+  ]
+}
+```
+
+**Example 400 response**
+
+```json  theme={null}
+{
+  "errors": [
+    {
+      "origin": "string",
+      "code": "invalid_format",
+      "format": "regex",
+      "pattern": "/^[a-zA-Z]\\w{1,7}$/",
+      "path": [ "inputs", 0 ],
+      "message": "Must be a short alpha-numeric symbol"
+    }
+  ]
+}
+```
+
+The `GET /assets/available-inputs` and `GET /assets/available-outputs` endpoints will return bad request errors in the scenario that an unsupported asset address is passed as a parameter.
+
+
+# API Example Apps
+Source: https://docs.halliday.xyz/pages/api-example-apps
+
+
+
+The following open source example app code demonstrates how to implement fiat onramps and cross-chain swaps using the Halliday API.
+
+* [Plain JavaScript app example repository](https://github.com/HallidayInc/HallidayPaymentsApiExamples)
+
+## Fiat onramps via API using JavaScript
+
+This [example app](https://github.com/HallidayInc/HallidayPaymentsApiExamples) shows how to build a fiat-to-crypto onramp, with a custom user interface, using the Halliday Payments API.
+
+<div style={{width: "100%", display: "flex", justifyContent: "center" }}>
+  <img src="https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-onramp-custom-ui.png?fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=9d12d5ea32fd4648294d304d8df9e4da" data-og-width="427" width="427" data-og-height="791" height="791" data-path="public/img/api-onramp-custom-ui.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-onramp-custom-ui.png?w=280&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=42fac76d351902f7182e48b5b58a30dd 280w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-onramp-custom-ui.png?w=560&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=e5f6bfc1277eb9e2f54db052b2130606 560w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-onramp-custom-ui.png?w=840&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=ff039140745bbcdcfc26cdd5c0ceebdc 840w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-onramp-custom-ui.png?w=1100&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=6bf75906dbf298ee9ab4c40b29bf3f60 1100w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-onramp-custom-ui.png?w=1650&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=6e51d3abc00ff6446e10983790d4feab 1650w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-onramp-custom-ui.png?w=2500&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=e3509f464ff1c9f890c5a4af62faf81e 2500w" />
+</div>
+
+In the example, a user would be able to onramp directly to IP on Story mainnet with a provider like Stripe, Transak, or Moonpay.
+
+The app allows a user to input their Story mainnet address and the amount of USD they wish to spend.
+
+Using JavaScript, the app fetches a collection of quotes from the API and displays the best price available with each provider, as well as the total amount of onramp fees.
+
+```js  theme={null}
+// From getQuote function
+
+const res = await fetch('https://v2.prod.halliday.xyz/payments/quotes', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ' + HALLIDAY_API_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    request: {
+      kind: 'FIXED_INPUT',
+      fixed_input_amount: {
+        asset: inputAsset,
+        amount: inputAmount,
+      },
+      output_asset: outputAsset,
+    },
+    price_currency: 'usd',
+    onramps,
+    onramp_methods: fiatOnrampPayInMethods,
+    customer_geolocation: { alpha3_country_code: 'USA' }
+  }),
+});
+```
+
+Once the user selects a quote and destination address in the user interface, clicking or tapping the Continue button confirms the quote with the API.
+
+```js  theme={null}
+// From acceptQuote function
+
+const res = await fetch('https://v2.prod.halliday.xyz/payments/confirm', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ' + HALLIDAY_API_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    payment_id: selectedQuote.paymentId,
+    state_token: selectedQuote.stateToken,
+    owner_address: destinationAddress,
+    destination_address: destinationAddress
+  })
+});
+```
+
+Next, the payment provider's checkout page is shown to the user. This is where the user would input their credit or debit card information for the transaction.
+
+```js  theme={null}
+// From onContinueButtonClick function
+
+const acceptedQuote = await acceptQuote();
+const paymentId = acceptedQuote.payment_id;
+const onrampUrl = acceptedQuote.next_instruction.funding_page_url;
+
+paymentStatusInterval = setInterval(async () => {
+  console.log('payment status:', paymentId, await getPaymentStatus(paymentId));
+}, 5000);
+
+continueButton.classList.remove('loading');
+
+onrampIframe.src = onrampUrl;
+```
+
+Once the checkout is completed, the payment workflow begins. The app polls the payment status endpoint and shows the current status of the payment in the user interface.
+
+```js  theme={null}
+// From getPaymentStatus function
+
+const res = await fetch(`https://v2.prod.halliday.xyz/payments?payment_id=${paymentId}`, {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer ' + HALLIDAY_API_KEY,
+    'Content-Type': 'application/json'
+  },
+});
+```
+
+This example **does not show** an implementation of a recovery flow if the payment fails midway onchain. In the event a payment does not complete, a user can recover it by connecting the **owner** wallet on this page: `https://app.halliday.xyz/funding/${payment_id}`.
+
+## Cross-chain swaps via API using JavaScript
+
+This [example app](https://github.com/HallidayInc/HallidayPaymentsApiExamples) shows how to build a cross-chain swap app, with a custom user interface, using the Halliday Payments API.
+
+<div style={{width: "100%", display: "flex", justifyContent: "center" }}>
+  <img src="https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui.png?fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=1478777f2e3c19b8302179652e87ab7d" data-og-width="407" width="407" data-og-height="626" height="626" data-path="public/img/api-swap-custom-ui.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui.png?w=280&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=32ec3db9db9d6cf2cc5f4e9b40a1d14b 280w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui.png?w=560&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=b0b4b10b2677ecb5386efb19e593cbab 560w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui.png?w=840&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=99adf4dc0c7406568b3649e642217944 840w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui.png?w=1100&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=aaaa3885a4527d1c81d550c53aeeaaaa 1100w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui.png?w=1650&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=5769d217d4fb1b4acbe3c50d50baf5fd 1650w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui.png?w=2500&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=63e22414f636a60a95c19b0d4847c89d 2500w" />
+</div>
+
+In the example, a user would be able to swap from USDC on Base to IP on Story mainnet using the Halliday Payments API and their own wallet.
+
+The app allows a user to connect their wallet and input the amount of USDC on Base that they wish to spend.
+
+Using JavaScript, the app fetches a collection of quotes from the API and displays the best price available and the total amount of fees.
+
+```js  theme={null}
+// From getQuote function
+
+const res = await fetch('https://v2.prod.halliday.xyz/payments/quotes', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ' + HALLIDAY_API_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    request: {
+      kind: 'FIXED_INPUT',
+      fixed_input_amount: {
+        asset: inputAsset,
+        amount: inputAmount
+      },
+      output_asset: outputAsset
+    },
+    price_currency: 'USD'
+  })
+});
+```
+
+Once the user approves the quote, it is confirmed using the API.
+
+```js  theme={null}
+const requestBody = {
+  payment_id: quote.paymentId,
+  state_token: quote.stateToken,
+  owner_address: userAddress,
+  destination_address: userAddress
+};
+
+const res = await fetch('https://v2.prod.halliday.xyz/payments/confirm', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ' + HALLIDAY_API_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(requestBody)
+});
+```
+
+Next, the user can sign transactions with their wallet to fund the workflow.
+
+<div style={{width: "100%", display: "flex", justifyContent: "center" }}>
+  <img src="https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui-confirmation-screen.png?fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=a5ea84507a595e98b357eec2bc77efaa" data-og-width="408" width="408" data-og-height="567" height="567" data-path="public/img/api-swap-custom-ui-confirmation-screen.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui-confirmation-screen.png?w=280&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=f424d30c5ce62b2ceedaef81e309bcb2 280w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui-confirmation-screen.png?w=560&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=fa3c0d695738ce875830c31cec2185ac 560w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui-confirmation-screen.png?w=840&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=17a9ac904f95aff9a5c547adbb0a870c 840w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui-confirmation-screen.png?w=1100&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=930ed6412149e8120c4c0b53e13ea60a 1100w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui-confirmation-screen.png?w=1650&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=53d55e1126e9d7eb7c35e3115dc61a06 1650w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/api-swap-custom-ui-confirmation-screen.png?w=2500&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=d0e9ca3910bdcd9d67a2044e7bec5df7 2500w" />
+</div>
+
+The latest status of the cross-chain swap is fetched from the API and displayed in the UI.
+
+```js  theme={null}
+const res = await fetch('https://v2.prod.halliday.xyz/payments' +
+  `?payment_id=${paymentId}`, {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer ' + HALLIDAY_API_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+```
+
+This example **does not show** an implementation of a recovery flow if the payment fails midway onchain. In the event a payment does not complete, a user can recover it by connecting the **owner** wallet on this page: `https://app.halliday.xyz/funding/${payment_id}`.
+
+
+# Halliday API Quickstart
+Source: https://docs.halliday.xyz/pages/api-quickstart
+
+
+
+Halliday Payments is a unified deposits API combining a global on/off ramp network, cross-chain swap router, and centralized exchange connector into a single product.
+
+The REST API is available to developers building custom user interfaces on any device.
+
+For a simpler payments integration with a web user interface, see the [Payments widget](/pages/payments-sdk-docs) documentation.
+
+### Authentication
+
+All API requests require authentication using an API key in the `Authorization` HTTP request header. To get API keys, send an email to [partnerships@halliday.xyz](mailto:partnerships@halliday.xyz).
+
+```
+Authorization: Bearer pk_HALLIDAY_API_KEY_HERE
+```
+
+### Sandbox Testing
+
+Some [API endpoints](/api-reference/chains/get-supported-chains) accept a boolean sandbox URL parameter which can be used to create test transactions. Test transactions do not use real fiat and onramp/swap to tokens on testnet chains.
+
+For more details on how to submit test transactions using the API see [Sandbox Transactions with the API](/pages/sandbox-testing#sandbox-transactions-with-the-api).
+
+### One Time Wallet (OTW)
+
+Each unique payment begins with a new onchain address called a **one-time wallet** (OTW) also known as the **deposit address**. The OTW is always different from the payment destination address. The Payments SDK widget UI refers to this address as a one-time wallet in the delivery details section.
+
+Each onramp or swap will create a new OTW that is controlled only by the **owner wallet address** specified in the API call parameters. In the event a payment gets stuck or is funded after expiration, the owner address has the ability to sign transactions to recover the assets from the OTW or retry the payment.
+
+A payment can be initiated by simply funding the OTW from any address. For fiat onramps specifically, the onramp providers will be instructed to send tokens to the deposit address.
+
+## Discovering Available Assets
+
+Halliday Payments supports hundreds of crypto assets for fiat onramps from centralized exchanges and payment providers, as well as onchain swaps via bridges and DEXs.
+
+Before initalizing a payment, use this endpoint to see which crypto assets are supported.
+
+### Get All Supported Assets
+
+<CodeGroup>
+  ```bash cURL theme={null}
+  curl https://v2.prod.halliday.xyz/assets \
+    -H "Authorization: Bearer pk_HALLIDAY_API_KEY_HERE"
+  ```
+
+  ```javascript JavaScript theme={null}
+  const response = await fetch('https://v2.prod.halliday.xyz/assets', {
+    headers: {
+      'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE'
+    }
+  });
+  const data = await response.json();
+  ```
+
+  ```python Python theme={null}
+  import urllib.request
+
+  request = urllib.request.Request(
+      'https://v2.prod.halliday.xyz/assets',
+      headers={'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE'}
+  )
+  response = urllib.request.urlopen(request)
+  data = response.read()
+  ```
+
+  ```php PHP theme={null}
+  <?php
+  $ch = curl_init('https://v2.prod.halliday.xyz/assets');
+  curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer pk_HALLIDAY_API_KEY_HERE'
+  ]);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($ch);
+  curl_close($ch);
+  ?>
+  ```
+
+  ```go Go theme={null}
+  package main
+
+  import (
+      "net/http"
+      "io"
+  )
+
+  func main() {
+      req, _ := http.NewRequest("GET", "https://v2.prod.halliday.xyz/assets", nil)
+      req.Header.Set("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE")
+      
+      client := &http.Client{}
+      resp, _ := client.Do(req)
+      defer resp.Body.Close()
+      
+      body, _ := io.ReadAll(resp.Body)
+  }
+  ```
+
+  ```java Java theme={null}
+  import java.net.HttpURLConnection;
+  import java.net.URL;
+
+  URL url = new URL("https://v2.prod.halliday.xyz/assets");
+  HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+  conn.setRequestProperty("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE");
+  conn.setRequestMethod("GET");
+
+  int status = conn.getResponseCode();
+  ```
+
+  ```ruby Ruby theme={null}
+  require 'net/http'
+  require 'uri'
+
+  uri = URI('https://v2.prod.halliday.xyz/assets')
+  request = Net::HTTP::Get.new(uri)
+  request['Authorization'] = 'Bearer pk_HALLIDAY_API_KEY_HERE'
+
+  response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+  end
+  ```
+</CodeGroup>
+
+**Response:**
+
+```json  theme={null}
+{
+  "usd": {
+    "issuer": "USA",
+    "name": "United States Dollar",
+    "symbol": "USD",
+    "decimals": 2,
+    "image_url": "<IMAGE_URL>..."
+  },
+  "arbitrum:0xaf88d065e77c8cc2239327c5edb3a432268e5831": {
+    "chain": "arbitrum",
+    "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+    "name": "USD Coin",
+    "symbol": "USDC",
+    "decimals": 6,
+    "image_url": "<IMAGE_URL>...",
+    "is_native": false
+  },
+  "ethereum:0x": {
+    "chain": "ethereum",
+    "address": "0x",
+    "name": "Ether",
+    "symbol": "ETH",
+    "decimals": 18,
+    "image_url": "<IMAGE_URL>...",
+    "is_native": true
+  }
+}
+```
+
+### Get valid deposit routes
+
+To verify conversion from a specific input to a desired output, query both assets together like in the following example.
+
+Get a list of assets that can be received as outputs for the given input assets and providers using `/assets/available-outputs`.
+
+Each of the query parameters of `inputs` and `outputs` are both arrays of strings of asset IDs which are returned by `/assets`.
+
+The `/assets/available-outputs` endpoint requires at least one input asset.
+
+Additionally, onramp provider checks can be done by passing an `onramps` array of strings (`moonpay`, `coinbase`, et al). This filtering ensures a path from an input to an output can be achieved with a given onramp provider.
+
+<CodeGroup>
+  ```bash cURL theme={null}
+  curl "https://v2.prod.halliday.xyz/assets/available-outputs\
+  ?inputs[]=usd\
+  &outputs[]=ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" \
+    -H "Authorization: Bearer pk_HALLIDAY_API_KEY_HERE"
+  ```
+
+  ```javascript JavaScript theme={null}
+  const params = new URLSearchParams({
+    'inputs[]': 'usd',
+    'outputs[]': 'ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+  });
+
+  const response = await fetch(`https://v2.prod.halliday.xyz/assets/available-outputs?${params}`, {
+    headers: {
+      'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE'
+    }
+  });
+  const data = await response.json();
+  ```
+
+  ```python Python theme={null}
+  import urllib.request
+  import urllib.parse
+
+  params = urllib.parse.urlencode({
+      'inputs[]': 'usd',
+      'outputs[]': 'ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+  })
+  url = f'https://v2.prod.halliday.xyz/assets/available-outputs?{params}'
+
+  request = urllib.request.Request(
+      url,
+      headers={'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE'}
+  )
+  response = urllib.request.urlopen(request)
+  data = response.read()
+  ```
+
+  ```php PHP theme={null}
+  <?php
+  $params = http_build_query([
+      'inputs' => ['usd'],
+      'outputs' => ['ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48']
+  ]);
+  $url = 'https://v2.prod.halliday.xyz/assets/available-outputs?' . $params;
+
+  $ch = curl_init($url);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer pk_HALLIDAY_API_KEY_HERE'
+  ]);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($ch);
+  curl_close($ch);
+  ?>
+  ```
+
+  ```go Go theme={null}
+  package main
+
+  import (
+      "net/http"
+      "net/url"
+      "io"
+  )
+
+  func main() {
+      baseURL, _ := url.Parse("https://v2.prod.halliday.xyz/assets/available-outputs")
+      params := url.Values{}
+      params.Add("inputs[]", "usd")
+      params.Add("outputs[]", "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48")
+      baseURL.RawQuery = params.Encode()
+      
+      req, _ := http.NewRequest("GET", baseURL.String(), nil)
+      req.Header.Set("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE")
+      
+      client := &http.Client{}
+      resp, _ := client.Do(req)
+      defer resp.Body.Close()
+      
+      body, _ := io.ReadAll(resp.Body)
+  }
+  ```
+
+  ```java Java theme={null}
+  import java.net.HttpURLConnection;
+  import java.net.URL;
+  import java.net.URLEncoder;
+
+  String params = "inputs[]=usd&outputs[]=ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
+  String urlString = "https://v2.prod.halliday.xyz/assets/available-outputs?" + params;
+
+  URL url = new URL(urlString);
+  HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+  conn.setRequestProperty("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE");
+  conn.setRequestMethod("GET");
+
+  int status = conn.getResponseCode();
+  ```
+
+  ```ruby Ruby theme={null}
+  require 'net/http'
+  require 'uri'
+
+  uri = URI('https://v2.prod.halliday.xyz/assets/available-outputs')
+  params = {
+    'inputs[]' => 'usd',
+    'outputs[]' => 'ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+  }
+  uri.query = URI.encode_www_form(params)
+
+  request = Net::HTTP::Get.new(uri)
+  request['Authorization'] = 'Bearer pk_HALLIDAY_API_KEY_HERE'
+
+  response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+  end
+  ```
+</CodeGroup>
+
+This checks if USD can be converted to USDC on Ethereum. If the response includes the desired output asset, the route is supported.
+
+**Response:**
+
+```json  theme={null}
+{
+  "usd": {
+    "fiats": [],
+    "tokens": [
+      "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    ]
+  }
+}
+```
+
+The response shows that USDC on Ethereum can be obtained from USD (fiat). A 200 OK empty object JSON string response `{}` would indicate that there is no route currently supported.
+
+### Verify multiple routes in one request
+
+The following is an example of providing more than one member to an array in the request query parameters.
+
+<CodeGroup>
+  ```bash cURL theme={null}
+  curl "https://v2.prod.halliday.xyz/assets/available-outputs\
+  ?inputs[]=usd\
+  &outputs[]=base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913\
+  &outputs[]=avalanche:0x" \
+    -H "Authorization: Bearer pk_HALLIDAY_API_KEY_HERE"
+  ```
+
+  ```javascript JavaScript theme={null}
+  const params = new URLSearchParams();
+  params.append('inputs[]', 'usd');
+  params.append('outputs[]', 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913');
+  params.append('outputs[]', 'avalanche:0x');
+
+  const response = await fetch(`https://v2.prod.halliday.xyz/assets/available-outputs?${params}`, {
+    headers: {
+      'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE'
+    }
+  });
+  const data = await response.json();
+  ```
+
+  ```python Python theme={null}
+  import urllib.request
+  import urllib.parse
+
+  params = [
+      ('inputs[]', 'usd'),
+      ('outputs[]', 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'),
+      ('outputs[]', 'avalanche:0x')
+  ]
+  url = f'https://v2.prod.halliday.xyz/assets/available-outputs?{urllib.parse.urlencode(params)}'
+
+  request = urllib.request.Request(
+      url,
+      headers={'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE'}
+  )
+  response = urllib.request.urlopen(request)
+  data = response.read()
+  ```
+
+  ```php PHP theme={null}
+  <?php
+  $params = http_build_query([
+      'inputs' => ['usd'],
+      'outputs' => [
+          'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+          'avalanche:0x'
+      ]
+  ]);
+  $url = 'https://v2.prod.halliday.xyz/assets/available-outputs?' . $params;
+
+  $ch = curl_init($url);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer pk_HALLIDAY_API_KEY_HERE'
+  ]);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($ch);
+  curl_close($ch);
+  ?>
+  ```
+
+  ```go Go theme={null}
+  package main
+
+  import (
+      "net/http"
+      "net/url"
+      "io"
+  )
+
+  func main() {
+      baseURL, _ := url.Parse("https://v2.prod.halliday.xyz/assets/available-outputs")
+      params := url.Values{}
+      params.Add("inputs[]", "usd")
+      params.Add("outputs[]", "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913")
+      params.Add("outputs[]", "avalanche:0x")
+      baseURL.RawQuery = params.Encode()
+      
+      req, _ := http.NewRequest("GET", baseURL.String(), nil)
+      req.Header.Set("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE")
+      
+      client := &http.Client{}
+      resp, _ := client.Do(req)
+      defer resp.Body.Close()
+      
+      body, _ := io.ReadAll(resp.Body)
+  }
+  ```
+
+  ```java Java theme={null}
+  import java.net.HttpURLConnection;
+  import java.net.URL;
+
+  String params = "inputs[]=usd&outputs[]=base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&outputs[]=avalanche:0x";
+  String urlString = "https://v2.prod.halliday.xyz/assets/available-outputs?" + params;
+
+  URL url = new URL(urlString);
+  HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+  conn.setRequestProperty("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE");
+  conn.setRequestMethod("GET");
+
+  int status = conn.getResponseCode();
+  ```
+
+  ```ruby Ruby theme={null}
+  require 'net/http'
+  require 'uri'
+
+  uri = URI('https://v2.prod.halliday.xyz/assets/available-outputs')
+  params = [
+    ['inputs[]', 'usd'],
+    ['outputs[]', 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'],
+    ['outputs[]', 'avalanche:0x']
+  ]
+  uri.query = URI.encode_www_form(params)
+
+  request = Net::HTTP::Get.new(uri)
+  request['Authorization'] = 'Bearer pk_HALLIDAY_API_KEY_HERE'
+
+  response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+  end
+  ```
+</CodeGroup>
+
+The response confirms that USDC on Base and AVAX on Avalanche can be obtained from USD (fiat).
+
+```json  theme={null}
+{
+  "usd": {
+    "fiats": [],
+    "tokens": [
+      "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "avalanche:0x"
+    ]
+  }
+}
+```
+
+## Fiat-to-Crypto Onramping with the API
+
+Halliday Payments supports fiat onramp providers like Stripe, Moonpay, Transak and cryptocurrency exchanges (CEX) to enable users to compliantly onramp using fiat in their region with the best price available.
+
+This enables end users to pay with credit or debit card, Apple Pay, Google Pay, or a centralized exchange balance with one simple interface.
+
+### Get a collection of quotes for an onramp
+
+When a user is ready to onramp, make an API request to generate quotes based on the amount of fiat the user desires to spend.
+
+The Halliday API queries onramp providers to create quotes for the delivery of tokens onchain. The API intelligently surfaces providers based on the detected or provided IP address.
+
+Additional checks are performed to identify if bridge and DEX calls are necessary to deliver the desired output token. All quoted routes are returned to the client with fees included.
+
+This data can then be dispalyed in a UI so the user can select the their preferred provider and quote.
+
+All quotes can be requested through the unified `POST /payments/quotes` endpoint.
+
+#### Example: Quoting fiat-to-crypto onramp
+
+Request a quote for purchasing USDC on Base with USD:
+
+<CodeGroup>
+  ```bash cURL theme={null}
+  curl -X POST "https://v2.prod.halliday.xyz/payments/quotes" \
+    -H "Authorization: Bearer pk_HALLIDAY_API_KEY_HERE" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "request": {
+        "kind": "FIXED_INPUT",
+        "fixed_input_amount": {
+          "asset": "USD",
+          "amount": "100"
+        },
+        "output_asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+      },
+      "price_currency": "USD",
+      "onramps": [ "MOONPAY", "TRANSAK", "STRIPE" ],
+      "onramp_methods": [ "CREDIT_CARD", "ACH" ],
+      "customer_ip_address": "<your_customer_ip_address>"
+    }'
+  ```
+
+  ```javascript JavaScript theme={null}
+  const response = await fetch('https://v2.prod.halliday.xyz/payments/quotes', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      request: {
+        kind: 'FIXED_INPUT',
+        fixed_input_amount: {
+          asset: 'USD',
+          amount: '100'
+        },
+        output_asset: 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+      },
+      price_currency: 'USD',
+      onramps: ['MOONPAY', 'TRANSAK', 'STRIPE'],
+      onramp_methods: ['CREDIT_CARD', 'ACH'],
+      customer_ip_address: '<your_customer_ip_address>'
+    })
+  });
+  const data = await response.json();
+  ```
+
+  ```python Python theme={null}
+  import urllib.request
+  import json
+
+  data = {
+      'request': {
+          'kind': 'FIXED_INPUT',
+          'fixed_input_amount': {
+              'asset': 'USD',
+              'amount': '100'
+          },
+          'output_asset': 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+      },
+      'price_currency': 'USD',
+      'onramps': ['MOONPAY', 'TRANSAK', 'STRIPE'],
+      'onramp_methods': ['CREDIT_CARD', 'ACH'],
+      'customer_ip_address': '<your_customer_ip_address>'
+  }
+
+  request = urllib.request.Request(
+      'https://v2.prod.halliday.xyz/payments/quotes',
+      data=json.dumps(data).encode('utf-8'),
+      headers={
+          'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE',
+          'Content-Type': 'application/json'
+      },
+      method='POST'
+  )
+  response = urllib.request.urlopen(request)
+  result = response.read()
+  ```
+
+  ```php PHP theme={null}
+  <?php
+  $data = [
+      'request' => [
+          'kind' => 'FIXED_INPUT',
+          'fixed_input_amount' => [
+              'asset' => 'USD',
+              'amount' => '100'
+          ],
+          'output_asset' => 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+      ],
+      'price_currency' => 'USD',
+      'onramps' => ['MOONPAY', 'TRANSAK', 'STRIPE'],
+      'onramp_methods' => ['CREDIT_CARD', 'ACH'],
+      'customer_ip_address' => '<your_customer_ip_address>'
+  ];
+
+  $ch = curl_init('https://v2.prod.halliday.xyz/payments/quotes');
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+  curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer pk_HALLIDAY_API_KEY_HERE',
+      'Content-Type: application/json'
+  ]);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($ch);
+  curl_close($ch);
+  ?>
+  ```
+
+  ```go Go theme={null}
+  package main
+
+  import (
+      "net/http"
+      "bytes"
+      "encoding/json"
+      "io"
+  )
+
+  func main() {
+      data := map[string]interface{}{
+          "request": map[string]interface{}{
+              "kind": "FIXED_INPUT",
+              "fixed_input_amount": map[string]string{
+                  "asset": "USD",
+                  "amount": "100",
+              },
+              "output_asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          },
+          "price_currency": "USD",
+          "onramps": []string{"MOONPAY", "TRANSAK", "STRIPE"},
+          "onramp_methods": []string{"CREDIT_CARD", "ACH"},
+          "customer_ip_address": "<your_customer_ip_address>",
+      }
+      
+      jsonData, _ := json.Marshal(data)
+      req, _ := http.NewRequest("POST", "https://v2.prod.halliday.xyz/payments/quotes", bytes.NewBuffer(jsonData))
+      req.Header.Set("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE")
+      req.Header.Set("Content-Type", "application/json")
+      
+      client := &http.Client{}
+      resp, _ := client.Do(req)
+      defer resp.Body.Close()
+      
+      body, _ := io.ReadAll(resp.Body)
+  }
+  ```
+
+  ```java Java theme={null}
+  import java.net.HttpURLConnection;
+  import java.net.URL;
+  import java.io.OutputStream;
+
+  URL url = new URL("https://v2.prod.halliday.xyz/payments/quotes");
+  HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+  conn.setRequestMethod("POST");
+  conn.setRequestProperty("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE");
+  conn.setRequestProperty("Content-Type", "application/json");
+  conn.setDoOutput(true);
+
+  String jsonData = "{\"request\":{\"kind\":\"FIXED_INPUT\",\"fixed_input_amount\":{\"asset\":\"USD\",\"amount\":\"100\"},\"output_asset\":\"base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913\"},\"price_currency\":\"USD\",\"onramps\":[\"MOONPAY\",\"TRANSAK\",\"STRIPE\"],\"onramp_methods\":[\"CREDIT_CARD\",\"ACH\"],\"customer_ip_address\":\"<your_customer_ip_address>\"}";
+
+  try (OutputStream os = conn.getOutputStream()) {
+      os.write(jsonData.getBytes());
+  }
+
+  int status = conn.getResponseCode();
+  ```
+
+  ```ruby Ruby theme={null}
+  require 'net/http'
+  require 'uri'
+  require 'json'
+
+  uri = URI('https://v2.prod.halliday.xyz/payments/quotes')
+  request = Net::HTTP::Post.new(uri)
+  request['Authorization'] = 'Bearer pk_HALLIDAY_API_KEY_HERE'
+  request['Content-Type'] = 'application/json'
+  request.body = {
+    request: {
+      kind: 'FIXED_INPUT',
+      fixed_input_amount: {
+        asset: 'USD',
+        amount: '100'
+      },
+      output_asset: 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+    },
+    price_currency: 'USD',
+    onramps: ['MOONPAY', 'TRANSAK', 'STRIPE'],
+    onramp_methods: ['CREDIT_CARD', 'ACH'],
+    customer_ip_address: '<your_customer_ip_address>'
+  }.to_json
+
+  response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+  end
+  ```
+</CodeGroup>
+
+**Response:**
+
+```json  theme={null}
+{
+  "quote_request": {
+    "request": {
+      "kind": "FIXED_INPUT",
+      "fixed_input_amount": {
+        "asset": "usd",
+        "amount": "100"
+      },
+      "output_asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+    },
+    "price_currency": "usd",
+    "onramps": [
+      "moonpay",
+      "transak",
+      "stripe"
+    ],
+    "onramp_methods": [
+      "CREDIT_CARD",
+      "ACH"
+    ]
+  },
+  "quotes": [
+    {
+      "payment_id": "v4uuid...",
+      "onramp": "stripe",
+      "onramp_method": "CREDIT_CARD",
+      "output_amount": {
+        "asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "amount": "96.11"
+      },
+      "fees": {
+        "total_fees": "3.90941422",
+        "conversion_fees": "3.90941422",
+        "network_fees": "0",
+        "business_fees": "0",
+        "currency_symbol": "usd"
+      },
+      "route": [...]
+    }
+  ],
+  "current_prices": {
+    "usd": "1.0",
+    "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": "0.999798",
+    "base:0x": "4058.01",
+    "avalanche:0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e": "0.999798",
+    "avalanche:0x": "19.8",
+    "arbitrum:0xaf88d065e77c8cc2239327c5edb3a432268e5831": "0.999798",
+    "arbitrum:0x": "4058.01"
+  },
+  "price_currency": "usd",
+  "state_token": "H4sIAAA...",
+  "quoted_at": "2025-10-28T19:29:18.351Z",
+  "accept_by": "2025-10-28T19:34:18.351Z",
+  "failures": []
+}
+```
+
+### Confirm and fund the onramp
+
+Once the user selects a quote, the onramp payment needs to be confirmed with the API before the quote expires.
+
+Using the `payment_id` and `state_token` returned in the quote, a request is made to confirm the quote and specify the owner and destination. The owner and destination wallet addresses can be different.
+
+The private key of the owner address is the **sole controller** of the one-time wallet. In the scenario that a recovery is needed, the owner address will need to sign transactions. See [API Recoveries & Errors](/pages/api-error-recovery-withdrawal) for more details.
+
+This request (`POST /payments/confirm`) returns the same response body that the payment status endpoint (`GET /payments`) returns.
+
+Within the `next_instruction` response body object, there is a `funding_page_url` string. This URL navigates the user to the payment page where they input their fiat payment information with the onramp provider. Developers are expected to display this web page to the user.
+
+In the use case that a user does not fund the onramp directly, the `deposit_address` (OTW) can be funded by anyone with the `deposit_amount` to initiate the onramp.
+
+#### Example: Confirm fiat-to-crypto onramp
+
+<CodeGroup>
+  ```bash cURL theme={null}
+  curl -X POST "https://v2.prod.halliday.xyz/payments/confirm" \
+    -H "Authorization: Bearer pk_HALLIDAY_API_KEY_HERE" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "payment_id": "v4uuid...",
+      "state_token": "H4sIAAA...",
+      "owner_address": "0xowner...",
+      "destination_address": "0xdestination..."
+    }'
+  ```
+
+  ```javascript JavaScript theme={null}
+  const response = await fetch('https://v2.prod.halliday.xyz/payments/confirm', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      payment_id: 'v4uuid...',
+      state_token: 'H4sIAAA...',
+      owner_address: '0xowner...',
+      destination_address: '0xdestination...'
+    })
+  });
+  const data = await response.json();
+  ```
+
+  ```python Python theme={null}
+  import urllib.request
+  import json
+
+  data = {
+      'payment_id': 'v4uuid...',
+      'state_token': 'H4sIAAA...',
+      'owner_address': '0xowner...',
+      'destination_address': '0xdestination...'
+  }
+
+  request = urllib.request.Request(
+      'https://v2.prod.halliday.xyz/payments/confirm',
+      data=json.dumps(data).encode('utf-8'),
+      headers={
+          'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE',
+          'Content-Type': 'application/json'
+      },
+      method='POST'
+  )
+  response = urllib.request.urlopen(request)
+  result = response.read()
+  ```
+
+  ```php PHP theme={null}
+  <?php
+  $data = [
+      'payment_id' => 'v4uuid...',
+      'state_token' => 'H4sIAAA...',
+      'owner_address' => '0xowner...',
+      'destination_address' => '0xdestination...'
+  ];
+
+  $ch = curl_init('https://v2.prod.halliday.xyz/payments/confirm');
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+  curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer pk_HALLIDAY_API_KEY_HERE',
+      'Content-Type: application/json'
+  ]);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($ch);
+  curl_close($ch);
+  ?>
+  ```
+
+  ```go Go theme={null}
+  package main
+
+  import (
+      "net/http"
+      "bytes"
+      "encoding/json"
+      "io"
+  )
+
+  func main() {
+      data := map[string]string{
+          "payment_id": "v4uuid...",
+          "state_token": "H4sIAAA...",
+          "owner_address": "0xowner...",
+          "destination_address": "0xdestination...",
+      }
+      
+      jsonData, _ := json.Marshal(data)
+      req, _ := http.NewRequest("POST", "https://v2.prod.halliday.xyz/payments/confirm", bytes.NewBuffer(jsonData))
+      req.Header.Set("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE")
+      req.Header.Set("Content-Type", "application/json")
+      
+      client := &http.Client{}
+      resp, _ := client.Do(req)
+      defer resp.Body.Close()
+      
+      body, _ := io.ReadAll(resp.Body)
+  }
+  ```
+
+  ```java Java theme={null}
+  import java.net.HttpURLConnection;
+  import java.net.URL;
+  import java.io.OutputStream;
+
+  URL url = new URL("https://v2.prod.halliday.xyz/payments/confirm");
+  HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+  conn.setRequestMethod("POST");
+  conn.setRequestProperty("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE");
+  conn.setRequestProperty("Content-Type", "application/json");
+  conn.setDoOutput(true);
+
+  String jsonData = "{\"payment_id\":\"v4uuid...\",\"state_token\":\"H4sIAAA...\",\"owner_address\":\"0xowner...\",\"destination_address\":\"0xdestination...\"}";
+
+  try (OutputStream os = conn.getOutputStream()) {
+      os.write(jsonData.getBytes());
+  }
+
+  int status = conn.getResponseCode();
+  ```
+
+  ```ruby Ruby theme={null}
+  require 'net/http'
+  require 'uri'
+  require 'json'
+
+  uri = URI('https://v2.prod.halliday.xyz/payments/confirm')
+  request = Net::HTTP::Post.new(uri)
+  request['Authorization'] = 'Bearer pk_HALLIDAY_API_KEY_HERE'
+  request['Content-Type'] = 'application/json'
+  request.body = {
+    payment_id: 'v4uuid...',
+    state_token: 'H4sIAAA...',
+    owner_address: '0xowner...',
+    destination_address: '0xdestination...'
+  }.to_json
+
+  response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+  end
+  ```
+</CodeGroup>
+
+**Response:**
+
+```json  theme={null}
+{
+  "payment_id": "v4uuid...",
+  "status": "PENDING",
+  "funded": false,
+  "created_at": "2025-10-28T19:30:12.818Z",
+  "updated_at": "2025-10-28T19:30:12.818Z",
+  "initiate_fund_by": "2025-10-28T19:40:12.818Z",
+  "quote_request": {
+    "request": {
+      "kind": "FIXED_INPUT",
+      "fixed_input_amount": {
+        "asset": "usd",
+        "amount": "100"
+      },
+      "output_asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+    },
+    "price_currency": "usd",
+    "onramps": [ "moonpay", "transak", "stripe" ],
+    "onramp_methods": [ "CREDIT_CARD", "ACH" ]
+  },
+  "quoted": {
+    "onramp": "stripe",
+    "onramp_method": "CREDIT_CARD",
+    "output_amount": {
+      "asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "96.11"
+    },
+    "fees": {
+      "total_fees": "3.90941422",
+      "conversion_fees": "3.90941422",
+      "network_fees": "0",
+      "business_fees": "0",
+      "currency_symbol": "usd"
+    },
+    "route": []
+  },
+  "fulfilled": {
+    "onramp": "stripe",
+    "onramp_method": "CREDIT_CARD",
+    "route": [...]
+  },
+  "current_prices": {...},
+  "price_currency": "usd",
+  "processing_addresses": [],
+  "owner_address": "0xowner...",
+  "destination_address": "0xdestination...",
+  "next_instruction": {
+    "type": "ONRAMP",
+    "payment_id": "v4uuid...",
+    "funding_page_url": "https://app.halliday.xyz/funding/_payment_id_goes_here_?token=_token_",
+    "deposit_info": [
+      {
+        "deposit_token": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "deposit_amount": "96.11",
+        "deposit_address": "0xdeposit...",
+        "deposit_chain": "base"
+      }
+    ]
+  }
+}
+```
+
+## Cross-chain swaps with the API
+
+Halliday Payments brings together bridges, DEXs, and cross-chain routing logic to enable users to seamlessly swap to any token on any chain.
+
+### Get a collection of quotes for a swap
+
+When a user is ready to swap tokens, make an API request to generate quotes based on the amount the user desires to swap.
+
+The Halliday API queries all available cross-chain routes supported by the protocol, optimizing current bridge, DEX, and transfer fees. All quoted onchain routes are returned to the client, including all fees.
+
+This data can then be dispalyed in a UI so the user can select the their preferred route and quote.
+
+All quotes are requested through the unified `POST /payments/quotes` endpoint.
+
+#### Example: Quote a crypto-to-crypto swap
+
+Request a quote for swapping AVAX on Avalanche to USDC on Base:
+
+<CodeGroup>
+  ```bash cURL theme={null}
+  curl -X POST "https://v2.prod.halliday.xyz/payments/quotes" \
+    -H "Authorization: Bearer pk_HALLIDAY_API_KEY_HERE" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "request": {
+        "kind": "FIXED_INPUT",
+        "fixed_input_amount": {
+          "asset": "avalanche:0x",
+          "amount": "50"
+        },
+        "output_asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+      },
+      "price_currency": "USD"
+    }'
+  ```
+
+  ```javascript JavaScript theme={null}
+  const response = await fetch('https://v2.prod.halliday.xyz/payments/quotes', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      request: {
+        kind: 'FIXED_INPUT',
+        fixed_input_amount: {
+          asset: 'avalanche:0x',
+          amount: '50'
+        },
+        output_asset: 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+      },
+      price_currency: 'USD'
+    })
+  });
+  const data = await response.json();
+  ```
+
+  ```python Python theme={null}
+  import urllib.request
+  import json
+
+  data = {
+      'request': {
+          'kind': 'FIXED_INPUT',
+          'fixed_input_amount': {
+              'asset': 'avalanche:0x',
+              'amount': '50'
+          },
+          'output_asset': 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+      },
+      'price_currency': 'USD'
+  }
+
+  request = urllib.request.Request(
+      'https://v2.prod.halliday.xyz/payments/quotes',
+      data=json.dumps(data).encode('utf-8'),
+      headers={
+          'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE',
+          'Content-Type': 'application/json'
+      },
+      method='POST'
+  )
+  response = urllib.request.urlopen(request)
+  result = response.read()
+  ```
+
+  ```php PHP theme={null}
+  <?php
+  $data = [
+      'request' => [
+          'kind' => 'FIXED_INPUT',
+          'fixed_input_amount' => [
+              'asset' => 'avalanche:0x',
+              'amount' => '50'
+          ],
+          'output_asset' => 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+      ],
+      'price_currency' => 'USD'
+  ];
+
+  $ch = curl_init('https://v2.prod.halliday.xyz/payments/quotes');
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+  curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer pk_HALLIDAY_API_KEY_HERE',
+      'Content-Type: application/json'
+  ]);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($ch);
+  curl_close($ch);
+  ?>
+  ```
+
+  ```go Go theme={null}
+  package main
+
+  import (
+      "net/http"
+      "bytes"
+      "encoding/json"
+      "io"
+  )
+
+  func main() {
+      data := map[string]interface{}{
+          "request": map[string]interface{}{
+              "kind": "FIXED_INPUT",
+              "fixed_input_amount": map[string]string{
+                  "asset": "avalanche:0x",
+                  "amount": "50",
+              },
+              "output_asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          },
+          "price_currency": "USD",
+      }
+      
+      jsonData, _ := json.Marshal(data)
+      req, _ := http.NewRequest("POST", "https://v2.prod.halliday.xyz/payments/quotes", bytes.NewBuffer(jsonData))
+      req.Header.Set("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE")
+      req.Header.Set("Content-Type", "application/json")
+      
+      client := &http.Client{}
+      resp, _ := client.Do(req)
+      defer resp.Body.Close()
+      
+      body, _ := io.ReadAll(resp.Body)
+  }
+  ```
+
+  ```java Java theme={null}
+  import java.net.HttpURLConnection;
+  import java.net.URL;
+  import java.io.OutputStream;
+
+  URL url = new URL("https://v2.prod.halliday.xyz/payments/quotes");
+  HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+  conn.setRequestMethod("POST");
+  conn.setRequestProperty("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE");
+  conn.setRequestProperty("Content-Type", "application/json");
+  conn.setDoOutput(true);
+
+  String jsonData = "{\"request\":{\"kind\":\"FIXED_INPUT\",\"fixed_input_amount\":{\"asset\":\"avalanche:0x\",\"amount\":\"50\"},\"output_asset\":\"base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913\"},\"price_currency\":\"USD\"}";
+
+  try (OutputStream os = conn.getOutputStream()) {
+      os.write(jsonData.getBytes());
+  }
+
+  int status = conn.getResponseCode();
+  ```
+
+  ```ruby Ruby theme={null}
+  require 'net/http'
+  require 'uri'
+  require 'json'
+
+  uri = URI('https://v2.prod.halliday.xyz/payments/quotes')
+  request = Net::HTTP::Post.new(uri)
+  request['Authorization'] = 'Bearer pk_HALLIDAY_API_KEY_HERE'
+  request['Content-Type'] = 'application/json'
+  request.body = {
+    request: {
+      kind: 'FIXED_INPUT',
+      fixed_input_amount: {
+        asset: 'avalanche:0x',
+        amount: '50'
+      },
+      output_asset: 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+    },
+    price_currency: 'USD'
+  }.to_json
+
+  response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+  end
+  ```
+</CodeGroup>
+
+**Response:**
+
+```json  theme={null}
+{
+  "quote_request": {
+    "request": {
+      "kind": "FIXED_INPUT",
+      "fixed_input_amount": {
+        "asset": "avalanche:0x",
+        "amount": "50"
+      },
+      "output_asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+    },
+    "price_currency": "usd"
+  },
+  "quotes": [
+    {
+      "payment_id": "v4uuid...",
+      "output_amount": {
+        "asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "amount": "963.20128"
+      },
+      "fees": {
+        "total_fees": "1.89407692672",
+        "conversion_fees": "1.89407692672",
+        "network_fees": "0",
+        "business_fees": "0",
+        "currency_symbol": "usd"
+      },
+      "route": [...]
+    }
+  ],
+  "current_prices": {
+    "usd": "1.0",
+    "avalanche:0x": "19.3",
+    "avalanche:0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e": "0.999901",
+    "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": "0.999901",
+    "base:0x": "3956.77",
+    "arbitrum:0xaf88d065e77c8cc2239327c5edb3a432268e5831": "0.999901",
+    "arbitrum:0x": "3956.77",
+    "base:0x4200000000000000000000000000000000000006": "3957.08",
+    "base:0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b": "1.45",
+    "arbitrum:0x7f9fbf9bdd3f4105c478b996b648fe6e828a1e98": "0.416717"
+  },
+  "price_currency": "usd",
+  "state_token": "H4sIAAA...",
+  "quoted_at": "2025-10-28T21:27:54.994Z",
+  "accept_by": "2025-10-28T21:32:54.994Z",
+  "failures": []
+}
+```
+
+### Confirm and fund the swap
+
+Once the user selects a quote, the swap needs to be confirmed with the API before the quote expires.
+
+Using the `payment_id` and `state_token` returned in the quote, a request is made to confirm the quote and specify the owner and destination. The owner and destination wallet addresses can be different.
+
+The private key of the owner address is the **sole controller** of the one-time wallet. In the scenario that a recovery is needed, the owner address will need to sign transactions. See [API Recoveries & Errors](/pages/api-error-recovery-withdrawal) for more details.
+
+This request (`POST /payments/confirm`) returns the same response body that the payment status endpoint (`GET /payments`) returns.
+
+Within the `next_instruction` response body object, the `type` will be `TRANSFER_IN` string. This means that the `deposit_address` can be funded by anyone with the `deposit_amount` on the source chain. Transferring tokens to this OTW address initiates the swap.
+
+#### Example: Confirm crypto-to-crypto swap
+
+<CodeGroup>
+  ```bash cURL theme={null}
+  curl -X POST "https://v2.prod.halliday.xyz/payments/confirm" \
+    -H "Authorization: Bearer pk_HALLIDAY_API_KEY_HERE" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "payment_id": "v4uuid...",
+      "state_token": "H4sIAAA...",
+      "owner_address": "0xowner...",
+      "destination_address": "0xdestination..."
+    }'
+  ```
+
+  ```javascript JavaScript theme={null}
+  const response = await fetch('https://v2.prod.halliday.xyz/payments/confirm', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      payment_id: 'v4uuid...',
+      state_token: 'H4sIAAA...',
+      owner_address: '0xowner...',
+      destination_address: '0xdestination...'
+    })
+  });
+  const data = await response.json();
+  ```
+
+  ```python Python theme={null}
+  import urllib.request
+  import json
+
+  data = {
+      'payment_id': 'v4uuid...',
+      'state_token': 'H4sIAAA...',
+      'owner_address': '0xowner...',
+      'destination_address': '0xdestination...'
+  }
+
+  request = urllib.request.Request(
+      'https://v2.prod.halliday.xyz/payments/confirm',
+      data=json.dumps(data).encode('utf-8'),
+      headers={
+          'Authorization': 'Bearer pk_HALLIDAY_API_KEY_HERE',
+          'Content-Type': 'application/json'
+      },
+      method='POST'
+  )
+  response = urllib.request.urlopen(request)
+  result = response.read()
+  ```
+
+  ```php PHP theme={null}
+  <?php
+  $data = [
+      'payment_id' => 'v4uuid...',
+      'state_token' => 'H4sIAAA...',
+      'owner_address' => '0xowner...',
+      'destination_address' => '0xdestination...'
+  ];
+
+  $ch = curl_init('https://v2.prod.halliday.xyz/payments/confirm');
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+  curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer pk_HALLIDAY_API_KEY_HERE',
+      'Content-Type: application/json'
+  ]);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($ch);
+  curl_close($ch);
+  ?>
+  ```
+
+  ```go Go theme={null}
+  package main
+
+  import (
+      "net/http"
+      "bytes"
+      "encoding/json"
+      "io"
+  )
+
+  func main() {
+      data := map[string]string{
+          "payment_id": "v4uuid...",
+          "state_token": "H4sIAAA...",
+          "owner_address": "0xowner...",
+          "destination_address": "0xdestination...",
+      }
+      
+      jsonData, _ := json.Marshal(data)
+      req, _ := http.NewRequest("POST", "https://v2.prod.halliday.xyz/payments/confirm", bytes.NewBuffer(jsonData))
+      req.Header.Set("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE")
+      req.Header.Set("Content-Type", "application/json")
+      
+      client := &http.Client{}
+      resp, _ := client.Do(req)
+      defer resp.Body.Close()
+      
+      body, _ := io.ReadAll(resp.Body)
+  }
+  ```
+
+  ```java Java theme={null}
+  import java.net.HttpURLConnection;
+  import java.net.URL;
+  import java.io.OutputStream;
+
+  URL url = new URL("https://v2.prod.halliday.xyz/payments/confirm");
+  HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+  conn.setRequestMethod("POST");
+  conn.setRequestProperty("Authorization", "Bearer pk_HALLIDAY_API_KEY_HERE");
+  conn.setRequestProperty("Content-Type", "application/json");
+  conn.setDoOutput(true);
+
+  String jsonData = "{\"payment_id\":\"v4uuid...\",\"state_token\":\"H4sIAAA...\",\"owner_address\":\"0xowner...\",\"destination_address\":\"0xdestination...\"}";
+
+  try (OutputStream os = conn.getOutputStream()) {
+      os.write(jsonData.getBytes());
+  }
+
+  int status = conn.getResponseCode();
+  ```
+
+  ```ruby Ruby theme={null}
+  require 'net/http'
+  require 'uri'
+  require 'json'
+
+  uri = URI('https://v2.prod.halliday.xyz/payments/confirm')
+  request = Net::HTTP::Post.new(uri)
+  request['Authorization'] = 'Bearer pk_HALLIDAY_API_KEY_HERE'
+  request['Content-Type'] = 'application/json'
+  request.body = {
+    payment_id: 'v4uuid...',
+    state_token: 'H4sIAAA...',
+    owner_address: '0xowner...',
+    destination_address: '0xdestination...'
+  }.to_json
+
+  response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+  end
+  ```
+</CodeGroup>
+
+**Response:**
+
+```json  theme={null}
+{
+  "payment_id": "v4uuid...",
+  "status": "PENDING",
+  "funded": false,
+  "created_at": "2025-10-28T21:28:46.034Z",
+  "updated_at": "2025-10-28T21:28:46.872Z",
+  "initiate_fund_by": "2025-10-28T21:38:45.902Z",
+  "quote_request": {
+    "request": {
+      "kind": "FIXED_INPUT",
+      "fixed_input_amount": {
+        "asset": "avalanche:0x",
+        "amount": "50"
+      },
+      "output_asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+    },
+    "price_currency": "usd"
+  },
+  "quoted": {
+    "output_amount": {
+      "asset": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "amount": "963.20128"
+    },
+    "fees": {
+      "total_fees": "1.89407692672",
+      "conversion_fees": "1.89407692672",
+      "network_fees": "0",
+      "business_fees": "0",
+      "currency_symbol": "usd"
+    },
+    "route": [...]
+  },
+  "fulfilled": {...},
+  "current_prices": {...},
+  "price_currency": "usd",
+  "processing_addresses": [...],
+  "owner_address": "0xowner...",
+  "destination_address": "0xdestination...",
+  "next_instruction": {
+    "type": "TRANSFER_IN",
+    "payment_id": "v4uuid...",
+    "funding_page_url": "https://app.halliday.xyz/funding/_payment_id_goes_here_?token=_token_",
+    "deposit_info": [
+      {
+        "deposit_token": "avalanche:0x",
+        "deposit_amount": "50",
+        "deposit_address": "0xdeposit...",
+        "deposit_chain": "avalanche"
+      }
+    ]
+  }
+}
+```
+
+The response includes the full payment status with confirmation details, tracking information, and funding status.
+
+## Tracking Payment Status
+
+This endpoint can be polled to get the latest **status** of the payment.
+
+The `payment_id` parameter is from the chosen quote returned from the quotes endpoint and also the confirm endpoint. Note that the response from `POST /payments/confirm` is the same as the response body returned from `GET /payments`.
+
+For more information on the API's payment statuses and depositing to initialize a payment workflow see [Status API](/pages/api-status).
+
+## Error Handling and Recoveries
+
+For information on payment errors, recovering failed payments, and withdrawing assets from an OTW, see [Payment API Errors & Recoveries](/pages/api-error-recovery-withdrawal).
+
+
+# Payment Funding & Status
+Source: https://docs.halliday.xyz/pages/api-status
+
+
+
+The `GET /payments` [status endpoint](/api-reference/payments/get-payment-status) can be polled to retrieve the full scope and current status of a payment using its unique `payment_id`. This endpoint supports fiat onramps, centralized exchange withdrawals, and cross-chain swaps initiated through the API or the Payments SDK widget.
+
+During the payment lifecycle, the status response provides essential **funding information**. Once a payment is funded, the predefined onchain steps **execute automatically**.
+
+Note that the JSON response object returned by `GET /payments` and `POST /payments/confirm` share the same structure and both represent the payment’s current status.
+
+## Funding a payment
+
+A payment is initiated onchain once the OTW [deposit address](/pages/otw) on the specified network holds a token balance **greater than or equal to** the input amount set in the quote. Sending tokens to this deposit address is referred to as a **deposit**. Any address can perform the deposit to fund the payment.
+
+Once a fiat-to-crypto onramp, centralized exchange withdrawal, or cross-chain swap is confirmed using the `POST /payments/confirm` endpoint, the API returns a payment status object with a status of `PENDING`. Once a payment is pending, it can be funded. Funding must occur before the quote expires. The payment expires if it is not funded before the `initiate_fund_by` datetime detailed in the status object.
+
+### Funding an onramp vs funding a swap
+
+Fiat onramps are funded onchain **automatically** by the provider once a user completes the checkout on the provider's page.
+
+A swap must be funded by transferring tokens to the deposit address onchain. For most use cases of swaps, the user transfers the input token to the deposit address from their own wallet. However any wallet may fund a payment.
+
+Developers can find the specific details for funding a payment by viewing the `next_instruction` object.
+
+### Next instruction
+
+The JSON response object returned from the status and confirm endpoints contains a `next_instruction` object while the payment status is `PENDING`. This object details the next instruction required to execute the payment.
+
+**Type**
+
+The `next_instruction.type` value can be `ONRAMP` for fiat onramp payments or `TRANSFER_IN` for swaps.
+
+**Funding page URL for fiat onramps**
+
+The `next_instruction.funding_page_url` value is a unique URL. The URL redirects to a fiat onramp provider's checkout page (i.e. Stripe, Moonpay). On this page, the user confirms their fiat payment information.
+
+**Deposit information**
+
+The `next_instruction.deposit_info` value is an array of objects. This information is used to fund a payment.
+
+* `deposit_token` The token to send to the deposit address in `${chain}:${token_address}` format.
+* `deposit_amount` The amount of the token to send to the deposit address.
+* `deposit_address` The onchain deposit address (OTW).
+* `deposit_chain` Name of the chain on which to perform the deposit.
+
+Example `next_instruction.deposit_info`:
+
+```json  theme={null}
+[{
+  "deposit_token": "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+  "deposit_amount": "53.26",
+  "deposit_address": "0x39bd1CfcF898A3a3d1e6EFD33e1F65499e6326a9",
+  "deposit_chain": "base"
+}]
+```
+
+**Pitfalls**
+
+Note that EVM wallets have identical addresses on every EVM chain. The deposit is required to be done only on the chain specified in the deposit information.
+
+Depositing to the OTW address on the wrong chain will not execute a payment and is to be avoided.
+
+## Payment Statuses
+
+The `status` property in the JSON response object is a string indicating the present status of the payment. Each of the following statuses can be returned for an onramp or swap payment.
+
+### Pending
+
+The `PENDING` status is the inital state of a confirmed payment. This state indicates that the payment is ready to be funded.
+
+The specified onchain steps begin executing once the OTW (deposit address) is issued the proper amount of tokens on the proper chain.
+
+See [funding a payment](#funding-a-payment) above for more details and [funding examples](#funding-examples) below.
+
+### Expired
+
+The `EXPIRED` status indicates that the payment was not funded before the `initiate_fund_by` datetime detailed in the status response object.
+
+A payment can be safely abandoned if it becomes `EXPIRED`, before it is funded, in favor of a new quote. If an `EXPIRED` payment is funded, the `owner` wallet address can retry the payment with a new quote or withdraw the assets from the OTW to the `owner` address.
+
+Withdrawal requires creation of an EIP-712 signature which the API can use to execute the transfer.
+
+For more information on withdrawals and payment recoveries see the [Payment API Errors & Recoveries](/pages/api-error-recovery-withdrawal) guide.
+
+### Complete
+
+The `COMPLETE` status indicates that a payment has successfully reached the originally intended final onchain step detailed in the `route` object of the status response. There are no other possible states for the payment to change to once it has reached `COMPLETE`.
+
+### Withdrawn
+
+The `WITHDRAWN` status indicates that the funding amount deposited to the OTW has been successfully transferred out of the deposit address following execution of a withdrawal request. There are no other possible states for the payment to change to once it has reached `WITHDRAWN`.
+
+### Tainted
+
+The `TAINTED` status indicates that an onchain address associated with a payment request is recognized as a sanctioned address. Tainted payments cannot be completed or retried.
+
+## Funding Examples
+
+Both fiat onramps and swaps are funded in the same manner. Each unique payment has a unique onchain deposit address that begins execution of the payment steps once it is funded.
+
+Any subsequent onchain actions are performed automatically using predefined workflows. The user does not need to be mindful of gas tokens, bridges, or swaps that occur during the payment lifecycle.
+
+The result of a payment is that a destination wallet address holds, at minimum, the quoted amount of a destination token.
+
+### Swap
+
+After the user indicates their input token amount, chooses a quote, and the payment is confirmed, the deposit can be performed.
+
+An app can prompt the user to transfer tokens in their wallet to the deposit address. Also, any funder wallet can perform the deposit.
+
+### Fiat onramp
+
+Just like a swap, the user indicates the amount that they want to spend, chooses a quote, and the funding process begins.
+
+The user provides payment details via the next instruction's `funding_page_url`.
+
+Once the checkout is completed, the onramp provider automatically funds the deposit address on the proper chain.
+
+
+# Compliance & Security
+Source: https://docs.halliday.xyz/pages/compliance-security
+
+
+
+More details on Halliday's compliance and security practices will be shown here soon.
+
+
+# Frequently Asked Questions
+Source: https://docs.halliday.xyz/pages/faq
+
+
+
+#### What is Halliday Payments?
+
+Halliday Payments is a non-custodial, unified crypto payment flow that can be implemented by developers using only 7 lines of code. It orchestrates three different product categories – onramps, centralized exchanges, and bridges – into a single app, simplifying the experience for users and allowing them to get their first dollar onchain in less than a minute.
+
+#### How does it work?
+
+Halliday Payments is built on the [Workflow Protocol](https://halliday.xyz/protocol), which is used to streamline blockchain development. Depending on the chain, traditional onramp providers may not be able to access liquidity, leaving users to figure out the best path on their own – a process that can take up to 30 minutes or more.
+
+Halliday Payments simplifies this process by offering seamless interoperability across different blockchain networks, ensuring users can easily deposit without having to navigate across different platforms. Halliday uses a broad network of [integrations and support](https://halliday.xyz/ecosystem) to create interoperability no matter the starting token or geographic location, creating a truly Web2-like experience.
+
+#### What is a one-time wallet (OTW)?
+
+Each unique payment begins with a new onchain address called a one-time wallet (OTW), also known as the deposit address or a single-program wallet (SPW). Each onramp or swap will create a new OTW that is controlled only by the owner wallet address specified in the API call parameters. In the event a payment gets stuck or is funded after expiration, the owner address has the ability to sign transactions to recover the assets from the OTW or retry the payment.
+
+End users control the OTW - Halliday never takes custody or control of user funds.
+
+#### What can Halliday Payments be used for?
+
+Halliday Payments is extremely flexible and can be utilized for a number of different business uses. This includes, but is not limited to:
+
+* Blockchains: Simple deposit to a specific token, expanding access to liquidity
+* Perps: Swap and stake automatically
+* Prediction markets: Deposit and immediately buy
+* Games: Easily purchase in-game assets
+* Launchpads: Onboard and swap between coins
+* Fintechs: On and offramp to stablecoins
+
+The Workflow Protocol enables quick cross-chain development. Have an idea for a custom use case? Reach out to [partnerships@halliday.xyz](mailto:partnerships@halliday.xyz)
+
+## How to use Halliday Payments
+
+### Onramps
+
+#### How can users onramp from fiat using Halliday Payments?
+
+The onramp service is designed to integrate effortlessly with existing blockchain applications, providing fast, secure, and reliable onramping from fiat currencies.
+
+To integrate the onramp service into an app, there are two main options:
+
+* The Halliday Payments Widget: Easiest way to add a feature-complete UI for enabling onramps.
+* The Halliday API: Completely controls the user experience using direct API integration.
+
+Reach out to [partnerships@halliday.xyz](mailto:partnerships@halliday.xyz) to learn more and get access.
+
+### Swaps
+
+#### How can users pay with digital assets held in their own wallets?
+
+The cross-chain swaps service is designed to integrate effortlessly with existing blockchain applications, providing fast, secure, and reliable swaps for digital asset holders.
+
+To integrate the cross-chain swaps service into an app, there are two main options:
+
+* The Halliday Payments Payments Widget: Easiest way to add a feature-complete UI for enabling swaps.
+* The Halliday API: Completely controls the user experience using HTTP directly.
+
+Reach out to [partnerships@halliday.xyz](mailto:partnerships@halliday.xyz) to learn more and get access.
+
+#### What are the use cases for cross-chain swaps?
+
+With cross-chain swaps, users can effortlessly bridge and swap into any token from any chain. Halliday routes between numerous onchain protocols for low latency and enhanced transaction speed.
+This feature is ideal for users looking to acquire any token on any chain, or to consolidate their assets on a preferred network.
+
+### Exchanges
+
+#### How can users pay with assets from their exchange?
+
+This feature is designed to integrate effortlessly with existing blockchain applications, providing fast, secure, and reliable onramping from their centralized exchange accounts.
+
+To integrate this feature in an app, use the Halliday Payments Payments Widget.
+
+#### What if the user does not have enough of the desired token in their exchange account to afford the transfer?
+
+The exchange service supports two methods of supplementing the user's balance:
+
+* The user can spend any 'buying power' available in the - exchange account to cover the difference.
+* The user can use any payment methods they have saved in their exchange account to cover the difference.
+
+### Offramps
+
+#### How can my users offramp to fiat?
+
+Halliday Payments is working on an offramp service designed to integrate effortlessly with existing apps, providing fast, secure, and reliable offramping to fiat currencies.
+
+[Get in touch](https://halliday.xyz/contact) to learn more.
+
+
+# Halliday API Documentation
+Source: https://docs.halliday.xyz/pages/halliday-api-docs
+
+
+
+The Halliday API provides direct HTTP access to payment services including onramps, swaps, exchange withdrawals, and offramps.
+It offers complete control over the payment experience through a flexible, API-first integration.
+
+There are two primary ways to integrate Halliday's payment services:
+
+* [The Payments Widget](/pages/payments-sdk-docs): Pre-built UI component with complete payment functionality.
+* [The Halliday API](/pages/halliday-api-docs): Direct API access for building custom payment experiences.
+
+The Halliday API is ideal for developers who need:
+
+* Full control over the user interface and experience
+* Custom payment flows tailored to specific use cases
+
+## Key Features
+
+* **RESTful Design**: Standard HTTP methods and status codes
+* **API-First Architecture**: No SDK dependencies required
+* **Comprehensive Payment Support**: Onramps, swaps, offramps, and exchange balances
+* **Real-time Status Tracking**: Monitor payments throughout their lifecycle
+* **Flexible Integration**: Works with any programming language or framework
+
+## Getting Started
+
+To begin using the Halliday API:
+
+1. **Obtain API Credentials**: Get your API key from Halliday
+2. **Explore the API**: Review the [API Quickstart](/pages/api-quickstart) guide
+3. **Test in Sandbox**: Use the [Sandbox Testing](/pages/sandbox-testing) environment during development
+4. **Go Live**: Switch to production when ready
+
+## API Endpoints
+
+The Halliday API provides endpoints for:
+
+* **Asset Discovery**: Find supported assets and payment routes
+* **Quote Generation**: Get real-time pricing and optimal routing for payments
+* **Payment Confirmation**: Confirm and initiate payments
+* **Status Tracking**: Monitor payment progress
+* **Fund Management**: Handle deposits and withdrawals
+
+## Authentication
+
+All API requests require authentication via API key:
+
+```bash  theme={null}
+Authorization: Bearer pk_your-api-key-here
+```
+
+For detailed implementation examples, see the [API Quickstart](/pages/api-quickstart) guide.
+
+## Method Docs and Playground
+
+After getting an API key, check out the [Haliday Payments REST API endpoint method documentation](/api-reference/chains/get-supported-chains) tab.
+
+This can also be found in the **API Reference** tab at the top of each page.
+
+
+# Halliday Payments Documentation
+Source: https://docs.halliday.xyz/pages/home
+
+
+
+Welcome to the Halliday Payments documentation. Developers can explore our guides and examples to integrate a seamless crypto deposit flow in minutes.
+
+<Columns cols={2}>
+  <Card title="API Keys" icon="key" href="mailto:partnerships@halliday.xyz?subject=Halliday%20API%20Keys%20[Docs]&body=Hello%2C%0D%0A%0D%0AWe+are+interested+in+receiving+Halliday+API+keys.%0D%0A%0D%0ADetails+about+our+project%3A%0D%0A%0D%0AApp+name%3A%0D%0A%0D%0AThanks%2C%0D%0AName">
+    Reach out and get your API keys now
+  </Card>
+
+  <Card title="Hello World" icon="code" href="/pages/payments-hello-world">
+    Create your first app with the Payments SDK in minutes
+  </Card>
+</Columns>
+
+<Columns cols={2}>
+  <Card title="Developer Workshop" icon="video" href="https://blog.halliday.xyz/p/343d96be-2e6b-4a39-9073-838c715bb37e">
+    See firsthand how to get started with the Halliday Payments SDK widget
+  </Card>
+
+  <Card title="API Quickstart" icon="sparkles" href="/pages/api-quickstart">
+    Learn how to implement Halliday Payments with the API directly
+  </Card>
+</Columns>
+
+## About Halliday Payments
+
+With Halliday Payments, users can acquire **any token** on **any chain** with minimal effort. Seamlessly onramp from fiat, cross arbitrary bridges, and swap assets from an existing wallet (e.g. MetaMask), into whatever form. Connect with an exchange account (e.g. Coinbase) to transfer digital assets onto any chain.
+
+Halliday Payments works in a fully self-custodial manner. Users can connect with any wallet to manage their funds. And, they remain in complete control, not Halliday.
+
+Gain access to a unified integration that offers:
+
+* Fiat on and off ramps
+* Seamless cross-chain swaps
+* Exchange payments direct to any network
+
+An all-in-one payments solution that just works — purpose built for all chains, production ready on day one.
+
+## Contact
+
+To get in touch regarding integration of Halliday into an existing product, contact the team on X [@HallidayHQ](https://x.com/HallidayHQ) or reach out to [the business development team](mailto:partnerships@halliday.xyz).
+
+Developers can join the conversation in the Halliday community [Discord](https://discord.halliday.xyz/) server. The Halliday team and community members can help with technical questions for those implementing payment automation.
+
+## Use Cases
+
+Examples of Web3 teams using Halliday Payments for the following use cases can be found on [the Ecosystem page](https://halliday.xyz/ecosystem).
+
+### Fiat Onramp to All Chains
+
+Users can onramp from fiat to a specific token on any chain with a streamlined experience. Fund an address using credit card or centralized exchange within a whitelabeled popup or embedded modal. A headless SDK is also available to developers.
+
+### Cross-Chain Swaps
+
+Halliday simplifies cross-chain token swaps for both developers and their end users. By design, the system finds the optimal route, from an input token on one chain, to an output token on another. No need to sign multiple transactions. One user interaction and Halliday handles the heavy lifting.
+
+### Automated Workflows
+
+Protocols can compose interactions across networks, like a purchase, a swap, a stake, and more with one interaction. Halliday handles cross-chain operations, retries, gas payments, asset balances, transaction formation, batch scheduling, and network routing all with a single click or tap.
+
+## Which Tokens & Chains Does Halliday Payments Support?
+
+Halliday can support **any token** on **any chain**, including routes through specific bridges or decentralized exchanges based on the needs of a use case.
+
+**To support more onramps, tokens, chains, bridges, or DEXs, get in touch with the Halliday team today.**
+
+
+# Export of the Documentation for LLMs
+Source: https://docs.halliday.xyz/pages/llms-info
+
+
+
+The llms.txt of the documentation can be crawled from here:
+[https://docs.halliday.xyz/llms.txt](https://docs.halliday.xyz/llms.txt)
+
+Additionally, a full export of all docs pages as markdown can be found here: [https://docs.halliday.xyz/llms-full.txt](https://docs.halliday.xyz/llms-full.txt)
+
+The API specification `openapi.yaml` is here:
+
+```yaml openapi.yaml theme={null}
+
+openapi: 3.1.0
+info:
+  title: Halliday API V2
+  description: |
+    API V2 for Halliday's payment infrastructure, supporting onramps, swaps, and offramps.
+
+    This API provides a unified interface for cryptocurrency payments, allowing developers to:
+    - Quote payments across multiple providers
+    - Execute payments with onramps, swaps, and offramps
+    - Track payment status and history
+
+    ## Authentication
+
+    API key authentication is required for all endpoints.
+  version: 2.0.0
+  contact:
+    name: Contact Halliday
+    url: https://halliday.xyz
+    email: support@halliday.xyz
+
+security:
+  - ApiKeyAuth: []
+
+servers:
+  - url: https://v2.prod.halliday.xyz
+    description: Base domain
+
+paths:
+  /chains:
+    get:
+      summary: Get supported chains
+      description: |
+        Get a list of all supported blockchain networks with their configuration details.
+      operationId: getChains
+      tags:
+        - Chains
+      parameters:
+        - name: sandbox
+          in: query
+          required: false
+          description: Whether to return sandbox/testnet chains
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of supported chains
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/ChainInfo"
+              example:
+                ethereum:
+                  chain_id: 1
+                  network: ethereum
+                  native_currency:
+                    name: Ether
+                    symbol: ETH
+                    decimals: 18
+                  is_testnet: false
+                  explorer: https://etherscan.io/
+                  image: <IMAGE_URL>...
+                  rpc: <RPC_URL>...
+                arbitrum:
+                  chain_id: 42161
+                  network: arbitrum
+                  native_currency:
+                    name: Ether
+                    symbol: ETH
+                    decimals: 18
+                  is_testnet: false
+                  explorer: https://arbiscan.io/
+                  image: <IMAGE_URL>...
+                  rpc: <RPC_URL>...
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid sandbox parameter value. Expected boolean."
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid API key"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Insufficient permissions to access this resource"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /assets:
+    get:
+      summary: Get asset details
+      description: |
+        Get detailed information about specific assets including metadata, symbols, and chain information.
+      operationId: getAssets
+      tags:
+        - Assets
+      parameters:
+        - name: sandbox
+          in: query
+          required: false
+          description: Whether to use sandbox environment
+          schema:
+            type: boolean
+        - name: assets[]
+          in: query
+          required: false
+          description: List of assets to get details for
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Asset"
+      responses:
+        "200":
+          description: Asset details
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/AssetDetails"
+              example:
+                usd:
+                  issuer: USA
+                  name: United States Dollar
+                  symbol: USD
+                  decimals: 2
+                eur:
+                  issuer: ECB
+                  name: Euro
+                  symbol: EUR
+                  decimals: 2
+                "ethereum:0x":
+                  chain: ethereum
+                  address: "0x"
+                  name: Ether
+                  symbol: ETH
+                  decimals: 18
+                  image_url: https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid asset format. Expected format: 'chain:address' for tokens or currency code for fiats"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Missing or invalid API key"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "API key does not have permission to access asset information"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /assets/available-inputs:
+    get:
+      summary: Get available input assets for a given output asset
+      description: |
+        Get a list of assets that can be used as inputs for the given output assets and providers.
+      operationId: getInputAssets
+      tags:
+        - Assets
+      parameters:
+        - name: sandbox
+          in: query
+          required: false
+          description: Whether to use sandbox environment
+          schema:
+            type: boolean
+        - name: inputs[]
+          in: query
+          required: false
+          description: Filter by specific input assets
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Asset"
+        - name: outputs[]
+          in: query
+          required: false
+          description: Output assets to find inputs for
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Asset"
+        - name: onramps[]
+          in: query
+          required: false
+          description: Filter by specific onramp providers
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: offramps[]
+          in: query
+          required: false
+          description: Filter by specific offramp providers
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: Available input assets grouped by output
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    fiats:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/Fiat"
+                    tokens:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/Token"
+                  required:
+                    - fiats
+                    - tokens
+              example:
+                "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48":
+                  fiats:
+                    - usd
+                  tokens: []
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid provider specified. Provider 'invalid_provider' is not supported"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Authentication required. Please provide a valid API key."
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Access denied. Your API key does not have permission to query available assets."
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /assets/available-outputs:
+    get:
+      summary: Get available output assets for a given input asset
+      description: |
+        Get a list of assets that can be received as outputs for the given input assets and providers.
+      operationId: getOutputAssets
+      tags:
+        - Assets
+      parameters:
+        - name: sandbox
+          in: query
+          required: false
+          description: Whether to use sandbox environment
+          schema:
+            type: boolean
+        - name: inputs[]
+          in: query
+          required: false
+          description: Input assets to find outputs for
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Asset"
+        - name: outputs[]
+          in: query
+          required: false
+          description: Filter by specific output assets
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Asset"
+        - name: onramps[]
+          in: query
+          required: false
+          description: Filter by specific onramp providers
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: offramps[]
+          in: query
+          required: false
+          description: Filter by specific offramp providers
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: Available output assets grouped by input
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    fiats:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/Fiat"
+                    tokens:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/Token"
+                  required:
+                    - fiats
+                    - tokens
+              example:
+                "usd":
+                  fiats: []
+                  tokens:
+                    - "arbitrum:0x"
+                    - "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid input asset format. Asset 'invalid-format' does not match expected pattern."
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid or expired API key"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Your account does not have access to this endpoint"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /payments:
+    get:
+      summary: Get payment status
+      description: |
+        Get the current status of a payment, including progress through onramp/swap/offramp stages.
+      operationId: getPaymentStatus
+      tags:
+        - Payments
+      parameters:
+        - name: payment_id
+          in: query
+          required: true
+          description: Payment identifier to check
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Payment status retrieved successfully!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentStatus"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Missing required parameter: payment_id"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid API key"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "You do not have permission to view this payment"
+        "404":
+          description: Payment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Payment with payment_id 'pay_abc123' not found"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /payments/history:
+    get:
+      summary: Get payment history
+      description: |
+        Retrieve a paginated list of payment statuses filtered by owner.
+        Returns an array of payment status objects and a pagination key for fetching the next page.
+      operationId: getPaymentHistory
+      tags:
+        - Payments
+      parameters:
+        - name: owner_address
+          in: query
+          required: true
+          description: Owner address to filter payments by
+          schema:
+            type: string
+        - name: pagination_key
+          in: query
+          required: false
+          description: Pagination key from previous response to fetch next page
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of results to return
+          schema:
+            type: number
+        - name: category
+          in: query
+          required: false
+          description: Filter payments by category
+          schema:
+            type: string
+            enum: [ALL, NEW_OR_FUNDED]
+            default: NEW_OR_FUNDED
+      responses:
+        "200":
+          description: Payment history retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - payment_statuses
+                properties:
+                  payment_statuses:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PaymentStatus"
+                    description: Array of payment status objects
+                  next_pagination_key:
+                    type: string
+                    description: Pagination key to fetch the next page of results
+                    example: "42ff9b02-037f-4a90-87fb-a4d2ca128565_2025-11-12T22:08:52.517Z"
+              example:
+                payment_statuses:
+                  - payment_id: "<string>"
+                    status: "COMPLETE"
+                    funded: true
+                    created_at: "2025-11-12T20:15:30.000Z"
+                    updated_at: "2025-11-12T20:25:45.000Z"
+                    initiate_fund_by: "2025-11-12T21:15:30.000Z"
+                    completed_at: "2025-11-12T20:25:45.000Z"
+                    quoted:
+                      output_amount:
+                        asset: "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                        amount: "100.00"
+                      fees:
+                        total_fees: "3.50"
+                        conversion_fees: "2.00"
+                        network_fees: "1.00"
+                        business_fees: "0.50"
+                        currency_symbol: "USD"
+                      onramp: "stripe"
+                      onramp_method: "credit_card"
+                      route:
+                        - type: "ONRAMP"
+                          net_effect:
+                            consume:
+                              - account: "USER"
+                                resource:
+                                  asset: "usd"
+                                  property: "BALANCE"
+                                amount:
+                                  amount: "103.50"
+                            produce:
+                              - account: "PROCESSING_ADDRESS"
+                                resource:
+                                  asset: "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                                  property: "BALANCE"
+                                amount:
+                                  amount: "100.00"
+                          pieces_info:
+                            - type: "onramp"
+                          step_index: 0
+                    fulfilled:
+                      output_amount:
+                        asset: "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                        amount: "100.00"
+                      fees:
+                        total_fees: "3.50"
+                        conversion_fees: "2.00"
+                        network_fees: "1.00"
+                        business_fees: "0.50"
+                        currency_symbol: "USD"
+                      onramp: "stripe"
+                      onramp_method: "credit_card"
+                      route:
+                        - status: "COMPLETE"
+                          type: "ONRAMP"
+                          net_effect:
+                            consume:
+                              - account: "USER"
+                                resource:
+                                  asset: "usd"
+                                  property: "BALANCE"
+                                amount:
+                                  amount: "103.50"
+                            produce:
+                              - account: "PROCESSING_ADDRESS"
+                                resource:
+                                  asset: "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                                  property: "BALANCE"
+                                amount:
+                                  amount: "100.00"
+                          pieces_info:
+                            - type: "onramp"
+                          step_index: 0
+                          transaction_hash: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+                    current_prices:
+                      "USD": "1.00"
+                      "ethereum:0x": "4200.00"
+                      "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "1.00"
+                    price_currency: "USD"
+                    processing_addresses:
+                      - chain: "ethereum"
+                        address: "0xaddress..."
+                    owner_address: "0xowner..."
+                    destination_address: "0xdest..."
+                next_pagination_key: "42ff9b02-037f-4a90-87fb-a4d2ca128565_2025-11-12T22:08:52.517Z"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Missing required parameter: owner_address"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid API key"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "You do not have permission to access payment history for this address"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /payments/methods:
+    get:
+      summary: Get available payment methods
+      description: |
+        Get available payment methods for a specific input/output asset pair, grouped by provider.
+        This endpoint returns the supported payment methods (ACH, credit card, etc.) for each provider
+        that supports the requested asset conversion.
+      operationId: getPaymentMethods
+      tags:
+        - Payments
+      parameters:
+        - name: input
+          in: query
+          required: true
+          description: Input fiat asset type (e.g., "usd", "eur")
+          schema:
+            type: string
+          example: usd
+        - name: output
+          in: query
+          required: true
+          description: Output asset - can be a fiat or token (e.g., "usd", "base:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913")
+          schema:
+            type: string
+          example: base:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+        - name: customer_ip_address
+          in: query
+          required: false
+          description: Customer IP address for geolocation-based filtering
+          schema:
+            type: string
+          example: 192.168.1.1
+      responses:
+        "200":
+          description: Available payment methods by provider
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  providers:
+                    type: object
+                    description: Payment methods grouped by provider name
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                        enum: [ACH, APPLE_PAY, CREDIT_CARD, DEBIT_CARD, GOOGLE_PAY, PAYPAL, VENMO, FIAT_BALANCE]
+              example:
+                providers:
+                  stripe:
+                    - ACH
+                    - APPLE_PAY
+                    - CREDIT_CARD
+                    - DEBIT_CARD
+                  moonpay:
+                    - APPLE_PAY
+                    - CREDIT_CARD
+                    - DEBIT_CARD
+                    - GOOGLE_PAY
+                    - PAYPAL
+                    - VENMO
+                  coinbase:
+                    - ACH
+                    - DEBIT_CARD
+                    - FIAT_BALANCE
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Missing required parameter: input"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid API key"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "You do not have permission to access payment methods"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /payments/quotes:
+    post:
+      summary: Get payment quotes
+      description: |
+        Request quotes for payments, supporting both fixed input and fixed output scenarios.
+        Returns multiple quote options with pricing, fees, and routing information.
+
+        This endpoint can also be used to requote from an existing payment by providing a payment_id.
+        When requoting, input amounts are automatically derived from
+        the payment's current state, but you can optionally override the output asset.
+      operationId: getPaymentQuotes
+      tags:
+        - Payments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuoteRequest"
+      responses:
+        "200":
+          description: Successful quote response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuoteResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: amount
+                    given:
+                      amount: "5"
+                    limits:
+                      min:
+                        amount: "10"
+                      max:
+                        amount: "10000"
+                    source: "moonpay"
+                    message: "Amount too low. Minimum amount is $10 USD"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "API key missing or invalid"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Your API key does not have permission to create quotes"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /payments/confirm:
+    post:
+      summary: Confirm a payment
+      description: |
+        Confirm a previously quoted payment and receive deposit instructions.
+        Returns information on how to fund the payment (widget URL, contract address, etc.).
+      operationId: confirmPayment
+      tags:
+        - Payments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - payment_id
+                - state_token
+                - owner_address
+                - destination_address
+              properties:
+                payment_id:
+                  type: string
+                  description: ID of the payment from the quote to confirm
+                state_token:
+                  type: string
+                  format: byte
+                  description: State token from the quote response
+                owner_address:
+                  type: string
+                  description: Owner address for the payment. This is the address that the payment will be sent from.
+                destination_address:
+                  type: string
+                  description: Destination address for the payment. This is the address that the payment will be sent to.
+                client_redirect_url:
+                  type: string
+                  format: uri
+                  description: Optional URL to redirect users to after an onramp flow completes.
+      responses:
+        "200":
+          description: Payment confirmed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentStatus"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid state_token. The quote may have expired."
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Authentication failed. Invalid API key."
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Access denied. This payment belongs to a different account."
+        "404":
+          description: Payment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Payment 'pay_xyz789' not found or has expired"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /payments/withdraw:
+    post:
+      summary: Return funds to owner or retry payment
+      description: |
+        Request a withdrawal to return funds back to the owner or to a requoted processing address.
+        This endpoint should be used when a payment cannot be completed and funds need to be returned.
+      operationId: withdrawPayment
+      tags:
+        - Payments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WithdrawPaymentAuthorizationRequest"
+      responses:
+        "200":
+          description: Withdrawal initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WithdrawPaymentAuthorizationResponse"
+        "404":
+          description: Payment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Payment 'pay_def456' not found"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Missing field 'token_amounts'."
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid or missing API key"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "You are not authorized to withdraw funds from this payment"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /payments/withdraw/confirm:
+    post:
+      summary: Confirm withdrawal request
+      description: |
+        Submit and execute the signed withdrawal request to return funds back to the owner or to a requoted processing address.
+      operationId: withdrawPaymentConfirm
+      tags:
+        - Payments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WithdrawPaymentRequest"
+      responses:
+        "200":
+          description: Withdrawal executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WithdrawPaymentResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid request body"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid API key"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "You are not authorized to withdraw funds from this payment"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+  /payments/balances:
+    post:
+      summary: Get wallet balances
+      description: |
+        Retrieve balances for the wallets associated with a payment. You can optionally supply additional
+        wallet and token pairs to check alongside the payment's primary wallet.
+      operationId: getPaymentBalances
+      tags:
+        - Payments
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestForPaymentBalances"
+            example:
+              payment_id: pay_abc123
+              custom_queries:
+                - address: "0xabc1234567890abcdef1234567890abcdef1234"
+                  token: "ethereum:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+                - address: "0xdef1234567890abcdef1234567890abcdef5678"
+                  token: "arbitrum:0xfffFFFFFfFFfffFFfFffffFffFFfFFfFFfFFf"
+      responses:
+        "200":
+          description: Wallet balances retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentBalancesResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid wallet address format"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Invalid API key"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "You do not have permission to query payment balances"
+        "404":
+          description: Payment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - kind: other
+                    message: "Payment 'pay_abc123' not found"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
+              example:
+                errors:
+                  - message: "A server error occurred. Please try again later."
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API_KEY
+
+  schemas:
+    # Core Data Types
+    ChainInfo:
+      type: object
+      required:
+        - chain_id
+        - network
+        - native_currency
+        - is_testnet
+      properties:
+        chain_id:
+          type: number
+          description: Chain ID for the network
+          example: 1
+        network:
+          type: string
+          description: Network name
+          example: ethereum
+        native_currency:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Ether
+            symbol:
+              type: string
+              example: ETH
+            decimals:
+              type: number
+              example: 18
+          required:
+            - name
+            - symbol
+            - decimals
+        is_testnet:
+          type: boolean
+          description: Whether this is a testnet
+          example: false
+        explorer:
+          type: string
+          format: uri
+          description: Block explorer URL
+          example: https://etherscan.io
+        image:
+          type: string
+          format: uri
+          description: Chain logo URL
+        rpc:
+          type: string
+          format: uri
+          description: RPC endpoint URL
+
+    AssetDetails:
+      oneOf:
+        - $ref: "#/components/schemas/FiatDetails"
+        - $ref: "#/components/schemas/TokenDetails"
+
+    FiatDetails:
+      type: object
+      required:
+        - issuer
+        - name
+        - symbol
+        - decimals
+      properties:
+        issuer:
+          type: string
+          description: Issuer of the fiat
+          example: USA
+        name:
+          type: string
+          description: Full currency name
+          example: US Dollar
+        symbol:
+          type: string
+          description: Currency symbol
+          example: USD
+        decimals:
+          type: number
+          minimum: 0
+          maximum: 18
+          description: Number of decimal places
+          example: 2
+        alias:
+          type: string
+          description: Alternative symbol or alias
+        image_url:
+          type: string
+          format: uri
+          description: Currency icon URL
+
+    TokenDetails:
+      type: object
+      required:
+        - chain
+        - address
+        - name
+        - symbol
+        - decimals
+      properties:
+        chain:
+          type: string
+          description: Blockchain network
+          example: ethereum
+        address:
+          type: string
+          description: Token contract address
+          example: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+        name:
+          type: string
+          description: Token name
+          example: USD Coin
+        symbol:
+          type: string
+          description: Token symbol
+          example: USDC
+        decimals:
+          type: number
+          minimum: 0
+          maximum: 18
+          description: Token decimals
+          example: 6
+        alias:
+          type: string
+          description: Alternative symbol or alias
+        image_url:
+          type: string
+          format: uri
+          description: Token icon URL
+        is_native:
+          type: boolean
+          description: Whether this is the native token
+          example: false
+        wrapper:
+          type: string
+          description: Wrapper token symbol
+
+    Asset:
+      type: string
+      description: Identifier in the token format ("chain:address") or fiat currency code ("USD")
+      example: ethereum:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+
+    Fiat:
+      type: string
+      description: Fiat currency code
+      example: USD
+
+    Token:
+      type: string
+      description: Token identifier in the format "chain:address"
+      pattern: "^[a-z]+:0x[a-fA-F0-9]+$"
+      example: "ethereum:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+
+    AssetAmount:
+      type: object
+      required:
+        - asset
+        - amount
+      properties:
+        asset:
+          $ref: "#/components/schemas/Asset"
+        amount:
+          type: string
+          description: Amount as a string to preserve precision
+          example: "1"
+
+    TokenAmount:
+      type: object
+      required:
+        - token
+        - amount
+      properties:
+        token:
+          $ref: "#/components/schemas/Token"
+        amount:
+          type: string
+          description: Amount of the token to withdraw, represented as a string to preserve precision
+
+    # Quote Request Types
+    QuoteRequest:
+      type: object
+      required:
+        - request
+        - price_currency
+      properties:
+        request:
+          $ref: "#/components/schemas/FixedInputQuoteRequest"
+        price_currency:
+          type: string
+          description: Currency that all prices are denominated in
+          example: USD
+        onramps:
+          type: array
+          items:
+            type: string
+          description: Filter by specific onramp providers
+          example: ["moonpay", "coinbase"]
+        onramp_methods:
+          type: array
+          items:
+            type: string
+          description: Filter by onramp payment methods
+          example: ["credit_card", "ach", "apple_pay"]
+        customer_ip_address:
+          type: string
+          description: IP address of the customer
+        customer_id:
+          type: string
+          description: Customer ID for tracking
+        customer_geolocation:
+          type: object
+          description: Geolocation information
+          required:
+            - alpha3_country_code
+          properties:
+            alpha3_country_code:
+              type: string
+              description: Three-letter ISO country code
+            state_code:
+              type: string
+              description: State or region code when applicable. Use an empty string when not applicable.
+        parent_payment_id:
+          type: string
+          description: Optional parent payment identifier used when creating a quote from an existing payment.
+
+    FixedInputQuoteRequest:
+      type: object
+      required:
+        - kind
+        - fixed_input_amount
+        - output_asset
+      properties:
+        kind:
+          type: string
+          enum: [FIXED_INPUT]
+        fixed_input_amount:
+          $ref: "#/components/schemas/AssetAmount"
+        output_asset:
+          $ref: "#/components/schemas/Asset"
+
+    # Quote Response Types
+    QuoteResponse:
+      type: object
+      required:
+        - quote_request
+        - quotes
+        - current_prices
+        - price_currency
+        - state_token
+        - quoted_at
+        - accept_by
+        - failures
+      properties:
+        quote_request:
+          $ref: "#/components/schemas/QuoteRequest"
+        quotes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Quote"
+        current_prices:
+          type: object
+          additionalProperties:
+            type: string
+          description: Mapping of asset symbols to their unit prices
+          example:
+            "USD": "1.00"
+            "ethereum:0x": "4200"
+            "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "1.00"
+        price_currency:
+          type: string
+          description: Currency that all prices are denominated in
+          example: USD
+        state_token:
+          type: string
+          description: |
+            Signed state token containing routing and payment flow information.
+            This value must be passed unmodified in subsequent API calls.
+            Do not attempt to parse or modify this data as it is cryptographically signed.
+        quoted_at:
+          type: string
+          format: date-time
+          description: |
+            Timestamp of when the quote was created, in UTC ISO 8601 format
+        accept_by:
+          type: string
+          format: date-time
+          description: |
+            Timestamp of when the quote will expire, in UTC ISO 8601 format
+        failures:
+          type: array
+          description: Providers that failed to return a quote.
+          items:
+            $ref: "#/components/schemas/FailureContent"
+
+    QuotedEntry:
+      type: object
+      required:
+        - output_amount
+        - fees
+        - route
+      properties:
+        output_amount:
+          $ref: "#/components/schemas/AssetAmount"
+        fees:
+          $ref: "#/components/schemas/Fees"
+        onramp:
+          type: string
+          description: Onramp provider name
+        onramp_method:
+          type: string
+          description: Payment method
+          example: credit_card
+        route:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuotedRouteItem"
+          description: Quoted workflow steps and their effects
+
+    Quote:
+      allOf:
+        - $ref: "#/components/schemas/QuotedEntry"
+        - type: object
+          properties:
+            payment_id:
+              type: string
+              description: Unique payment identifier
+      required:
+        - payment_id
+
+    FailureContent:
+      type: object
+      required:
+        - service_ids
+        - latency_seconds
+      properties:
+        service_ids:
+          type: array
+          description: Providers that failed to return quotes.
+          items:
+            type: string
+        latency_seconds:
+          type: number
+          format: float
+          description: Time taken for the failed quote attempt.
+        issues:
+          type: array
+          description: Optional list of structured issues describing the failure.
+          items:
+            $ref: "#/components/schemas/Issue"
+
+    FulfilledEntry:
+      type: object
+      required:
+        - route
+      properties:
+        output_amount:
+          $ref: "#/components/schemas/AssetAmount"
+        fees:
+          $ref: "#/components/schemas/Fees"
+        onramp:
+          type: string
+          description: Onramp provider name
+        onramp_method:
+          type: string
+          description: Payment method
+          example: credit_card
+        route:
+          type: array
+          items:
+            $ref: "#/components/schemas/FulfilledRouteItem"
+          description: In-progress workflow steps, statuses, and their effects
+
+    # Fees
+    Fees:
+      type: object
+      required:
+        - total_fees
+        - conversion_fees
+        - network_fees
+        - business_fees
+        - currency_symbol
+      properties:
+        total_fees:
+          type: string
+          description: Total fees amount
+        conversion_fees:
+          type: string
+          description: Ramps + bridge + DEX fees
+        network_fees:
+          type: string
+          description: Blockchain gas fees
+        business_fees:
+          type: string
+          description: Developer integration fees
+        currency_symbol:
+          type: string
+          description: Currency symbol that the fees are denominated in (e.g., "USD", "USDC")
+          example: "USD"
+
+    # Confirm Payment Response
+    ConfirmPaymentResponse:
+      type: object
+      required:
+        - quote_request
+        - quote
+      properties:
+        quote:
+          $ref: "#/components/schemas/Quote"
+        current_prices:
+          type: object
+          additionalProperties:
+            type: string
+          description: Mapping of asset symbols to their unit prices
+          example:
+            "USD": "1.00"
+            "ethereum:0x": "4200"
+            "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "1.00"
+        price_currency:
+          type: string
+          description: Currency that all prices are denominated in
+          example: USD
+
+    Instruction:
+      oneOf:
+        - $ref: "#/components/schemas/OnrampWidgetInstruction"
+        - $ref: "#/components/schemas/SwapInstruction"
+        - $ref: "#/components/schemas/ErrorWithdrawOrRolloverInstruction"
+      discriminator:
+        propertyName: instruction_type
+
+    OnrampWidgetInstruction:
+      type: object
+      required:
+        - instruction_type
+        - payment_id
+        - onramp_url
+        - deposit_info
+        - onramp_currency
+      properties:
+        instruction_type:
+          type: string
+          enum: [ONRAMP_WIDGET]
+        onramp_url:
+          type: string
+          description: URL to query to get onramp details and redirect to onramp
+          example: "https://app.halliday.xyz/funding?payment_id=pay123&..."
+        payment_id:
+          type: string
+          description: ID of the payment to onramp
+        deposit_info:
+          type: object
+          required:
+            - deposit_token
+            - deposit_amount
+            - deposit_address
+            - deposit_chain
+          properties:
+            deposit_token:
+              $ref: "#/components/schemas/Token"
+              description: Token required for deposit
+            deposit_amount:
+              type: string
+              description: Amount of the token required for deposit
+              example: "100.50"
+            deposit_address:
+              type: string
+              description: Contract address for payment
+            deposit_chain:
+              type: string
+              description: Blockchain for payment contract
+              example: ethereum
+        onramp_currency:
+          $ref: "#/components/schemas/Fiat"
+
+    SwapInstruction:
+      type: object
+      required:
+        - instruction_type
+        - deposit_info
+      properties:
+        instruction_type:
+          type: string
+          enum: [SWAP]
+        deposit_info:
+          type: object
+          required:
+            - deposit_token
+            - deposit_amount
+            - deposit_address
+            - deposit_chain
+          properties:
+            deposit_token:
+              $ref: "#/components/schemas/Token"
+              description: Token required for deposit
+            deposit_amount:
+              type: string
+              description: Amount of the token required for deposit
+              example: "100.50"
+            deposit_address:
+              type: string
+              description: Contract address for payment
+            deposit_chain:
+              type: string
+              description: Blockchain for payment contract
+              example: ethereum
+
+    ErrorWithdrawOrRolloverInstruction:
+      type: object
+      required:
+        - instruction_type
+        - error_message
+        - asset_amounts
+      properties:
+        instruction_type:
+          type: string
+          enum: [ERROR_WITHDRAW_OR_ROLLOVER]
+          description: Instruction type for error handling with withdrawal or rollover option
+        error_message:
+          type: string
+          description: Brief explanation of the error.
+        asset_amounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/AssetAmount"
+        parent_payment_id:
+          type: string
+          description: ID of the parent payment where the funds are being rolled over from.
+
+      description: |
+        When an error occurs during payment processing, this instruction provides:
+        1. Information about the error
+        2. The assets and amounts to withdraw or rollover
+        3. For rollovers, the parent payment ID of the payment that encountered the error
+        4. To retry the payment, call /payments/quotes with the payment_id to get new quote options.
+
+    BalanceQuery:
+      type: object
+      required:
+        - address
+        - token
+      properties:
+        address:
+          type: string
+          description: One-time wallet address associated with the payment.
+          example: "0xabc1234567890abcdef1234567890abcdef1234"
+        token:
+          $ref: "#/components/schemas/Token"
+          description: Token identifier to query in the wallet.
+          example: "ethereum:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+
+    RequestForBalances:
+      type: object
+      properties:
+        workflow_id:
+          type: string
+          description: Payment identifier whose one-time wallet balances should be returned.
+          example: pay_abc123
+        custom_queries:
+          type: array
+          description: Additional wallet and token combinations to query.
+          items:
+            $ref: "#/components/schemas/BalanceQuery"
+
+    BalanceResult:
+      type: object
+      required:
+        - address
+        - token
+        - value
+      properties:
+        address:
+          type: string
+          description: One-time wallet address that was queried.
+          example: "0xabc1234567890abcdef1234567890abcdef1234"
+        token:
+          $ref: "#/components/schemas/Token"
+          description: Token identifier that was queried.
+          example: "ethereum:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+        value:
+          oneOf:
+            - type: object
+              required:
+                - kind
+                - amount
+              properties:
+                kind:
+                  type: string
+                  enum: [amount]
+                amount:
+                  $ref: "#/components/schemas/Amount"
+            - type: object
+              required:
+                - kind
+              properties:
+                kind:
+                  type: string
+                  enum: [error]
+          discriminator:
+            propertyName: kind
+
+    BalancesResponse:
+      type: object
+      required:
+        - balance_results
+      properties:
+        balance_results:
+          type: array
+          items:
+            $ref: "#/components/schemas/BalanceResult"
+
+    RequestForPaymentBalances:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: Payment identifier whose associated wallets should be queried.
+          example: pay_abc123
+        custom_queries:
+          type: array
+          description: Additional wallet and token combinations to query.
+          items:
+            type: object
+            required:
+              - address
+              - token
+            properties:
+              address:
+                type: string
+                description: Wallet address to query.
+                example: "0xabc1234567890abcdef1234567890abcdef1234"
+              token:
+                $ref: "#/components/schemas/Token"
+                description: Token identifier to query at the wallet address.
+                example: "ethereum:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+
+    PaymentBalancesResult:
+      type: object
+      required:
+        - address
+        - token
+        - value
+      properties:
+        address:
+          type: string
+          description: Wallet address that was queried.
+          example: "0xabc1234567890abcdef1234567890abcdef1234"
+        token:
+          $ref: "#/components/schemas/Token"
+          description: Token identifier that was queried.
+          example: "ethereum:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+        value:
+          oneOf:
+            - type: object
+              required:
+                - kind
+                - amount
+              properties:
+                kind:
+                  type: string
+                  enum: [amount]
+                amount:
+                  $ref: "#/components/schemas/Amount"
+            - type: object
+              required:
+                - kind
+              properties:
+                kind:
+                  type: string
+                  enum: [error]
+          discriminator:
+            propertyName: kind
+
+    PaymentBalancesResponse:
+      type: object
+      required:
+        - balance_results
+      properties:
+        balance_results:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentBalancesResult"
+
+    # Withdrawal
+    WithdrawPaymentAuthorizationRequest:
+      type: object
+      required:
+        - payment_id
+        - token_amounts
+        - recipient_address
+      properties:
+        payment_id:
+          type: string
+          description: ID of the payment to withdraw
+        token_amounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/TokenAmount"
+          description: List of token amounts to withdraw back to the owner or to a requoted processing address
+        recipient_address:
+          type: string
+          description: On-chain address to withdraw the funds to. The assets will go to the address on the same chain the assets are on.
+
+    WithdrawPaymentAuthorizationResponse:
+      type: object
+      required:
+        - payment_id
+        - withdraw_authorization
+      properties:
+        payment_id:
+          type: string
+          description: ID of the withdrawal transaction
+        withdraw_authorization:
+          type: string
+          description: An EIP-712 JSON string that the owner signs to perform a withdrawal on their one-time payment wallet
+
+    WithdrawPaymentRequest:
+      type: object
+      required:
+        - payment_id
+        - token_amounts
+        - recipient_address
+        - owner_signature
+      properties:
+        payment_id:
+          type: string
+          description: ID of the payment to withdraw
+        token_amounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/TokenAmount"
+          description: List of token amounts to withdraw back to the owner or to a requoted processing address
+        recipient_address:
+          type: string
+          description: On-chain address to withdraw the funds to, on the same chain as the assets to withdraw.
+        owner_signature:
+          type: string
+          description: The payment owner's signature on the withdrawal_authorization, authorizing the withdrawal
+
+    WithdrawPaymentResponse:
+      type: object
+      required:
+        - payment_id
+        - transaction_hash
+      properties:
+        payment_id:
+          type: string
+          description: ID of the payment to withdraw
+        transaction_hash:
+          type: string
+          description: Blockchain transaction hash for the withdrawal
+
+
+    # Payment Status
+    PaymentStatus:
+      type: object
+      required:
+        - payment_id
+        - status
+        - funded
+        - created_at
+        - updated_at
+        - initiate_fund_by
+        - quoted
+        - fulfilled
+        - current_prices
+        - price_currency
+        - processing_addresses
+        - owner_address
+        - destination_address
+      properties:
+        payment_id:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, COMPLETE, FAILED, EXPIRED, WITHDRAWN, TAINTED]
+        funded:
+          type: boolean
+          description: Whether the payment has been funded
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        initiate_fund_by:
+          type: string
+          format: date-time
+          description: Deadline for funding the payment.
+        completed_at:
+          type: string
+          format: date-time
+        quote_request:
+          $ref: "#/components/schemas/QuoteRequest"
+          description: Optional reference to the original quote request.
+        quoted:
+          $ref: "#/components/schemas/QuotedEntry"
+        fulfilled:
+          $ref: "#/components/schemas/FulfilledEntry"
+        current_prices:
+          type: object
+          additionalProperties:
+            type: string
+          description: Mapping of asset symbols to their unit prices
+          example:
+            "USD": "1.00"
+            "ethereum:0x": "4200"
+            "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "1.00"
+        price_currency:
+          type: string
+          description: Currency that all prices are denominated in
+          example: USD
+        customer_id:
+          type: string
+          description: ID of the customer who created the payment
+        processing_addresses:
+          type: array
+          items:
+            type: object
+            required:
+              - chain
+              - address
+            properties:
+              chain:
+                type: string
+                description: Blockchain network
+                example: ethereum
+              address:
+                type: string
+                description: Payment processing contract address
+        owner_address:
+          type: string
+          description: Address of the owner of the payment
+        destination_address:
+          type: string
+          description: Address of the destination of the payment
+        next_instruction:
+          $ref: "#/components/schemas/NextInstruction"
+          nullable: true
+
+    PaymentStatusRequest:
+      type: object
+      required:
+        - payment_id
+      properties:
+        payment_id:
+          type: string
+          description: Unique payment identifier to fetch status for.
+
+    NextInstruction:
+      description: Instruction payload that returns the funding pages if the payment requires funding.
+      oneOf:
+        - $ref: "#/components/schemas/OnrampOrTransferInInstruction"
+      discriminator:
+        propertyName: type
+        mapping:
+          ONRAMP: "#/components/schemas/OnrampOrTransferInInstruction"
+      example:
+        type: ONRAMP
+        payment_id: <string>
+        funding_page_url: https://app.halliday.xyz/funding/${payment_id}
+        deposit_info:
+          - deposit_token: base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913
+            deposit_amount: "4.8"
+            deposit_address: 0xaddress
+            deposit_chain: base
+
+    OnrampOrTransferInInstruction:
+      type: object
+      required:
+        - type
+        - payment_id
+        - funding_page_url
+        - deposit_info
+      properties:
+        type:
+          type: string
+          enum: [ONRAMP, TRANSFER_IN]
+          description: Discriminator for this instruction type.
+        payment_id:
+          type: string
+          description: The payment this instruction is associated with.
+        funding_page_url:
+          type: string
+          format: uri
+          description: URL where the user can complete funding for this payment.
+        deposit_info:
+          type: array
+          description: One or more deposit routes to fund the payment.
+          items:
+            $ref: "#/components/schemas/DepositInfo"
+
+    DepositInfo:
+      type: object
+      required:
+        - deposit_token
+        - deposit_amount
+        - deposit_address
+        - deposit_chain
+      properties:
+        deposit_token:
+          # Use your existing Asset schema (identifier like "chain:address" or fiat code).
+          $ref: "#/components/schemas/Asset"
+        deposit_amount:
+          type: string
+          description: Amount to deposit, as a decimal string.
+          example: "4.8"
+        deposit_address:
+          type: string
+          description: Address to which funds will be deposited.
+        deposit_chain:
+          type: string
+          description: Network on which the deposit will be made (e.g., base, ethereum).
+          example: base
+
+    # Error Responses
+    Issue:
+      oneOf:
+        - $ref: "#/components/schemas/AmountIssue"
+        - $ref: "#/components/schemas/AmountDownstreamIssue"
+        - $ref: "#/components/schemas/GeolocationIssue"
+        - $ref: "#/components/schemas/ProviderIssue"
+        - $ref: "#/components/schemas/PayinMethodIssue"
+        - $ref: "#/components/schemas/OtherIssue"
+        - $ref: "#/components/schemas/UnknownIssue"
+      discriminator:
+        propertyName: kind
+
+    AmountIssue:
+      type: object
+      required:
+        - kind
+        - given
+        - limits
+        - source
+        - message
+      properties:
+        kind:
+          type: string
+          enum: [amount]
+        given:
+          $ref: "#/components/schemas/Amount"
+        limits:
+          $ref: "#/components/schemas/Limits"
+        source:
+          type: string
+        message:
+          type: string
+
+    AmountDownstreamIssue:
+      type: object
+      required:
+        - kind
+        - given
+        - limits
+        - source
+        - message
+      properties:
+        kind:
+          type: string
+          enum: [amount-downstream]
+        given:
+          $ref: "#/components/schemas/Amount"
+        limits:
+          $ref: "#/components/schemas/Limits"
+        source:
+          type: string
+        message:
+          type: string
+
+    GeolocationIssue:
+      type: object
+      required:
+        - kind
+        - message
+      properties:
+        kind:
+          type: string
+          enum: [geolocation]
+        message:
+          type: string
+
+    ProviderIssue:
+      type: object
+      required:
+        - kind
+        - message
+      properties:
+        kind:
+          type: string
+          enum: [provider]
+        message:
+          type: string
+
+    PayinMethodIssue:
+      type: object
+      required:
+        - kind
+        - message
+      properties:
+        kind:
+          type: string
+          enum: [payin_method]
+        message:
+          type: string
+
+    OtherIssue:
+      type: object
+      required:
+        - kind
+        - message
+      properties:
+        kind:
+          type: string
+          enum: [other]
+        message:
+          type: string
+
+    UnknownIssue:
+      type: object
+      required:
+        - kind
+        - message
+      properties:
+        kind:
+          type: string
+          enum: [unknown]
+        message:
+          type: string
+
+    Amount:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          type: string
+
+    Limits:
+      type: object
+      properties:
+        min:
+          $ref: "#/components/schemas/Amount"
+        max:
+          $ref: "#/components/schemas/Amount"
+
+    ErrorResponse:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/Issue"
+      description: Error response for known errors
+
+    ServerErrorResponse:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+          minItems: 1
+          maxItems: 1
+      description: Error response for unkown server errors
+
+    # Workflow Details
+    QuotedRouteItem:
+      type: object
+      required:
+        - type
+        - net_effect
+        - pieces_info
+      properties:
+        type:
+          type: string
+          enum: [ONRAMP, ONCHAIN_STEP, USER_FUND]
+        net_effect:
+          $ref: "#/components/schemas/EffectAmount"
+        pieces_info:
+          type: array
+          items:
+            $ref: "#/components/schemas/PieceInfo"
+        step_index:
+          type: number
+
+    FulfilledRouteItem:
+      type: object
+      required:
+        - status
+        - type
+        - net_effect
+        - pieces_info
+      properties:
+        status:
+          type: string
+          enum: [PENDING, COMPLETE, UNREACHABLE, FAILED]
+        type:
+          type: string
+          enum: [ONRAMP, ONCHAIN_STEP, USER_FUND]
+        net_effect:
+          $ref: "#/components/schemas/EffectAmount"
+        pieces_info:
+          type: array
+          items:
+            $ref: "#/components/schemas/PieceInfo"
+        step_index:
+          type: number
+        transaction_hash:
+          type: string
+          description: Blockchain transaction hash for the step
+
+    PieceInfo:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [onramp, poll, bridge, transfer_out, rev_share, convert]
+
+    Effect:
+      type: object
+      required:
+        - consume
+        - produce
+      properties:
+        consume:
+          type: array
+          items:
+            $ref: "#/components/schemas/Change"
+        produce:
+          type: array
+          items:
+            $ref: "#/components/schemas/Change"
+
+    ChangeAmount:
+      type: object
+      required:
+        - account
+        - resource
+        - amount
+      properties:
+        account:
+          type: string
+          enum: [USER, DEST, HALLIDAY, PROCESSING_ADDRESS, REV_SHARE, BRIDGE]
+        resource:
+          $ref: "#/components/schemas/Resource"
+        amount:
+          $ref: "#/components/schemas/Amount"
+
+    EffectAmount:
+      type: object
+      required:
+        - consume
+        - produce
+      properties:
+        consume:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChangeAmount"
+        produce:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChangeAmount"
+
+    Change:
+      type: object
+      required:
+        - account
+        - resource
+        - amount
+      properties:
+        account:
+          type: string
+          enum: [USER, DEST, HALLIDAY, PROCESSING_ADDRESS, REV_SHARE, BRIDGE]
+        resource:
+          $ref: "#/components/schemas/Resource"
+        amount:
+          type: string
+
+    Resource:
+      type: object
+      required:
+        - asset
+        - property
+      properties:
+        asset:
+          type: string
+        property:
+          type: string
+          enum: [APPROVAL, BALANCE]
+
+tags:
+  - name: Chains
+    description: Blockchain network information and configuration
+  - name: Assets
+    description: Asset information, discovery, and supported asset pairs
+  - name: Payments
+    description: Core payment operations including quotes, confirmation, and status tracking
+
+
+```
+
+
+# One-Time Wallet (OTW) or Deposit Address
+Source: https://docs.halliday.xyz/pages/otw
+
+
+
+Each unique payment begins with a new onchain address called a **one-time wallet** (OTW) also known as the **deposit address**. The OTW is always different from the payment destination address. The Payments SDK widget UI refers to the OTW as a "one-time wallet" in the delivery details section.
+
+Each onramp or swap will create a new OTW that is controlled only by the **owner wallet address** specified in the API call parameters. In the event a payment gets stuck or is funded after expiration, the owner address has the ability to sign transactions to recover the assets from the OTW or retry the payment.
+
+A payment can be initiated by simply funding the OTW from any address. For fiat onramps specifically, the onramp providers will be instructed to send tokens to the deposit address after the user authorizes their fiat payment.
+
+Using the OTW to encapsulate each unique payment enables the workflow protocol to orchestrate payments in a compliant and non-custodial manner.
+
+
+# Payment Flows
+Source: https://docs.halliday.xyz/pages/payment-flows
+
+
+
+The Halliday API orchestrates complex payment flows across multiple providers and chains. This page illustrates how funds move through the system for different payment scenarios.
+
+For rapid integrations, a customizable and feature-complete web user interface is available by [implementing the widget](/pages/payments-hello-world) using the Halliday Payments SDK.
+
+For integrations that require deeper granularity see the [Halliday API](/pages/api-quickstart).
+
+## Onramp to any token on any chain
+
+Implementing onramping from fiat to a crypto asset is a challenging endeavor for the developer. Halliday makes this easy by integrating global on and offramp providers and utilizing a noncustodial cross-chain workflow protocol. Workflows can include onramping, offramping, swapping, and even custom actions.
+
+The Payments SDK widget UI features a ramp optimized for conversion with a simple drop-in integration. The following is the order of operations in an onramp workflow using the Halliday API.
+
+* Confirm that there is a valid route for the input and output tokens using the API.
+* Request up-to-date quotes by passing the set of providers to use (Moonpay, Stripe, Coinbase, et al) as well as the input fiat currency and amount to the API.
+* Select a quote returned from the API and accept it by passing the payment ID, state token, owner address and destination address to the API.
+* The onramp provider checkout URL will be in the response. The user will choose their method of payment, provide payment info, and in their first purchase with the provider, input KYC information. After checkout, the onramp provider will fund the payment with tokens onchain automatically.
+* Poll the status endpoint using the payment ID to monitor the progress of the onramp until it completes onchain.
+
+**See the developer [API quickstart guide](/pages/api-quickstart) to get started building a Halliday payments integration for fiat onramps with payment providers and centralized exchanges.**
+
+## Onchain and cross-chain token swaps
+
+Single and cross-chain swaps are core features of Halliday Payments, enabled by the workflow protocol.
+
+The following is the order of operations of a token swap using the API.
+
+* Confirm that there is a valid route for the input and output tokens using the API.
+* Request up-to-date quotes by passing the input and output tokens as well as the input token amount to the API.
+* Select a quote returned from the API and accept it by passing the payment ID, state token, owner address and destination address to the API.
+* Using the deposit details in the next instruction, transfer input tokens from the funder to the payment deposit address.
+* Poll the status endpoint using the payment ID to monitor the progress of the swap until it completes onchain.
+
+**See the developer [API quickstart guide](/pages/api-quickstart) to get started building a Halliday payments integration for swaps.**
+
+## Token Recovery and Withdrawal Flows
+
+In some instances, an onramp or swap can fail, in which case the developer can provide options for their user to proceed. An onramp or swap can fail if the output asset has a sudden price change, there is no longer sufficient liquidity in a DEX pool, or an unforeseen onchain state change occurs.
+
+Developers can remedy the situation with a recovery or a withdrawal. A **recovery** resubmits the onramp or swap with a new quote. A **withdrawal** withdraws the input asset from the OTW back to the user's wallet address. **For an in-depth guide on payment retry and withdrawal flows, see the [API Recoveries](/pages/api-error-recovery-withdrawal) page.**
+
+The Halliday Payments widget automatically monitors and provides recovery options for the user in real-time. Developers initializing their workflows with the Halliday API will need to handle these flows using relevant endpoints.
+
+
+# Payments Hello World
+Source: https://docs.halliday.xyz/pages/payments-hello-world
+
+
+
+export const OnrampWithWalletConnector = () => {
+  return <div>
+            <style>{`
+              .onrampButtonContainer {
+                  display: block;
+                  margin: auto;
+                  width: max-content;
+              }
+              .onrampButton {
+                  border: none;
+                  opacity: 1;
+                  background-color: rgb(var(--primary));
+                  color: white;
+                  font-weight: 500;
+                  width: auto;
+                  height: 50px;
+                  border-radius: 8px;
+                  display: inline-flex;
+                  align-items: center;
+                  padding: 10px 18px;
+                  transition: all 0.2s ease;
+              }
+              .onrampButton:hover {
+                  opacity: 0.9;
+              }
+              .onrampButton::before {
+                  content: '';
+                  width: 20px;
+                  height: 20px;
+                  margin-right: 10px;
+                  background-color: currentColor;
+                  mask: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyOS4wNjggMjIuNDA4IiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImJhY2tncm91bmQ6IHRyYW5zcGFyZW50OyI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCwgLTYuNTc1KSI+PHBhdGggZD0iTSA2LjY4NiA2LjU3NSBDIDcuMjEgNi41NzUgNy42OTYgNi44NTUgNy45NiA3LjMxMyBMIDkuNjUyIDEwLjIzOCBMIDQuNTEyIDEwLjIzOCBDIDQuMDk4IDEwLjI0MiAzLjc2NSAxMC41OCAzLjc2NyAxMC45OTQgTCAzLjc2NyAyNC41NjUgQyAzLjc2NyAyNC45ODIgNC4xMDEgMjUuMzIxIDQuNTEzIDI1LjMyMSBMIDkuNjUzIDI1LjMyMSBMIDExLjQzOCAyMi4yMzcgQyAxMS42NDQgMjEuODgzIDEyLjAyIDIxLjY2MyAxMi40MjggMjEuNjYzIEwgMTYuNjM4IDIxLjY2MyBDIDE3LjA0NyAyMS42NjMgMTcuNDIxIDIxLjg4MiAxNy42MjggMjIuMjM3IEwgMTkuNDEyIDI1LjMxOSBMIDkuNjU3IDI1LjMxOSBMIDcuOTYzIDI4LjI0NSBDIDcuNjk3IDI4LjcwMyA3LjIxMyAyOC45ODMgNi42ODkgMjguOTgzIEwgMy41NzQgMjguOTgzIEMgMS42IDI4Ljk4MyAwIDI3LjM2MyAwIDI1LjM2NiBMIDAgMTAuMTkgQyAwIDguMTk0IDEuNiA2LjU3NSAzLjU3MSA2LjU3NSBaIiBmaWxsPSJyZ2IoMCwwLDApIi8+PHBhdGggZD0iTSAyNS40OTQgNi41NzUgQyAyNy40NjkgNi41NzUgMjkuMDY4IDguMTk0IDI5LjA2OCAxMC4xOTEgTCAyOS4wNjggMjUuMzcgQyAyOS4wNjggMjcuMzY3IDI3LjQ2OCAyOC45ODYgMjUuNDk0IDI4Ljk4NiBMIDIyLjM4IDI4Ljk4NiBDIDIxLjg1NCAyOC45ODYgMjEuMzY4IDI4LjcwNCAyMS4xMDYgMjguMjQ4IEwgMTkuNDEzIDI1LjMyMyBMIDI0LjU1NiAyNS4zMjMgQyAyNC45NjcgMjUuMzIzIDI1LjMwMiAyNC45ODMgMjUuMzAyIDI0LjU2NyBMIDI1LjMwMiAxMC45OTUgQyAyNS4zMDMgMTAuNzk2IDI1LjIyNSAxMC42MDQgMjUuMDg2IDEwLjQ2MyBDIDI0Ljk0NiAxMC4zMjEgMjQuNzU1IDEwLjI0MSAyNC41NTYgMTAuMjQgTCAxOS40MTYgMTAuMjQgTCAyMS4xMDcgNy4zMTMgQyAyMS4zNzEgNi44NTggMjEuODU2IDYuNTc3IDIyLjM4MiA2LjU3NSBMIDI1LjQ5NSA2LjU3NSBaIiBmaWxsPSJyZ2IoMCwwLDApIi8+PHBhdGggZD0iTSAxOS40MTMgMjUuMzIxIEwgMTkuNDEzIDI1LjMxOSBMIDE5LjQxNCAyNS4zMTkgTCAxOS40MTQgMjUuMzIxIFoiIGZpbGw9InJnYigwLDAsMCkiLz48cGF0aCBkPSJNIDE3LjYzMiAxMy4zMjQgTCAxNy42MyAxMy4zMjQgQyAxNy40MjYgMTMuNjc4IDE3LjA0OCAxMy44OTYgMTYuNjQgMTMuODk3IEwgMTIuNDIzIDEzLjg5NyBDIDEyLjAxNiAxMy44OTcgMTEuNjM5IDEzLjY4IDExLjQzMyAxMy4zMjQgTCA5LjY1MiAxMC4yNCBMIDE5LjQxNCAxMC4yNCBMIDE3LjYzMyAxMy4zMjMgWiIgZmlsbD0icmdiKDAsMCwwKSIvPjwvZz48L3N2Zz4=') no-repeat center;
+                  mask-size: contain;
+                  flex-shrink: 0;
+              }
+              #halliday-payments-modal {
+                color-scheme: none;
+              }
+            `}</style>
+            <div className="onrampButtonContainer">
+                <button className="onrampButton" onClick={() => {
+    hallidayPayments.openHallidayPayments({
+      apiKey: "pk_96a54f74-7e46-4bf0-ba9d-1627a164be89",
+      outputs: ["base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"],
+      windowType: "MODAL"
+    });
+  }}>
+                    Pay with Halliday
+                </button>
+            </div>
+        </div>;
+};
+
+The fastest way to implement Halliday Payments is by utilizing the widget user interface.
+
+## Try the Halliday Payments SDK Widget
+
+Following this guide, or the [Widget Documentation](/pages/payments-sdk-docs) guide will result in an onramp expeirence like the following.
+
+Try out onramping to an external wallet with this button:
+
+<OnrampWithWalletConnector />
+
+### Integrate Halliday Payments
+
+Follow these steps to integrate Halliday Payments in just a few minutes.
+
+<Steps>
+  <Step title="Obtain API Keys">
+    <Note>
+      To get set up with API access for Halliday Payments, please reach out to [partnerships@halliday.xyz](mailto:partnerships@halliday.xyz).
+    </Note>
+  </Step>
+
+  <Step title="Integrate">
+    First, install the Halliday Payments SDK into a web project.
+
+    <Tabs>
+      <Tab title="npm">
+        ```shell copy theme={null}
+        npm install @halliday-sdk/payments
+        ```
+      </Tab>
+
+      <Tab title="yarn">
+        ```shell copy theme={null}
+        yarn add @halliday-sdk/payments
+        ```
+      </Tab>
+
+      <Tab title="HTML">
+        ```html copy theme={null}
+        <script src="https://cdn.jsdelivr.net/npm/@halliday-sdk/payments@latest/dist/paymentsWidget/index.umd.min.js"></script>
+        ```
+      </Tab>
+    </Tabs>
+
+    Next, integrate Halliday Payments into an existing application with a few lines of code. This example is in a React.js project.
+
+    <Tabs>
+      <Tab title="React">
+        ```tsx copy theme={null}
+        import { openHallidayPayments } from "@halliday-sdk/payments";
+
+        // openHallidayPayments will open a popup that begins the payments flow.
+        // Customize the button to match a DApp's existing styles.
+
+        <button
+            onClick={() => {
+                openHallidayPayments({
+                    apiKey: HALLIDAY_PUBLIC_API_KEY,
+                    // USDC on Base
+                    outputs: ["base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"],
+                    // windowType can also be "POPUP" or "EMBED"
+                    windowType: "MODAL",
+                });
+            }}
+        >
+            Pay with Halliday
+        </button>
+        ```
+      </Tab>
+
+      <Tab title="HTML">
+        ```html copy theme={null}
+        <html>
+        <body>
+            <div id="halliday"></div>
+        </body>
+        <script src="https://cdn.jsdelivr.net/npm/@halliday-sdk/payments@latest/dist/paymentsWidget/index.umd.min.js"></script>
+        <script>
+            hallidayPayments.openHallidayPayments({
+                apiKey: HALLIDAY_PUBLIC_API_KEY,
+                // USDC on Base
+                outputs: ["base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"],
+                // windowType can also be "POPUP" or "EMBED"
+                windowType: "MODAL",
+                // The HTML element id to render the iframe inside of
+                targetElementId: "halliday",
+            });
+        </script>
+        </html>
+        ```
+      </Tab>
+    </Tabs>
+
+    Run the app page and try onramping or swapping tokens with the newly implemented Halliday Payments Payments Widget. Try it now using the **button** above.
+  </Step>
+</Steps>
+
+
+# Halliday Payments SDK Widget Documentation
+Source: https://docs.halliday.xyz/pages/payments-sdk-docs
+
+
+
+export const OnrampWithWalletConnector = () => {
+  return <div>
+            <style>{`
+              .onrampButtonContainer {
+                  display: block;
+                  margin: auto;
+                  width: max-content;
+              }
+              .onrampButton {
+                  border: none;
+                  opacity: 1;
+                  background-color: rgb(var(--primary));
+                  color: white;
+                  font-weight: 500;
+                  width: auto;
+                  height: 50px;
+                  border-radius: 8px;
+                  display: inline-flex;
+                  align-items: center;
+                  padding: 10px 18px;
+                  transition: all 0.2s ease;
+              }
+              .onrampButton:hover {
+                  opacity: 0.9;
+              }
+              .onrampButton::before {
+                  content: '';
+                  width: 20px;
+                  height: 20px;
+                  margin-right: 10px;
+                  background-color: currentColor;
+                  mask: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyOS4wNjggMjIuNDA4IiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImJhY2tncm91bmQ6IHRyYW5zcGFyZW50OyI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCwgLTYuNTc1KSI+PHBhdGggZD0iTSA2LjY4NiA2LjU3NSBDIDcuMjEgNi41NzUgNy42OTYgNi44NTUgNy45NiA3LjMxMyBMIDkuNjUyIDEwLjIzOCBMIDQuNTEyIDEwLjIzOCBDIDQuMDk4IDEwLjI0MiAzLjc2NSAxMC41OCAzLjc2NyAxMC45OTQgTCAzLjc2NyAyNC41NjUgQyAzLjc2NyAyNC45ODIgNC4xMDEgMjUuMzIxIDQuNTEzIDI1LjMyMSBMIDkuNjUzIDI1LjMyMSBMIDExLjQzOCAyMi4yMzcgQyAxMS42NDQgMjEuODgzIDEyLjAyIDIxLjY2MyAxMi40MjggMjEuNjYzIEwgMTYuNjM4IDIxLjY2MyBDIDE3LjA0NyAyMS42NjMgMTcuNDIxIDIxLjg4MiAxNy42MjggMjIuMjM3IEwgMTkuNDEyIDI1LjMxOSBMIDkuNjU3IDI1LjMxOSBMIDcuOTYzIDI4LjI0NSBDIDcuNjk3IDI4LjcwMyA3LjIxMyAyOC45ODMgNi42ODkgMjguOTgzIEwgMy41NzQgMjguOTgzIEMgMS42IDI4Ljk4MyAwIDI3LjM2MyAwIDI1LjM2NiBMIDAgMTAuMTkgQyAwIDguMTk0IDEuNiA2LjU3NSAzLjU3MSA2LjU3NSBaIiBmaWxsPSJyZ2IoMCwwLDApIi8+PHBhdGggZD0iTSAyNS40OTQgNi41NzUgQyAyNy40NjkgNi41NzUgMjkuMDY4IDguMTk0IDI5LjA2OCAxMC4xOTEgTCAyOS4wNjggMjUuMzcgQyAyOS4wNjggMjcuMzY3IDI3LjQ2OCAyOC45ODYgMjUuNDk0IDI4Ljk4NiBMIDIyLjM4IDI4Ljk4NiBDIDIxLjg1NCAyOC45ODYgMjEuMzY4IDI4LjcwNCAyMS4xMDYgMjguMjQ4IEwgMTkuNDEzIDI1LjMyMyBMIDI0LjU1NiAyNS4zMjMgQyAyNC45NjcgMjUuMzIzIDI1LjMwMiAyNC45ODMgMjUuMzAyIDI0LjU2NyBMIDI1LjMwMiAxMC45OTUgQyAyNS4zMDMgMTAuNzk2IDI1LjIyNSAxMC42MDQgMjUuMDg2IDEwLjQ2MyBDIDI0Ljk0NiAxMC4zMjEgMjQuNzU1IDEwLjI0MSAyNC41NTYgMTAuMjQgTCAxOS40MTYgMTAuMjQgTCAyMS4xMDcgNy4zMTMgQyAyMS4zNzEgNi44NTggMjEuODU2IDYuNTc3IDIyLjM4MiA2LjU3NSBMIDI1LjQ5NSA2LjU3NSBaIiBmaWxsPSJyZ2IoMCwwLDApIi8+PHBhdGggZD0iTSAxOS40MTMgMjUuMzIxIEwgMTkuNDEzIDI1LjMxOSBMIDE5LjQxNCAyNS4zMTkgTCAxOS40MTQgMjUuMzIxIFoiIGZpbGw9InJnYigwLDAsMCkiLz48cGF0aCBkPSJNIDE3LjYzMiAxMy4zMjQgTCAxNy42MyAxMy4zMjQgQyAxNy40MjYgMTMuNjc4IDE3LjA0OCAxMy44OTYgMTYuNjQgMTMuODk3IEwgMTIuNDIzIDEzLjg5NyBDIDEyLjAxNiAxMy44OTcgMTEuNjM5IDEzLjY4IDExLjQzMyAxMy4zMjQgTCA5LjY1MiAxMC4yNCBMIDE5LjQxNCAxMC4yNCBMIDE3LjYzMyAxMy4zMjMgWiIgZmlsbD0icmdiKDAsMCwwKSIvPjwvZz48L3N2Zz4=') no-repeat center;
+                  mask-size: contain;
+                  flex-shrink: 0;
+              }
+              #halliday-payments-modal {
+                color-scheme: none;
+              }
+            `}</style>
+            <div className="onrampButtonContainer">
+                <button className="onrampButton" onClick={() => {
+    hallidayPayments.openHallidayPayments({
+      apiKey: "pk_96a54f74-7e46-4bf0-ba9d-1627a164be89",
+      outputs: ["base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"],
+      windowType: "MODAL"
+    });
+  }}>
+                    Pay with Halliday
+                </button>
+            </div>
+        </div>;
+};
+
+The Halliday Payments Widget allows users to perform onramps, swaps, and exchange withdrawals to or from any chain or token with minimal integration effort.
+
+It provides the most rapid integration of Halliday Payments with a feature-rich configuration.
+
+To have more fine-grained control over the user interface, review the [Halliday API](/pages/halliday-api-docs) documentation.
+
+***
+
+## Try the Halliday Payments SDK Widget
+
+Following this guide, or the [Payments Hello World](/pages/payments-hello-world) guide will result in an onramp expeirence like the following.
+
+Try out onramping to an external wallet with this button:
+
+<OnrampWithWalletConnector />
+
+## Installation
+
+Install the Payments SDK, which is available on NPM.
+
+<Tabs>
+  <Tab title="npm">
+    ```shell  theme={null}
+    npm install @halliday-sdk/payments
+    ```
+  </Tab>
+
+  <Tab title="yarn">
+    ```shell  theme={null}
+    yarn add @halliday-sdk/payments
+    ```
+  </Tab>
+</Tabs>
+
+Next the SDK can be imported into a front-end TypeScript or JavaScript project.
+
+```typescript copy theme={null}
+import { openHallidayPayments } from '@halliday-sdk/payments'
+```
+
+## Options
+
+The `openHallidayPayments` function opens the Halliday Payments widget and accepts the following configuration options:
+
+| Name                            | Type                                                               | Description                                                                                         |
+| :------------------------------ | :----------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| `apiKey`                        | string                                                             | Your API key for authorization.                                                                     |
+| `sandbox` (optional)            | boolean                                                            | Whether the widget is in sandbox mode.                                                              |
+| `ownerAddress` (optional)       | string                                                             | The address of the owner of the widget.                                                             |
+| `destinationAddress` (optional) | string                                                             | The address of the destination of the widget.                                                       |
+| `inputs` (optional)             | Asset\[]                                                           | The input assets for the widget.                                                                    |
+| `outputs` (optional)            | Asset\[]                                                           | The output assets for the widget.                                                                   |
+| `onramps` (optional)            | RampName\[]                                                        | The onramps for the widget.                                                                         |
+| `offramps` (optional)           | RampName\[]                                                        | The offramps for the widget.                                                                        |
+| `customStyles` (optional)       | object ([CustomStyles](/pages/payments-sdk-docs#type-definitions)) | A list of custom styles to show in the widget. See [customizing styles](#customizing-styles).       |
+| `targetElementId`               | string                                                             | The ID of the DOM element where the widget should be embedded. Required if `windowType` is "EMBED". |
+| `windowType` (optional)         | "MODAL" \| POPUP" \| "EMBED"                                       | The desired display mode of the widget. Default is "MODAL".                                         |
+| `statusCallback` (optional)     | StatusCallback                                                     | Callback to receive status events.                                                                  |
+| `owner` (optional)              | Owner                                                              | Owner wallet configuration with address and signing functions.                                      |
+| `funder` (optional)             | Funder                                                             | Funder wallet configuration with signing functions.                                                 |
+
+### Type Definitions
+
+```ts  theme={null}
+type Address = string;
+
+type TypedData = string;
+
+interface TransactionRequest {
+  to: string;
+  from?: string;
+  nonce?: number;
+  gasLimit?: string | number | bigint;
+  gasPrice?: string | number | bigint;
+  maxPriorityFeePerGas?: string | number | bigint;
+  maxFeePerGas?: string | number | bigint;
+  data?: string;
+  value?: string | number | bigint;
+  chainId: number;
+}
+
+interface TransactionReceipt {
+  transactionHash?: string;
+  blockHash?: string;
+  blockNumber?: number;
+  from?: string;
+  to?: string;
+  // Preserves the original receipt from ethers or viem
+  rawReceipt: any;
+}
+
+interface EVMChainConfig {
+  chain_id: number;
+  network: string;
+  native_currency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  rpc: string;
+  image: string;
+  is_testnet: boolean;
+  explorer: string;
+}
+
+type WindowType = "MODAL" | "EMBED" | "POPUP";
+
+interface CustomStyles {
+  primaryColor?: string;
+  backgroundColor?: string;
+  /**
+   * In popup mode, the border only shows when the window is resized and made larger.
+   * If you would like there to be no border at all, you can set it to the same color as backgroundColor.
+   */
+  borderColor?: string;
+  textColor?: string;
+  textSecondaryColor?: string;
+}
+
+type Asset = string; // Format: "chainId:tokenAddress" or native token identifier or fiat symbol
+
+// i.e. 'moonpay'
+type RampName = string; // Onramp/offramp provider names
+
+type OrderStatus = any;
+
+type StatusCallback = (status: OrderStatus) => void;
+
+interface OwnerRole {
+  address: Address;
+}
+
+interface PaymentsWidgetSDKParams {
+  apiKey: string;
+  sandbox?: boolean;
+  ownerAddress?: Address;
+  destinationAddress?: Address;
+  inputs?: Asset[];
+  outputs?: Asset[];
+  onramps?: RampName[];
+  offramps?: RampName[];
+  customStyles?: CustomStyles;
+
+  // windowType = "EMBED", targetElementId is required
+  targetElementId?: string;
+  windowType?: WindowType;
+  owner?: OwnerRole;
+  funder?: FunderRole;
+  statusCallback?: StatusCallback;
+}
+```
+
+## Usage Patterns
+
+### Using the wallet connector
+
+Halliday can prompt users to choose a wallet to connect to the DApp. The wallet connector provides many options including MetaMask, Coinbase Wallet, Phantom, or Wallet Connect.
+
+Clicking the button will trigger the connect-wallet prompt. If the application already prompts the user to connect a wallet, see [using a connected wallet](#using-a-connected-wallet).
+
+```tsx copy theme={null}
+import { openHallidayPayments } from "@halliday-sdk/payments";
+
+openHallidayPayments({
+    apiKey: HALLIDAY_PUBLIC_API_KEY,
+    // USDC on Base
+    outputs: ["base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"],
+});
+```
+
+***
+
+### Using a connected wallet
+
+Halliday can accept a wallet connection that the DApp has already established. With this flow, the user connects their wallet using the application's original flow. You can use the `connectSigner` utility function to prepare your app's signer (works with Ethers) for use with Halliday, which will return the necessary signing and transaction functions.
+
+This offers an enhanced user experience for Web3 applications, since users do not need to re-connect their wallet using the Halliday external wallet modal. If the application does not already have a connected wallet, see [using the wallet connector](#using-the-wallet-connector). It also allows the widget to utilize the proper account if the user switches the address or network in their wallet extension.
+
+```typescript copy theme={null}
+import { openHallidayPayments } from "@halliday-sdk/payments";
+import { connectSigner } from "@halliday-sdk/payments/ethers"
+import { BrowserProvider } from "ethers"
+
+const connect = async () => {
+  const address = (await window.ethereum.request({ method: "eth_requestAccounts" }))[0];
+  const connectedSigner = connectSigner(() => {
+    return new BrowserProvider(window.ethereum).getSigner();
+  });
+
+  openHallidayPayments({
+      apiKey: HALLIDAY_PUBLIC_API_KEY,
+      // USDC on Base
+      outputs: ["base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"],
+      owner: { address, ...connectedSigner },
+      funder: { ...connectedSigner }
+  }).catch((error) => {
+    console.log('error.issues', error.issues);
+  });
+};
+```
+
+***
+
+### Embedding as an iframe
+
+By default, the Payments Widget opens as a modal overlaying the web page. It can also be opened as a popup window.
+
+Another option is embed it within a page using an `<iframe>`. This can be done by providing two additional options: `windowType` and `targetElementId`.
+
+```typescript copy theme={null}
+import { openHallidayPayments } from "@halliday-sdk/payments";
+
+openHallidayPayments({
+    apiKey: HALLIDAY_PUBLIC_API_KEY,
+    // USDC on Base
+    outputs: ["base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"],
+    windowType: "EMBED",           // Enable the embedded iframe mode
+    targetElementId: "element-id", // The HTML element id to render the iframe inside of
+});
+```
+
+***
+
+### Customizing styles
+
+Halliday supports setting custom styles on the Payments Widget in order to match an application's existing user interface.
+
+```typescript copy theme={null}
+import { openHallidayPayments } from "@halliday-sdk/payments";
+
+openHallidayPayments({
+    apiKey: HALLIDAY_PUBLIC_API_KEY,
+    // USDC on Base
+    outputs: ["base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"],
+    customStyles: {
+      primaryColor: '#8b5cf6',
+      backgroundColor: '#faf5ff',
+      borderColor: 'rgba(37, 56, 167, 1)',
+      textColor: '#1f1f23',
+      textSecondaryColor: '#a78bfa',
+    },
+    // ...
+});
+```
+
+The following diagram shows how these values are used:
+
+<br />
+
+<div style={{width: "100%", display: "flex", justifyContent: "center" }}>
+  <img src="https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/customize-ui.png?fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=7983172e46ceff775432dd08e24154b9" data-og-width="460" width="460" data-og-height="788" height="788" data-path="public/img/customize-ui.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/customize-ui.png?w=280&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=b3b82e8730a3ada02c6dcca9bb461c56 280w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/customize-ui.png?w=560&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=9faac1e970921b77369adf193a413f2d 560w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/customize-ui.png?w=840&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=acbbf305e7c28e48cbfd02f7847500fd 840w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/customize-ui.png?w=1100&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=b1d28237ba467ee18c65f4e11569a564 1100w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/customize-ui.png?w=1650&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=6e8f2df07c14e7f17d1b53a3557efc68 1650w, https://mintcdn.com/halliday/O_ekyiTzWO62enRA/public/img/customize-ui.png?w=2500&fit=max&auto=format&n=O_ekyiTzWO62enRA&q=85&s=f59943a998b98f8202728176cc48ae9b 2500w" />
+</div>
+
+For further customization or to get access to the Halliday API documentation, please [contact the Halliday team](mailto:partnerships@halliday.xyz).
+
+
+# Payments SDK Example Apps
+Source: https://docs.halliday.xyz/pages/payments-sdk-example-apps
+
+
+
+Open source example app code that demonstrates how to build onramping and swapping using the Payments SDK widget:
+
+* [Halliday Payments SDK examples repository](https://github.com/HallidayInc/HallidayPaymentsSdkExamples)
+
+
+# Sandbox Testing
+Source: https://docs.halliday.xyz/pages/sandbox-testing
+
+
+
+The sandbox mode is similar to that of real world usage in most regards, however there are some differences depending on the service being used.
+
+## Prices
+
+The prices used in sandbox are generally based on real world asset prices, for assets which exist (conceptually) on both mainnet and testnet. However the DEXs used on testnets are generally not arbitraged to be the same price. This can lead to the application reporting unexpectedly large (or possibly negative) fees.
+
+## KYC
+
+If the user does not have an existing MoonPay or Stripe account, a mock [KYC](https://www.investopedia.com/terms/k/knowyourclient.asp) form will be shown. This will **not** require a valid SSN or credit card, however the user will have to provide a valid email and phone number to get past security checks. See test credit card details that can be provided, depending on the service.
+
+The sandbox testing mode can be enabled in the application by setting `sandbox` to true. API keys can be obtained by contacting [partnerships@halliday.xyz](mailto:partnerships@halliday.xyz).
+
+Below is an example using the [Payments Widget](/pages/payments-sdk-docs). To learn more about the Halliday API and its options, please reach out to [partnerships@halliday.xyz](mailto:partnerships@halliday.xyz):
+
+```typescript copy theme={null}
+import { openHallidayPayments } from "@halliday-sdk/payments";
+
+openHallidayPayments({
+    apiKey: HALLIDAY_PUBLIC_API_KEY,
+    // USDC on Base
+    outputs: ["base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"],
+    ...
+
+    // If set to true, will use service sandboxes and testnet chains.
+    sandbox: true
+});
+```
+
+### Moonpay Onramp KYC Mock Values
+
+For testing Moonpay onramp, see the [guidelines for testing](https://dev.moonpay.com/docs/faq-testing-credit-cards).
+The following mock values will work for testing in the United States:
+
+| KYC Requirement            | Mock Value          |
+| :------------------------- | :------------------ |
+| SSN                        | 123-12-3123         |
+| Credit Card Number         | 5385 3083 6013 5181 |
+| Credit Card Expiration     | 12/2030             |
+| Email Verification Code    | receive from email  |
+| Checkout Confirmation Code | Checkout1!          |
+| CVC                        | 123                 |
+
+### Crypto.com Sandbox Onramp Mock Values
+
+For testing Crypto.com onramp, the following mock values will work for testing:
+
+| Field                      | Value                         |
+| :------------------------- | :---------------------------- |
+| Email                      | Any valid email string        |
+| Name                       | Any name                      |
+| Card Name                  | Any first and last name       |
+| Card Number                | 4242 4242 4242 4242           |
+| Expiry                     | Any expiry date in the future |
+| CVC                        | Any 3 digits                  |
+| Billing address            | Any US address                |
+| Checkout Confirmation Code | Checkout1!                    |
+
+## Considerations when testing MoonPay
+
+MoonPay has several security features in place to detect and prevent fraud; given the nature of testing, it is possible some activities may be incorrectly tagged as fraudulent. To that end, it is recommended to follow these best practices to test an integration:
+
+* Do not use test credit cards in real world environments or the account will automatically be blocked.
+* Do not use the same MoonPay account across sandbox and real world environments or the account will automatically be blocked.
+* Fraud alerts / issues may occur if MoonPay suspects a user has multiple MoonPay accounts. Ensure that each tester uses a unique identifier (email, phone number, etc.) that has not been previously associated with MoonPay.
+
+## Sandbox Transactions with the API
+
+Test transactions for Halliday Payments can be created for onramps and swaps using the API with sandbox assets. Sandbox transaction requests are submitted to the API using the same URL as production API requests (`https://v2.prod.halliday.xyz/`).
+
+Four [API endpoints](/api-reference/chains/get-supported-chains) accept a sandbox query parameter boolean in the request URL (`?sandbox=true`). The endpoints are:
+
+* `GET /chains`
+* `GET /assets`
+* `GET /assets/available-inputs`
+* `GET /assets/available-outputs`
+
+The sets of `assets` returned from the API with and without the sandbox flag have no overlap, which is also true for returned `chains`. For example, `/assets?sandbox=true` will return `fake_usd` and `sepolia:0x` among other sandbox assets. And `/assets` will return `usd` and `ethereum:0x` among other production assets.
+
+When creating or confirming a quote, the API will classify the transaction as sandbox or production based on the provided input and output assets in the request body. Using the `POST /payments/quotes` endpoint for a sandbox transaction does not require the `sandbox=true` URL parameter.
+
+Simply providing a request body specifying `fake_usd` to get ETH on Sepolia testnet (`sepolia:0x`) will be treated as a sandbox transaction because the provided assets are sandbox assets.
+
+Example sandbox request to `POST /payments/quotes`:
+
+```json  theme={null}
+{
+  "request": {
+    "kind": "FIXED_INPUT",
+    "fixed_input_amount": {
+      "asset": "fake_usd",
+      "amount": "500"
+    },
+    "output_asset": "sepolia:0x"
+  },
+  "price_currency": "USD",
+  "customer_ip_address": "102.129.145.128"
+}
+```
+
+Notice the following request does not require a sandbox query parameter:
+
+```bash copy theme={null}
+curl -X POST "https://v2.prod.halliday.xyz/payments/quotes" \
+  -H "Authorization: Bearer pk_YOUR_API_KEY_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "request": {
+      "kind": "FIXED_INPUT",
+      "fixed_input_amount": {
+        "asset": "fake_usd",
+        "amount": "500"
+      },
+      "output_asset": "sepolia:0x"
+    },
+    "price_currency": "USD",
+    "customer_ip_address": "102.129.145.128"
+  }'
+```
+
+To walk through onramping and swapping using the API, see the [Halliday API Quickstart](/pages/api-quickstart) page.
+
+

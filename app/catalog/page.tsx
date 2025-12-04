@@ -43,6 +43,11 @@ function CatalogPage() {
   // Filters
   const [contentType, setContentType] = useState('all')
   const [moodTag, setMoodTag] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedArtist, setSelectedArtist] = useState('all')
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100])
+  const [maxPrice, setMaxPrice] = useState(100)
+  const [artists, setArtists] = useState<Array<{ id: string; name: string }>>([])
 
   useEffect(() => {
     loadSessions()
@@ -50,7 +55,7 @@ function CatalogPage() {
 
   useEffect(() => {
     applyFilters()
-  }, [sessions, contentType, moodTag])
+  }, [sessions, contentType, moodTag, searchQuery, selectedArtist, priceRange])
 
   const loadSessions = async () => {
     try {
@@ -59,6 +64,25 @@ function CatalogPage() {
 
       const data = await response.json()
       setSessions(data)
+
+      // Extract unique artists
+      const uniqueArtists = Array.from(
+        new Map(
+          data.map((s: Session) => [
+            s.owner.id,
+            {
+              id: s.owner.id,
+              name: s.owner.displayName || truncateAddress(s.owner.walletAddress)
+            }
+          ])
+        ).values()
+      )
+      setArtists(uniqueArtists)
+
+      // Calculate max price
+      const max = Math.max(...data.map((s: Session) => s.priceUsd), 100)
+      setMaxPrice(max)
+      setPriceRange([0, max])
     } catch (error) {
       console.error('Failed to load sessions:', error)
     } finally {
@@ -84,12 +108,32 @@ function CatalogPage() {
       )
     }
 
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const search = searchQuery.toLowerCase().trim()
+      filtered = filtered.filter((s) =>
+        s.title.toLowerCase().includes(search) ||
+        s.description.toLowerCase().includes(search)
+      )
+    }
+
+    // Filter by artist
+    if (selectedArtist !== 'all') {
+      filtered = filtered.filter((s) => s.owner.id === selectedArtist)
+    }
+
+    // Filter by price range
+    filtered = filtered.filter((s) => s.priceUsd >= priceRange[0] && s.priceUsd <= priceRange[1])
+
     setFilteredSessions(filtered)
   }
 
   const handleClearFilters = () => {
     setContentType('all')
     setMoodTag('')
+    setSearchQuery('')
+    setSelectedArtist('all')
+    setPriceRange([0, maxPrice])
   }
 
   return (
@@ -129,8 +173,16 @@ function CatalogPage() {
             <FilterBar
               contentType={contentType}
               moodTag={moodTag}
+              searchQuery={searchQuery}
+              selectedArtist={selectedArtist}
+              priceRange={priceRange}
+              artists={artists}
+              maxPrice={maxPrice}
               onContentTypeChange={setContentType}
               onMoodTagChange={setMoodTag}
+              onSearchQueryChange={setSearchQuery}
+              onArtistChange={setSelectedArtist}
+              onPriceRangeChange={setPriceRange}
               onClearFilters={handleClearFilters}
             />
           </div>
