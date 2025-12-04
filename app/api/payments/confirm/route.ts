@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { verifyMultiPayment } from '@/lib/payment-verification'
+import { Hex, Address } from 'viem'
 
 /**
  * POST /api/payments/confirm
  * Confirm payment and create license after successful wallet transaction
  *
  * Flow:
- * 1. Verify transaction hash exists and is valid
- * 2. Create license record in database
- * 3. Link to Story Protocol IP asset
- * 4. Return license details
- *
- * Note: In production, you should verify the transaction on-chain
- * to ensure payment was actually received before creating the license.
+ * 1. Verify transaction hash exists and is valid on Base network
+ * 2. Verify payment recipients and amounts match expected values
+ * 3. Create license record in database
+ * 4. Link to Story Protocol IP asset
+ * 5. Return license details
  */
 export async function POST(request: NextRequest) {
   try {
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verify session exists
+    // Verify session exists and get payment details
     const session = await prisma.session.findUnique({
       where: { id: sessionId },
       select: {
@@ -39,6 +39,12 @@ export async function POST(request: NextRequest) {
         audioUrl: true,
         storyAssetId: true,
         storyTxHash: true,
+        priceUsd: true,
+        owner: {
+          select: {
+            walletAddress: true,
+          },
+        },
       },
     })
 
@@ -66,17 +72,51 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // TODO: Verify transaction on-chain
-    // In production, you should:
-    // 1. Check transaction exists on blockchain
-    // 2. Verify payment amounts are correct
-    // 3. Verify recipients received funds
-    // 4. Verify transaction is confirmed
-    //
-    // Example with viem:
-    // const publicClient = createPublicClient({ chain: mainnet, transport: http() })
-    // const tx = await publicClient.getTransaction({ hash: txHash })
-    // Verify tx.to, tx.value, etc.
+    // Calculate expected payment amounts (2% platform fee)
+    const PLATFORM_FEE_PERCENTAGE = 0.02
+    const totalAmount = session.priceUsd
+    const platformFee = totalAmount * PLATFORM_FEE_PERCENTAGE
+    const artistAmount = totalAmount - platformFee
+
+    const platformWallet = process.env.PLATFORM_WALLET_ADDRESS
+
+    // Verify transaction on Base network
+    console.log('🔍 Verifying payment transaction on Base network...')
+    console.log(`   TX Hash: ${txHash}`)
+    console.log(`   Expected Artist Payment: $${artistAmount} to ${session.owner.walletAddress}`)
+    console.log(`   Expected Platform Fee: $${platformFee} to ${platformWallet}`)
+
+    const verification = await verifyMultiPayment(txHash as Hex, [
+      {
+        recipient: session.owner.walletAddress as Address,
+        minAmount: artistAmount,
+        token: 'USDC',
+      },
+      ...(platformWallet
+        ? [
+            {
+              recipient: platformWallet as Address,
+              minAmount: platformFee,
+              token: 'USDC' as const,
+            },
+          ]
+        : []),
+    ])
+
+    if (!verification.isValid) {
+      console.error('❌ Payment verification failed:', verification.error)
+      return NextResponse.json(
+        {
+          error: 'Payment verification failed',
+          details: verification.error,
+        },
+        { status: 400 }
+      )
+    }
+
+    console.log('✅ Payment verified on Base network')
+    console.log(`   Confirmations: ${verification.transaction?.confirmations}`)
+    console.log(`   Block: ${verification.transaction?.blockNumber}`)
 
     // Create license
     const license = await prisma.license.create({
