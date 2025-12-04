@@ -101,12 +101,15 @@ export default function CommunityPage() {
                 throw new Error(errorData.error || "Failed to update follow status")
             }
 
-            // Update local state
+            // Update local state immediately for responsiveness
             setMusicians((prev) =>
                 prev.map((m) =>
                     m.id === musicianId ? { ...m, isFollowing: !isCurrentlyFollowing } : m
                 )
             )
+
+            // Refetch musicians to ensure we're in sync with server
+            await fetchMusicians()
 
             toast({
                 title: isCurrentlyFollowing ? "Unfollowed" : "Following",
