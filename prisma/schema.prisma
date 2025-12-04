@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// Note: SQLite doesn't support enums, so we use String with validation in the app layer
-// For PostgreSQL, these can be converted back to proper enums
+// Note: Using PostgreSQL for production (Vercel)
+// For local development with SQLite, use: provider = "sqlite"
 
 model User {
   id            String    @id @default(cuid())
