@@ -16,6 +16,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
 import { Loader2, Upload } from 'lucide-react'
+import { AudioUploader } from './AudioUploader'
 
 interface UploadSessionFormProps {
   onSuccess?: () => void
@@ -47,13 +48,18 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
       return
     }
 
+    if (!formData.audioUrl) {
+      toast({
+        title: 'Audio file required',
+        description: 'Please upload an audio file before submitting',
+        variant: 'destructive',
+      })
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
-      // For hackathon: Use a placeholder audio URL or simple upload simulation
-      // In production, implement proper file upload to cloud storage
-      const audioUrl = formData.audioUrl || `https://example.com/audio/${Date.now()}.mp3`
-
       const response = await fetch('/api/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -63,7 +69,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
           description: formData.description,
           contentType: formData.contentType,
           moodTags: formData.moodTags,
-          audioUrl,
+          audioUrl: formData.audioUrl,
           priceUsd: parseFloat(formData.priceUsd),
         }),
       })
@@ -185,15 +191,13 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="audioUrl">Audio URL (Optional for demo)</Label>
-            <Input
-              id="audioUrl"
-              value={formData.audioUrl}
-              onChange={(e) => setFormData({ ...formData, audioUrl: e.target.value })}
-              placeholder="https://example.com/audio.mp3"
+            <Label>Audio File *</Label>
+            <AudioUploader
+              onUploadComplete={(url) => setFormData({ ...formData, audioUrl: url })}
+              disabled={isSubmitting}
             />
-            <p className="text-xs text-muted-foreground">
-              For hackathon demo: provide a URL or leave empty for placeholder
+            <p className="text-xs text-muted-foreground font-mono">
+              Upload your audio file (MP3, M4A, WAV, FLAC, OGG • Max 50MB)
             </p>
           </div>
 
