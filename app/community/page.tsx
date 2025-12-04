@@ -89,10 +89,16 @@ export default function CommunityPage() {
             const response = await fetch("/api/follows", {
                 method: isCurrentlyFollowing ? "DELETE" : "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ followingId: musicianId }),
+                body: JSON.stringify({
+                    followerId: user?.id,
+                    followingId: musicianId
+                }),
             })
 
-            if (!response.ok) throw new Error("Failed to update follow status")
+            if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.error || "Failed to update follow status")
+            }
 
             // Update local state
             setMusicians((prev) =>
@@ -108,9 +114,10 @@ export default function CommunityPage() {
                     : `You are now following ${musician?.displayName || "this musician"}`,
             })
         } catch (error) {
+            console.error("Follow error:", error)
             toast({
                 title: "Error",
-                description: "Failed to update follow status",
+                description: error instanceof Error ? error.message : "Failed to update follow status",
                 variant: "destructive",
             })
         }

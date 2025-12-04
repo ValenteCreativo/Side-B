@@ -118,7 +118,7 @@ export default function ProfilePage() {
 
             toast({
                 title: "Avatar updated",
-                description: "Your profile picture has been uploaded to IPFS",
+                description: "Your profile picture has been uploaded successfully",
             })
 
             // Refresh user data
@@ -127,9 +127,13 @@ export default function ProfilePage() {
             }
         } catch (error) {
             console.error('Avatar upload error:', error)
+            const errorMessage = error instanceof Error ? error.message : "Failed to upload avatar"
+
             toast({
                 title: "Upload failed",
-                description: error instanceof Error ? error.message : "Failed to upload avatar",
+                description: errorMessage.includes("IPFS") || errorMessage.includes("Pinata")
+                    ? "IPFS upload service is not configured. Please contact support."
+                    : errorMessage,
                 variant: "destructive",
             })
             setAvatarPreview(user?.avatarUrl || null)
