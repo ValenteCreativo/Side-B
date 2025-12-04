@@ -66,17 +66,16 @@ function CatalogPage() {
       setSessions(data)
 
       // Extract unique artists
-      const uniqueArtists: { id: string; name: string }[] = Array.from(
-        new Map(
-          data.map((s: Session) => [
-            s.owner.id,
-            {
-              id: s.owner.id,
-              name: s.owner.displayName || truncateAddress(s.owner.walletAddress)
-            }
-          ])
-        ).values()
+      const artistMap = new Map<string, { id: string; name: string }>(
+        data.map((s: Session) => [
+          s.owner.id,
+          {
+            id: s.owner.id,
+            name: s.owner.displayName || truncateAddress(s.owner.walletAddress)
+          }
+        ])
       )
+      const uniqueArtists = Array.from(artistMap.values())
       setArtists(uniqueArtists)
 
       // Calculate max price
