@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Music, Users, MessageCircle, ExternalLink, Calendar } from "lucide-react"
 import { useUser } from "@/components/auth/UserContext"
 import { useToast } from "@/hooks/use-toast"
+import { SendMessageDialog } from "@/components/messages/SendMessageDialog"
 
 interface Session {
     id: string
@@ -52,6 +53,7 @@ export default function ProfilePage() {
     const [profile, setProfile] = useState<ProfileData | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isFollowing, setIsFollowing] = useState(false)
+    const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false)
 
     const userId = params.id as string
 
@@ -113,11 +115,15 @@ export default function ProfilePage() {
     }
 
     const handleMessage = () => {
-        // TODO: Open messaging modal/page
-        toast({
-            title: "Coming soon",
-            description: "Messaging feature is under development",
-        })
+        if (!user) {
+            toast({
+                title: "Sign in required",
+                description: "Please sign in to send messages",
+                variant: "destructive",
+            })
+            return
+        }
+        setIsMessageDialogOpen(true)
     }
 
     if (isLoading) {
@@ -325,6 +331,17 @@ export default function ProfilePage() {
                     </Card>
                 </div>
             </div>
+
+            {/* Message Dialog */}
+            {user && profile && !isOwnProfile && (
+                <SendMessageDialog
+                    isOpen={isMessageDialogOpen}
+                    onClose={() => setIsMessageDialogOpen(false)}
+                    recipientId={profile.id}
+                    recipientName={profile.displayName || "Anonymous"}
+                    senderId={user.id}
+                />
+            )}
         </AppShell>
     )
 }
