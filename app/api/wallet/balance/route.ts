@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createPublicClient, http, formatEther, type Address } from 'viem'
 import { base } from 'viem/chains'
+import { validateQuery, walletBalanceSchema } from '@/lib/validations'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,11 +33,13 @@ const ERC20_ABI = [
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const address = searchParams.get('address')
 
-    if (!address) {
-      return NextResponse.json({ error: 'Address required' }, { status: 400 })
+    const validation = validateQuery(searchParams, walletBalanceSchema)
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 })
     }
+
+    const { address } = validation.data
 
     const balances = []
 

@@ -90,13 +90,17 @@ export async function verifyPayment(
       }
     }
 
-    // Verify payment details
-    // For now, we verify direct ETH transfers
-    // TODO: Add USDC token transfer verification using transaction logs
-
-    const matchingPayment = expectedPayments.find(
-      (payment) => payment.recipient.toLowerCase() === tx.to?.toLowerCase()
-    )
+    // Verify payment details based on token type
+    const matchingPayment = expectedPayments.find((payment) => {
+      if (payment.token === 'ETH' || !payment.token) {
+        // For ETH, verify direct transfer recipient
+        return payment.recipient.toLowerCase() === tx.to?.toLowerCase()
+      } else if (payment.token === 'USDC') {
+        // For USDC, we'll verify via logs (checked below)
+        return true
+      }
+      return false
+    })
 
     if (!matchingPayment) {
       return {
@@ -105,16 +109,56 @@ export async function verifyPayment(
       }
     }
 
-    // Convert value from wei to ETH for comparison
-    // Note: For USDC, we should parse transaction logs instead
-    const valueInEth = Number(formatUnits(tx.value, 18))
+    // Verify based on token type
+    if (matchingPayment.token === 'USDC') {
+      // USDC verification via Transfer event logs
+      const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
+      const TRANSFER_EVENT_SIGNATURE = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' // keccak256("Transfer(address,address,uint256)")
 
-    // For now, we do a simple check
-    // In production, implement proper USDC token transfer verification
-    if (valueInEth === 0 && matchingPayment.token === 'ETH') {
-      return {
-        isValid: false,
-        error: 'Transaction has zero value',
+      const transferLog = receipt.logs.find(
+        (log) =>
+          log.address.toLowerCase() === USDC_ADDRESS.toLowerCase() &&
+          log.topics[0] === TRANSFER_EVENT_SIGNATURE &&
+          log.topics[2]?.toLowerCase() === `0x${matchingPayment.recipient.slice(2).toLowerCase().padStart(64, '0')}`
+      )
+
+      if (!transferLog) {
+        return {
+          isValid: false,
+          error: 'No USDC transfer found to expected recipient',
+        }
+      }
+
+      // Decode the transfer amount (USDC has 6 decimals)
+      const transferAmount = BigInt(transferLog.data)
+      const amountInUsdc = Number(transferAmount) / 1e6
+
+      if (amountInUsdc < matchingPayment.minAmount) {
+        return {
+          isValid: false,
+          error: `USDC amount ${amountInUsdc} is less than required ${matchingPayment.minAmount}`,
+        }
+      }
+    } else {
+      // ETH verification
+      const valueInEth = Number(formatUnits(tx.value, 18))
+
+      if (valueInEth === 0) {
+        return {
+          isValid: false,
+          error: 'Transaction has zero ETH value',
+        }
+      }
+
+      // For ETH, we approximate USD value (in production, use price oracle)
+      const ETH_PRICE_USD = 2500 // Approximate - should use Chainlink or similar
+      const valueInUsd = valueInEth * ETH_PRICE_USD
+
+      if (valueInUsd < matchingPayment.minAmount) {
+        return {
+          isValid: false,
+          error: `ETH value ~$${valueInUsd.toFixed(2)} is less than required $${matchingPayment.minAmount}`,
+        }
       }
     }
 
@@ -163,19 +207,50 @@ export async function verifyMultiPayment(
       }
     }
 
-    // TODO: Parse transaction logs to verify USDC transfers
-    // For now, we trust the transaction if it's confirmed
-    // In production, implement proper ERC20 transfer event parsing
-
     const currentBlock = await publicClient.getBlockNumber()
     const confirmations = Number(currentBlock - receipt.blockNumber) + 1
+
+    // Verify all expected payments
+    const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
+    const TRANSFER_EVENT_SIGNATURE = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+
+    for (const payment of expectedPayments) {
+      if (payment.token === 'USDC') {
+        // Find USDC transfer to this recipient
+        const transferLog = receipt.logs.find(
+          (log) =>
+            log.address.toLowerCase() === USDC_ADDRESS.toLowerCase() &&
+            log.topics[0] === TRANSFER_EVENT_SIGNATURE &&
+            log.topics[2]?.toLowerCase() === `0x${payment.recipient.slice(2).toLowerCase().padStart(64, '0')}`
+        )
+
+        if (!transferLog) {
+          return {
+            isValid: false,
+            error: `No USDC transfer found to ${payment.recipient}`,
+          }
+        }
+
+        // Verify amount (USDC has 6 decimals)
+        const transferAmount = BigInt(transferLog.data)
+        const amountInUsdc = Number(transferAmount) / 1e6
+
+        if (amountInUsdc < payment.minAmount) {
+          return {
+            isValid: false,
+            error: `USDC amount ${amountInUsdc} to ${payment.recipient} is less than required ${payment.minAmount}`,
+          }
+        }
+      }
+      // ETH multi-payment would require different handling (batch send contract)
+    }
 
     return {
       isValid: true,
       transaction: {
         from: receipt.from,
         to: receipt.to as Address,
-        value: BigInt(0), // Value from logs
+        value: BigInt(0), // Total from logs
         blockNumber: receipt.blockNumber,
         confirmations,
       },
