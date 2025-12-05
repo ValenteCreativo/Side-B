@@ -9,6 +9,9 @@ const publicClient = createPublicClient({
   transport: http(process.env.BASE_RPC_URL || 'https://mainnet.base.org'),
 })
 
+// Base network chain ID
+const BASE_CHAIN_ID = 8453
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -22,13 +25,25 @@ export async function GET(request: NextRequest) {
     const currentBlock = await publicClient.getBlockNumber()
     const fromBlock = currentBlock - 10000n // Last ~10,000 blocks (approximately 1-2 days on Base)
 
-    // Fetch transaction history using BaseScan API (more reliable than direct RPC)
-    // For production, use BaseScan API with your API key
-    const baseScanApiKey = process.env.BASESCAN_API_KEY || ''
+    // Fetch transaction history using Etherscan API V2
+    // Migration from BaseScan to Etherscan API V2 (single endpoint for all chains)
+    const etherscanApiKey = process.env.ETHERSCAN_API_KEY || ''
 
-    if (baseScanApiKey) {
+    if (etherscanApiKey) {
+      // Etherscan API V2 endpoint - single endpoint for all chains with chainid parameter
       const response = await fetch(
-        `https://api.basescan.org/api?module=account&action=txlist&address=${address}&startblock=${fromBlock}&endblock=${currentBlock}&page=1&offset=50&sort=desc&apikey=${baseScanApiKey}`
+        `https://api.etherscan.io/v2/api?` + new URLSearchParams({
+          chainid: BASE_CHAIN_ID.toString(),
+          module: 'account',
+          action: 'txlist',
+          address: address,
+          startblock: fromBlock.toString(),
+          endblock: currentBlock.toString(),
+          page: '1',
+          offset: '50',
+          sort: 'desc',
+          apikey: etherscanApiKey,
+        }).toString()
       )
 
       if (response.ok) {
@@ -50,10 +65,10 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Fallback: Return empty array if BaseScan API is not configured
+    // Fallback: Return empty array if Etherscan API key is not configured
     return NextResponse.json({
       transactions: [],
-      message: 'Configure BASESCAN_API_KEY for transaction history'
+      message: 'Configure ETHERSCAN_API_KEY for transaction history. Get your key at https://etherscan.io/myapikey'
     })
 
   } catch (error) {
