@@ -81,9 +81,7 @@ export const followSchema = z.object({
 
 // Analytics schemas
 export const analyticsQuerySchema = z.object({
-  userId: z.string().cuid().optional(),
-  startDate: z.string().datetime().optional(),
-  endDate: z.string().datetime().optional(),
+  userId: z.string().cuid(),
 })
 
 // Helper function to validate request body

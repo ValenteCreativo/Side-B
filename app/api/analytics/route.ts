@@ -1,16 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { validateQuery, analyticsQuerySchema } from '@/lib/validations'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
 
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 400 })
+    // Validate query params with Zod
+    const validation = validateQuery(searchParams, analyticsQuerySchema)
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      )
     }
+
+    const { userId } = validation.data
 
     // Get user's sessions
     const sessions = await prisma.session.findMany({
