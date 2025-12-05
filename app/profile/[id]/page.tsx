@@ -47,6 +47,7 @@ interface ProfileData {
 
 export default function ProfilePage() {
     const params = useParams()
+    const router = useRouter()
     const { user } = useUser()
     const { toast } = useToast()
     const [profile, setProfile] = useState<ProfileData | null>(null)
