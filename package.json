@@ -28,8 +28,6 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-toast": "^1.2.2",
     "@story-protocol/core-sdk": "^1.0.0-rc.1",
-    "@supabase/auth-helpers-nextjs": "^0.15.0",
-    "@supabase/supabase-js": "^2.86.0",
     "@vercel/blob": "^2.0.0",
     "@waku/react": "^0.0.6",
     "@waku/sdk": "^0.0.31",
