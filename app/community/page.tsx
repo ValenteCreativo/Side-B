@@ -131,11 +131,10 @@ export default function CommunityPage() {
     }
 
     const handleMessage = (musicianId: string) => {
-        // TODO: Implement messaging
-        toast({
-            title: "Coming soon",
-            description: "Messaging feature is under development",
-        })
+        const musician = musicians.find(m => m.id === musicianId)
+        if (musician) {
+            router.push(`/messages?user=${musician.walletAddress}`)
+        }
     }
 
     const handleViewProfile = (musicianId: string) => {

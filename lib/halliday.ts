@@ -9,7 +9,7 @@ const HALLIDAY_API_BASE = 'https://v2.prod.halliday.xyz'
 const HALLIDAY_API_KEY = process.env.HALLIDAY_API_KEY
 
 if (!HALLIDAY_API_KEY) {
-  throw new Error('HALLIDAY_API_KEY environment variable is required')
+  console.warn('⚠️  HALLIDAY_API_KEY not configured - Halliday features will not work')
 }
 
 export interface HallidayQuoteRequest {

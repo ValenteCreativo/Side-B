@@ -185,13 +185,22 @@ export default function ProfilePage() {
                                     </div>
 
                                     {!isOwnProfile && (
-                                        <Button
-                                            onClick={handleFollow}
-                                            variant={isFollowing ? "outline" : "default"}
-                                        >
-                                            <Users className="h-4 w-4 mr-2" />
-                                            {isFollowing ? "Unfollow" : "Follow"}
-                                        </Button>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                onClick={handleFollow}
+                                                variant={isFollowing ? "outline" : "default"}
+                                            >
+                                                <Users className="h-4 w-4 mr-2" />
+                                                {isFollowing ? "Unfollow" : "Follow"}
+                                            </Button>
+                                            <Button
+                                                onClick={() => router.push(`/messages?user=${profile.walletAddress}`)}
+                                                variant="outline"
+                                            >
+                                                <MessageCircle className="h-4 w-4 mr-2" />
+                                                Message
+                                            </Button>
+                                        </div>
                                     )}
                                 </div>
                             </div>
