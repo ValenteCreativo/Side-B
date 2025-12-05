@@ -45,6 +45,12 @@ export const createLicenseSchema = z.object({
 })
 
 // Payment schemas
+export const createPaymentSchema = z.object({
+  sessionId: z.string().cuid(),
+  buyerId: z.string().cuid(),
+  amount: z.number().positive(),
+})
+
 export const paymentConfirmSchema = z.object({
   sessionId: z.string().cuid(),
   txHash: z.string().regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid transaction hash'),
@@ -68,6 +74,16 @@ export const walletTransactionsSchema = z.object({
 })
 
 // Halliday schemas
+export const hallidayQuoteSchema = z.object({
+  amount: z.number().positive().max(100000),
+  currency: z.string().optional(),
+})
+
+export const hallidayConfirmSchema = z.object({
+  quoteId: z.string(),
+  walletAddress: ethereumAddress,
+})
+
 export const hallidayOnrampSchema = z.object({
   address: ethereumAddress,
   amount: z.number().positive().max(100000),
@@ -81,6 +97,16 @@ export const followSchema = z.object({
 
 // Analytics schemas
 export const analyticsQuerySchema = z.object({
+  userId: z.string().cuid(),
+})
+
+// User ID query schema (for GET /api/users/[id])
+export const userIdSchema = z.object({
+  id: z.string().cuid(),
+})
+
+// Avatar upload schema (FormData validation)
+export const avatarUploadSchema = z.object({
   userId: z.string().cuid(),
 })
 

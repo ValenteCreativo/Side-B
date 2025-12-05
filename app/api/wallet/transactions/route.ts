@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createPublicClient, http, type Address } from 'viem'
 import { base } from 'viem/chains'
+import { validateQuery, walletTransactionsSchema } from '@/lib/validations'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,11 +16,17 @@ const BASE_CHAIN_ID = 8453
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const address = searchParams.get('address')
 
-    if (!address) {
-      return NextResponse.json({ error: 'Address required' }, { status: 400 })
+    // Validate query params with Zod
+    const validation = validateQuery(searchParams, walletTransactionsSchema)
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      )
     }
+
+    const { address } = validation.data
 
     // Get current block number
     const currentBlock = await publicClient.getBlockNumber()

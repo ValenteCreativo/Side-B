@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { validateRequest, walletSendSchema } from '@/lib/validations'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { from, to, amount, token } = body
-
-    if (!from || !to || !amount) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    // Validate request body with Zod
+    const validation = await validateRequest(request, walletSendSchema)
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      )
     }
+
+    const { from, to, amount, token } = validation.data
 
     // NOTE: This endpoint is a placeholder for client-side wallet transactions
     // In production, transactions should be signed and sent from the client using
