@@ -62,7 +62,7 @@ export default function ProfilePage() {
 
     const fetchProfile = async () => {
         try {
-            const response = await fetch(`/ api / users / ${userId} `)
+            const response = await fetch(`/api/users/${userId}`)
             if (!response.ok) throw new Error("Failed to fetch profile")
             const data = await response.json()
             setProfile(data)
