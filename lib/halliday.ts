@@ -227,17 +227,20 @@ export const HALLIDAY_ASSETS = {
 }
 
 /**
- * Get Halliday quotes (wrapper for existing function)
+ * Get Halliday quotes
+ * Returns the full API response including state_token
  */
 export async function getHallidayQuotes(params: {
   inputAsset: string
   outputAsset: string
   amount: string
   isFixedInput?: boolean
-}): Promise<any[]> {
-  // For now, use the existing getOnrampQuotes function
-  // This is a simplified wrapper - you may need to adapt based on actual API
+}): Promise<any> {
   const { inputAsset, outputAsset, amount } = params
+
+  if (!HALLIDAY_API_KEY) {
+    throw new Error('HALLIDAY_API_KEY not configured')
+  }
 
   try {
     const response = await fetch(`${HALLIDAY_API_BASE}/payments/quotes`, {
@@ -260,11 +263,16 @@ export async function getHallidayQuotes(params: {
     })
 
     if (!response.ok) {
-      throw new Error('Failed to get quotes')
+      const errorData = await response.json().catch(() => ({}))
+      console.error('Halliday API error:', response.status, errorData)
+      throw new Error(`Halliday API error: ${response.status}`)
     }
 
     const data = await response.json()
-    return data.quotes || []
+    console.log('✅ Halliday quotes received:', data.quotes?.length || 0, 'quotes')
+
+    // Return the full response (includes state_token at root level)
+    return data
   } catch (error) {
     console.error('getHallidayQuotes error:', error)
     throw error

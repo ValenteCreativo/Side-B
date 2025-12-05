@@ -31,14 +31,14 @@ export async function POST(request: NextRequest) {
 
     // Step 1: Get quotes
     console.log('🔍 Getting Halliday quotes...')
-    const quotes = await getHallidayQuotes({
+    const quotesResponse = await getHallidayQuotes({
       inputAsset,
       outputAsset,
       amount: amount.toString(),
       isFixedInput: true,
     })
 
-    if (!quotes || quotes.length === 0) {
+    if (!quotesResponse.quotes || quotesResponse.quotes.length === 0) {
       return NextResponse.json({
         error: 'No quotes available',
         info: 'Try a different amount or check back later'
@@ -46,14 +46,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Select best quote (first one is usually best)
-    const bestQuote = quotes[0]
-    console.log('✅ Best quote:', bestQuote.provider, bestQuote.output_amount)
+    const bestQuote = quotesResponse.quotes[0]
+    const stateToken = quotesResponse.state_token
+
+    console.log('✅ Best quote:', bestQuote.onramp, bestQuote.output_amount.amount)
 
     // Step 2: Confirm the quote
     console.log('🔄 Confirming quote...')
     const confirmation = await confirmHallidayQuote({
       paymentId: bestQuote.payment_id,
-      stateToken: bestQuote.state_token,
+      stateToken: stateToken,
       ownerAddress: address,
       destinationAddress: address,
     })
@@ -72,11 +74,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       url: fundingUrl,
-      provider: bestQuote.provider,
+      provider: bestQuote.onramp,
       payment_id: confirmation.payment_id,
       quote: {
-        input_amount: bestQuote.input_amount,
-        output_amount: bestQuote.output_amount,
+        input_amount: '100',
+        output_amount: bestQuote.output_amount.amount,
         fees: bestQuote.fees,
       },
     })
