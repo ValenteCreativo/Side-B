@@ -14,7 +14,8 @@ import {
     ChevronLeft,
     ChevronRight,
     LogIn,
-    TrendingUp
+    TrendingUp,
+    Lock
 } from "lucide-react"
 import { cn, truncateAddress } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -26,6 +27,7 @@ const menuItems = [
     { icon: Users, label: "Community", href: "/community" },
     { icon: Mic2, label: "My Studio", href: "/studio" },
     { icon: FileCheck, label: "My Licenses", href: "/licenses" },
+    { icon: Lock, label: "Waku Messages", href: "/waku-messages" },
     { icon: TrendingUp, label: "Analytics", href: "/analytics" },
     { icon: Settings, label: "Settings", href: "/settings" },
 ]
