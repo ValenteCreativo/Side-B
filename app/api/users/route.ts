@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { UserRole } from '@/lib/types'
 import { Address } from 'viem'
+import { validateRequest, createUserSchema, updateUserSchema } from '@/lib/validations'
 
 /**
  * GET /api/users
@@ -63,15 +64,16 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { walletAddress, role } = body as { walletAddress: Address; role: UserRole }
-
-    if (!walletAddress) {
+    // Validate request body with Zod
+    const validation = await validateRequest(request, createUserSchema)
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Wallet address is required' },
+        { error: validation.error },
         { status: 400 }
       )
     }
+
+    const { walletAddress, role, ...optionalFields } = validation.data
 
     // Upsert user (create if doesn't exist, return if exists)
     const user = await prisma.user.upsert({
