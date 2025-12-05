@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { CoinbaseProvider } from "@/components/providers/CoinbaseProvider";
 import { PlayerProvider } from "@/components/player/PlayerContext";
 import { GlobalPlayer } from "@/components/player/GlobalPlayer";
-import { WakuProvider } from "@/components/waku/WakuProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -25,13 +24,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-background text-foreground`}>
         <CoinbaseProvider>
           <UserProvider>
-            <WakuProvider>
-              <PlayerProvider>
-                {children}
-                <GlobalPlayer />
-                <Toaster />
-              </PlayerProvider>
-            </WakuProvider>
+            <PlayerProvider>
+              {children}
+              <GlobalPlayer />
+              <Toaster />
+            </PlayerProvider>
           </UserProvider>
         </CoinbaseProvider>
       </body>
