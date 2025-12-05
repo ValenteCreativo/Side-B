@@ -216,3 +216,93 @@ export const STORY_IP_ASSET = {
   chain_id: '1513', // Story Iliad testnet (update for mainnet)
   contract_address: undefined, // Native token
 }
+
+/**
+ * Common asset IDs for Halliday API
+ */
+export const HALLIDAY_ASSETS = {
+  USD: 'usd',
+  USDC_BASE: 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+  ETH_BASE: 'base:0x',
+}
+
+/**
+ * Get Halliday quotes (wrapper for existing function)
+ */
+export async function getHallidayQuotes(params: {
+  inputAsset: string
+  outputAsset: string
+  amount: string
+  isFixedInput?: boolean
+}): Promise<any[]> {
+  // For now, use the existing getOnrampQuotes function
+  // This is a simplified wrapper - you may need to adapt based on actual API
+  const { inputAsset, outputAsset, amount } = params
+
+  try {
+    const response = await fetch(`${HALLIDAY_API_BASE}/payments/quotes`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${HALLIDAY_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        request: {
+          kind: 'FIXED_INPUT',
+          fixed_input_amount: {
+            asset: inputAsset,
+            amount,
+          },
+          output_asset: outputAsset,
+        },
+        price_currency: 'usd',
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to get quotes')
+    }
+
+    const data = await response.json()
+    return data.quotes || []
+  } catch (error) {
+    console.error('getHallidayQuotes error:', error)
+    throw error
+  }
+}
+
+/**
+ * Confirm Halliday quote (wrapper)
+ */
+export async function confirmHallidayQuote(params: {
+  paymentId: string
+  stateToken: string
+  ownerAddress: string
+  destinationAddress: string
+}): Promise<any> {
+  try {
+    const response = await fetch(`${HALLIDAY_API_BASE}/payments/confirm`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${HALLIDAY_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        payment_id: params.paymentId,
+        state_token: params.stateToken,
+        owner_address: params.ownerAddress,
+        destination_address: params.destinationAddress,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to confirm quote')
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('confirmHallidayQuote error:', error)
+    throw error
+  }
+}
+

@@ -13,7 +13,7 @@ const menuItems = [
     { icon: Disc, label: "Catalog", href: "/catalog" },
     { icon: Mic2, label: "My Studio", href: "/studio" },
     { icon: FileCheck, label: "My Licenses", href: "/licenses" },
-    { icon: MessageSquare, label: "Messages", href: "/waku-messages" },
+    { icon: MessageSquare, label: "Messages", href: "/messages" },
     { icon: Wallet, label: "Wallet", href: "/wallet" },
     { icon: TrendingUp, label: "Analytics", href: "/analytics" },
     { icon: Users, label: "Community", href: "/community" },
