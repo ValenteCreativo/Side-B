@@ -1,10 +1,11 @@
+```typescript
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { AppShell } from "@/components/layout/AppShell"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Button } => "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Music, Users, MessageCircle, ExternalLink, Calendar } from "lucide-react"
@@ -61,7 +62,7 @@ export default function ProfilePage() {
 
     const fetchProfile = async () => {
         try {
-            const response = await fetch(`/api/users/${userId}`)
+            const response = await fetch(`/ api / users / ${ userId } `)
             if (!response.ok) throw new Error("Failed to fetch profile")
             const data = await response.json()
             setProfile(data)
@@ -100,8 +101,8 @@ export default function ProfilePage() {
             toast({
                 title: isFollowing ? "Unfollowed" : "Following",
                 description: isFollowing
-                    ? `You unfollowed ${profile?.displayName || "this musician"}`
-                    : `You are now following ${profile?.displayName || "this musician"}`,
+                    ? `You unfollowed ${ profile?.displayName || "this musician" } `
+                    : `You are now following ${ profile?.displayName || "this musician" } `,
             })
         } catch (error) {
             toast({
@@ -194,7 +195,7 @@ export default function ProfilePage() {
                                                 {isFollowing ? "Unfollow" : "Follow"}
                                             </Button>
                                             <Button
-                                                onClick={() => router.push(`/messages?user=${profile.walletAddress}`)}
+                                                onClick={() => router.push(`/ messages ? user = ${ profile.walletAddress } `)}
                                                 variant="outline"
                                             >
                                                 <MessageCircle className="h-4 w-4 mr-2" />
@@ -212,44 +213,48 @@ export default function ProfilePage() {
                                         {profile.twitter && (
                                             <a
                                                 href={`https://twitter.com/${profile.twitter.replace('@', '')}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                            >
-                                                <ExternalLink className="h-4 w-4" />
-                                                Twitter
-                                            </a>
+target = "_blank"
+rel = "noopener noreferrer"
+className = "flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+    >
+    <ExternalLink className="h-4 w-4" />
+Twitter
+                                            </a >
                                         )}
-                                        {profile.instagram && (
-                                            <a
-                                                href={`https://instagram.com/${profile.instagram.replace('@', '')}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                            >
-                                                <ExternalLink className="h-4 w-4" />
-                                                Instagram
-                                            </a>
-                                        )}
-                                        {profile.website && (
-                                            <a
-                                                href={profile.website}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                            >
-                                                <ExternalLink className="h-4 w-4" />
-                                                Website
-                                            </a>
-                                        )}
-                                    </div>
-                                </div>
+{
+    profile.instagram && (
+        <a
+            href={`https://instagram.com/${profile.instagram.replace('@', '')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+            <ExternalLink className="h-4 w-4" />
+            Instagram
+        </a>
+    )
+}
+{
+    profile.website && (
+        <a
+            href={profile.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+            <ExternalLink className="h-4 w-4" />
+            Website
+        </a>
+    )
+}
+                                    </div >
+                                </div >
                             )}
-                        </CardContent>
-                    </Card>
+                        </CardContent >
+                    </Card >
 
-                    {/* Sessions/Tracks */}
-                    <Card className="bg-card/40 backdrop-blur-md border-white/5">
+    {/* Sessions/Tracks */ }
+    < Card className = "bg-card/40 backdrop-blur-md border-white/5" >
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Music className="h-5 w-5" />
@@ -317,9 +322,9 @@ export default function ProfilePage() {
                                 </div>
                             )}
                         </CardContent>
-                    </Card>
-                </div>
-            </div>
-        </AppShell>
+                    </Card >
+                </div >
+            </div >
+        </AppShell >
     )
 }
