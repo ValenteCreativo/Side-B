@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { validateRequest, createLicenseSchema } from '@/lib/validations'
+
+export const dynamic = 'force-dynamic'
 
 /**
  * POST /api/licenses
@@ -7,16 +10,16 @@ import { prisma } from '@/lib/db'
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { sessionId, buyerId } = body
-
-    // Validation
-    if (!sessionId || !buyerId) {
+    // Validate request body with Zod
+    const validation = await validateRequest(request, createLicenseSchema)
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Session ID and Buyer ID are required' },
+        { error: validation.error },
         { status: 400 }
       )
     }
+
+    const { sessionId, buyerId } = validation.data
 
     // Check if session exists
     const session = await prisma.session.findUnique({

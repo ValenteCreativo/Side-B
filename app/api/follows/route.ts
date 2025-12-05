@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { validateRequest, followSchema } from '@/lib/validations'
+
+export const dynamic = 'force-dynamic'
 
 /**
  * POST /api/follows
@@ -7,18 +10,16 @@ import { prisma } from '@/lib/db'
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { followerId, followingId } = body as {
-      followerId: string
-      followingId: string
-    }
-
-    if (!followerId || !followingId) {
+    // Validate request body with Zod
+    const validation = await validateRequest(request, followSchema)
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Follower ID and Following ID are required' },
+        { error: validation.error },
         { status: 400 }
       )
     }
+
+    const { followerId, followingId } = validation.data
 
     if (followerId === followingId) {
       return NextResponse.json(

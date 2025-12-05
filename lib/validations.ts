@@ -75,6 +75,7 @@ export const hallidayOnrampSchema = z.object({
 
 // Follow schemas
 export const followSchema = z.object({
+  followerId: z.string().cuid(),
   followingId: z.string().cuid(),
 })
 
