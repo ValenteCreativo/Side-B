@@ -3,7 +3,11 @@ import { prisma } from '@/lib/db'
 import { registerSessionAsIp } from '@/lib/story'
 import { ContentType } from '@/lib/types'
 import { parseMoodTags, stringifyMoodTags } from '@/lib/utils'
+import { validateRequest, createSessionSchema } from '@/lib/validations'
 import { Address } from 'viem'
+
+// Cache catalog sessions for 30 seconds (public data, frequently accessed)
+export const revalidate = 30
 
 /**
  * GET /api/sessions
@@ -86,7 +90,15 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    // Validate request body with Zod
+    const validation = await validateRequest(request, createSessionSchema)
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      )
+    }
+
     const {
       ownerId,
       title,
@@ -97,15 +109,7 @@ export async function POST(request: NextRequest) {
       audioUrl,
       priceUsd,
       durationSec,
-    } = body
-
-    // Validation
-    if (!ownerId || !title || !description || !contentType || !audioUrl || priceUsd === undefined) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
-    }
+    } = validation.data
 
     // Get owner wallet address
     const owner = await prisma.user.findUnique({

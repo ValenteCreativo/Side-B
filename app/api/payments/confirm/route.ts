@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { verifyMultiPayment } from '@/lib/payment-verification'
+import { validateRequest, paymentConfirmSchema } from '@/lib/validations'
 import { Hex, Address } from 'viem'
+
+export const dynamic = 'force-dynamic'
 
 /**
  * POST /api/payments/confirm
@@ -16,19 +19,16 @@ import { Hex, Address } from 'viem'
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { sessionId, buyerId, txHash } = body as {
-      sessionId: string
-      buyerId: string
-      txHash: string
-    }
-
-    if (!sessionId || !buyerId || !txHash) {
+    // Validate request body with Zod
+    const validation = await validateRequest(request, paymentConfirmSchema)
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Session ID, Buyer ID, and Transaction Hash are required' },
+        { error: validation.error },
         { status: 400 }
       )
     }
+
+    const { sessionId, buyerId, txHash } = validation.data
 
     // Verify session exists and get payment details
     const session = await prisma.session.findUnique({
@@ -94,12 +94,12 @@ export async function POST(request: NextRequest) {
       },
       ...(platformWallet
         ? [
-            {
-              recipient: platformWallet as Address,
-              minAmount: platformFee,
-              token: 'USDC' as const,
-            },
-          ]
+          {
+            recipient: platformWallet as Address,
+            minAmount: platformFee,
+            token: 'USDC' as const,
+          },
+        ]
         : []),
     ])
 

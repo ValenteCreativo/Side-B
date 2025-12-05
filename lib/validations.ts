@@ -24,13 +24,18 @@ export const updateUserSchema = createUserSchema.partial().omit({ walletAddress:
 
 // Session (music track) schemas
 export const createSessionSchema = z.object({
+  ownerId: z.string().cuid(),
   title: z.string().min(1).max(200),
   description: z.string().min(1).max(1000),
   contentType: z.enum(['JAM', 'REHEARSAL', 'PRODUCED']),
-  moodTags: z.array(z.string()).min(1).max(10),
+  moodTags: z.union([
+    z.array(z.string()),
+    z.string()
+  ]).transform(val => typeof val === 'string' ? val : val.join(', ')),
   durationSec: z.number().int().positive().optional(),
   audioUrl: z.string().url(),
   priceUsd: z.number().positive().max(10000),
+  collectionId: z.string().cuid().optional(),
 })
 
 // License schemas
@@ -92,7 +97,7 @@ export async function validateRequest<T>(
     if (!result.success) {
       return {
         success: false,
-        error: result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', '),
+        error: result.error.issues.map((e: z.ZodIssue) => `${e.path.join('.')}: ${e.message}`).join(', '),
       }
     }
 
@@ -117,7 +122,7 @@ export function validateQuery<T>(
     if (!result.success) {
       return {
         success: false,
-        error: result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', '),
+        error: result.error.issues.map((e: z.ZodIssue) => `${e.path.join('.')}: ${e.message}`).join(', '),
       }
     }
 
