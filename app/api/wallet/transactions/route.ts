@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     // Get current block number
     const currentBlock = await publicClient.getBlockNumber()
-    const fromBlock = currentBlock - 10000n // Last ~10,000 blocks (approximately 1-2 days on Base)
+    const fromBlock = currentBlock - BigInt(10000) // Last ~10,000 blocks (approximately 1-2 days on Base)
 
     // Fetch transaction history using Etherscan API V2
     // Migration from BaseScan to Etherscan API V2 (single endpoint for all chains)
