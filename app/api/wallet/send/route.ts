@@ -1,10 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { validateRequest, walletSendSchema } from '@/lib/validations'
+import { walletLimiter, getClientIdentifier, checkRateLimit } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting: 20 requests per minute per IP
+    const identifier = getClientIdentifier(request)
+    const rateLimitResult = await checkRateLimit(walletLimiter, identifier)
+
+    if (rateLimitResult && !rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          error: 'Too many wallet requests. Please try again later.',
+          limit: rateLimitResult.limit,
+          reset: rateLimitResult.reset,
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimitResult.limit?.toString() || '',
+            'X-RateLimit-Remaining': rateLimitResult.remaining?.toString() || '0',
+            'X-RateLimit-Reset': rateLimitResult.reset?.toString() || '',
+          }
+        }
+      )
+    }
+
     // Validate request body with Zod
     const validation = await validateRequest(request, walletSendSchema)
     if (!validation.success) {

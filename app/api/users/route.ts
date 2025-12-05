@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db'
 import { UserRole } from '@/lib/types'
 import { Address } from 'viem'
 import { validateRequest, createUserSchema, updateUserSchema } from '@/lib/validations'
+import { apiLimiter, getClientIdentifier, checkRateLimit } from '@/lib/rate-limit'
 
 /**
  * GET /api/users
@@ -64,6 +65,28 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting: 30 requests per minute per IP
+    const identifier = getClientIdentifier(request)
+    const rateLimitResult = await checkRateLimit(apiLimiter, identifier)
+
+    if (rateLimitResult && !rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          error: 'Too many requests. Please try again later.',
+          limit: rateLimitResult.limit,
+          reset: rateLimitResult.reset,
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimitResult.limit?.toString() || '',
+            'X-RateLimit-Remaining': rateLimitResult.remaining?.toString() || '0',
+            'X-RateLimit-Reset': rateLimitResult.reset?.toString() || '',
+          }
+        }
+      )
+    }
+
     // Validate request body with Zod
     const validation = await validateRequest(request, createUserSchema)
     if (!validation.success) {

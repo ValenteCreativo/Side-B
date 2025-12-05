@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { put } from '@vercel/blob'
+import { uploadLimiter, getClientIdentifier, checkRateLimit } from '@/lib/rate-limit'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -18,6 +19,28 @@ const ACCEPTED_FORMATS = [
 
 export async function POST(request: NextRequest) {
     try {
+        // Rate limiting: 5 uploads per hour per IP
+        const identifier = getClientIdentifier(request)
+        const rateLimitResult = await checkRateLimit(uploadLimiter, identifier)
+
+        if (rateLimitResult && !rateLimitResult.success) {
+            return NextResponse.json(
+                {
+                    error: 'Upload limit exceeded. Please try again later.',
+                    limit: rateLimitResult.limit,
+                    reset: rateLimitResult.reset,
+                },
+                {
+                    status: 429,
+                    headers: {
+                        'X-RateLimit-Limit': rateLimitResult.limit?.toString() || '',
+                        'X-RateLimit-Remaining': rateLimitResult.remaining?.toString() || '0',
+                        'X-RateLimit-Reset': rateLimitResult.reset?.toString() || '',
+                    }
+                }
+            )
+        }
+
         const formData = await request.formData()
         const file = formData.get('file') as File
 

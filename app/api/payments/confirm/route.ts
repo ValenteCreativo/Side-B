@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { verifyMultiPayment } from '@/lib/payment-verification'
 import { validateRequest, paymentConfirmSchema } from '@/lib/validations'
+import { paymentLimiter, getClientIdentifier, checkRateLimit } from '@/lib/rate-limit'
 import { Hex, Address } from 'viem'
 
 export const dynamic = 'force-dynamic'
@@ -19,6 +20,28 @@ export const dynamic = 'force-dynamic'
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting: 10 requests per minute per IP
+    const identifier = getClientIdentifier(request)
+    const rateLimitResult = await checkRateLimit(paymentLimiter, identifier)
+
+    if (rateLimitResult && !rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          error: 'Too many payment requests. Please try again later.',
+          limit: rateLimitResult.limit,
+          reset: rateLimitResult.reset,
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimitResult.limit?.toString() || '',
+            'X-RateLimit-Remaining': rateLimitResult.remaining?.toString() || '0',
+            'X-RateLimit-Reset': rateLimitResult.reset?.toString() || '',
+          }
+        }
+      )
+    }
+
     // Validate request body with Zod
     const validation = await validateRequest(request, paymentConfirmSchema)
     if (!validation.success) {
