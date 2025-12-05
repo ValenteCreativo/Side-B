@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, Home, Disc, Mic2, User, Users, FileCheck, Settings, TrendingUp, Lock } from "lucide-react"
+import { Menu, X, Home, Disc, Mic2, User, Users, FileCheck, Settings, TrendingUp, Lock, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -14,6 +14,7 @@ const menuItems = [
     { icon: Mic2, label: "My Studio", href: "/studio" },
     { icon: FileCheck, label: "My Licenses", href: "/licenses" },
     { icon: Lock, label: "Waku Messages", href: "/waku-messages" },
+    { icon: Wallet, label: "Wallet", href: "/wallet" },
     { icon: TrendingUp, label: "Analytics", href: "/analytics" },
     { icon: Users, label: "Community", href: "/community" },
     { icon: Settings, label: "Settings", href: "/settings" },
