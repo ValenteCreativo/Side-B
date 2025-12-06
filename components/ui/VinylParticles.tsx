@@ -49,13 +49,13 @@ export function VinylParticles({ isDark = false }: VinylParticlesProps) {
             },
             particles: {
                 color: {
-                    value: isDark ? "#ffffff" : "#000000",
+                    value: ["#CD7F32", "#B87333", "#A0522D"], // Bronze/copper gradient
                 },
                 links: {
-                    color: isDark ? "#ffffff" : "#000000",
+                    color: "#CD7F32", // Bronze
                     distance: 150,
                     enable: true,
-                    opacity: 0.2,
+                    opacity: 0.3,
                     width: 1,
                 },
                 move: {
@@ -75,7 +75,7 @@ export function VinylParticles({ isDark = false }: VinylParticlesProps) {
                     value: 30,
                 },
                 opacity: {
-                    value: 0.3,
+                    value: 0.4,
                 },
                 shape: {
                     type: "circle",

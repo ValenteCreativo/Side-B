@@ -93,6 +93,13 @@ export function VinylFlip({
                 >
                     {back}
 
+                    {/* Particles on flipped side */}
+                    {isFlipped && (
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <VinylParticles isDark={true} />
+                        </div>
+                    )}
+
                     {/* Decorative Corner */}
                     <div className="absolute bottom-0 left-0 w-8 h-8 border-r-2 border-t-2 border-background bg-foreground z-10" />
                 </div>
