@@ -207,8 +207,8 @@ export default function WalletPage() {
         <div className="min-h-screen bg-background">
           <PageHero
             title="WALLET"
-            subtitle="CRYPTO_VAULT"
-            description="Manage your digital assets and transactions"
+            subtitle="YOUR_BALANCE"
+            description="Manage your funds and transactions securely"
             sideText="SIDE B"
           >
             <VinylFlip flippable={false}
@@ -221,18 +221,18 @@ export default function WalletPage() {
               back={
                 <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
                   <span className="font-mono text-sm font-bold tracking-widest text-bronze">
-                    CONNECT
+                    SIGN
                     <br />
-                    YOUR
+                    IN
                     <br />
-                    WALLET
+                    TO VIEW
                   </span>
                 </div>
               }
             />
           </PageHero>
           <div className="container mx-auto px-4 py-12">
-            <p className="text-center text-muted-foreground font-mono">PLEASE_CONNECT_WALLET</p>
+            <p className="text-center text-muted-foreground font-mono">PLEASE_SIGN_IN_TO_VIEW_WALLET</p>
           </div>
         </div>
       </AppShell>
@@ -244,8 +244,8 @@ export default function WalletPage() {
       <div className="min-h-screen bg-background">
         <PageHero
           title="WALLET"
-          subtitle="CRYPTO_VAULT"
-          description="Manage your digital assets and transactions"
+          subtitle="YOUR_BALANCE"
+          description="Manage your funds and transactions securely"
           sideText="SIDE B"
         >
           <VinylFlip flippable={false}
