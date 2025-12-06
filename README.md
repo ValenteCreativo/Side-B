@@ -1,171 +1,132 @@
 <div align="center">
-
-  <img src="https://red-causal-armadillo-397.mypinata.cloud/ipfs/bafybeifioittq7aoty5mduzvki3wwhqzrtgwvyhinzqkhb25zd4rqzpa5y" alt="Side B Sessions" width="44" />
-
+  <img src="https://red-causal-armadillo-397.mypinata.cloud/ipfs/bafybeifioittq7aoty5mduzvki3wwhqzrtgwvyhinzqkhb25zd4rqzpa5y" width="100" alt="Side B Logo" />
   <h1>Side B Sessions</h1>
-  <p><i>Licensing the music that algorithms ignore.</i></p>
+  <p><em>Licensing the music that algorithms ignore.</em></p>
 
   <p>
-    <a href="https://story.foundation">
-      <img src="https://img.shields.io/badge/Story_Protocol-IP_Layer-8B5CF6?style=flat-square&logo=ethereum&logoColor=white" alt="Story Protocol" />
-    </a>
-    <a href="https://docs.cdp.coinbase.com/">
-      <img src="https://img.shields.io/badge/Coinbase_CDP-Embedded_Wallets-0052FF?style=flat-square&logo=coinbase&logoColor=white" alt="Coinbase CDP" />
-    </a>
-    <a href="https://base.org">
-      <img src="https://img.shields.io/badge/Base-L2_Network-0052FF?style=flat-square&logo=base&logoColor=white" alt="Base L2" />
-    </a>
-    <a href="https://waku.org">
-      <img src="https://img.shields.io/badge/Waku-Encrypted_P2P-000000?style=flat-square" alt="Waku" />
-    </a>
-    <a href="https://nextjs.org">
-      <img src="https://img.shields.io/badge/Next.js-14-000000?style=flat-square&logo=next.js&logoColor=white" alt="Next.js" />
-    </a>
+    <img src="https://img.shields.io/badge/Story_Protocol-IP_Asset-black?style=flat-square" alt="Story Protocol" />
+    <img src="https://img.shields.io/badge/Coinbase_CDP-Embedded_Wallet-0052FF?style=flat-square&logo=coinbase&logoColor=white" alt="Coinbase CDP" />
+    <img src="https://img.shields.io/badge/Base-L2-0052FF?style=flat-square&logo=base&logoColor=white" alt="Base L2" />
+    <img src="https://img.shields.io/badge/Waku-Encrypted_Messaging-00DDB3?style=flat-square" alt="Waku" />
+    <img src="https://img.shields.io/badge/Next.js-14_App_Router-black?style=flat-square&logo=nextdotjs&logoColor=white" alt="Next.js" />
+    <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Prisma-Psql-2D3748?style=flat-square&logo=prisma&logoColor=white" alt="Prisma" />
+    <img src="https://img.shields.io/badge/IPFS-Pinata-65C9FF?style=flat-square&logo=ipfs&logoColor=white" alt="IPFS/Pinata" />
   </p>
 
-  <p align="center">🎧 ─── 📀 ─── 🎧</p>
-
+  <p>🎧 ─── 📀 ─── 🎧</p>
 </div>
 
+## Problem & Core Idea
+
+Musicians rarely earn meaningful income from streaming unless they become full-time content creators. Hundreds of hours of practice, voice notes, and jams sit on hard drives, unmonetized and unprotected.  
+**Side B Sessions** turns these "Side B" tracks into registered IP assets that filmmakers and game devs can license instantly.
+
 > [!NOTE]
-> Most musicians will never see real income from Spotify or YouTube unless they become content creators and build a personal brand.  
-> **Side B Sessions** exists for the other path: honor the hours of practice, turn voice notes and sessions into IP, and make them licensable in one place.
+> Honoring practice hours, not follower counts.
 
----
+## Features
 
-## 🎧 What is Side B Sessions?
+| Feature | Description |
+| :--- | :--- |
+| 📜 **IP-backed Catalog** | Every upload is registered as a programmable IP Asset on Story Protocol. |
+| ⚡ **Invisible Web3** | Email login creates a non-custodial wallet instantly via Coinbase CDP. |
+| ☁️ **Secure Storage** | Audio secured via Vercel Blob (hot) + IPFS/Pinata (permanent). |
+| � **Licensing on Base** | Transparent USDC/ETH payments on Base L2 using `SideBPaymentSplitter`. |
+| � **Messaging** | End-to-end encrypted collaboration requests powered by Waku. |
+| ⚖️ **Rights Management** | Automated royalty splits and license verification on-chain. |
+| � **Creator Dashboard** | Track plays, licenses, and earnings in a unified musician view. |
 
-Side B Sessions is a Web3-native platform where independent musicians can upload **voice notes, jams, rehearsals, and finished tracks**, register them as **on-chain IP on Story Protocol**, and offer **non-exclusive licenses** to filmmakers, game devs, and content creators.
-
-Creators can **browse, preview, license, and download** tracks. Musicians keep ownership, track usage, and see how their catalog performs over time—without ever touching MetaMask or building an influencer persona.
-
----
-
-## 💿 Core Features
-
-| 🎛️ Feature                         | Description                                                                                   |
-|------------------------------------|-----------------------------------------------------------------------------------------------|
-| 🎵 IP-backed music catalog         | Audio uploads are registered as IP assets on **Story Protocol**, tied to the artist’s wallet. |
-| 📨 Email → wallet onboarding       | **Coinbase CDP Embedded Wallets** create an EOA from an email/OTP flow—no seed phrases.      |
-| 📤 Audio upload pipeline           | Upload via **Vercel Blob**, validated with **Zod**, and referenced via **IPFS/Pinata**.      |
-| 💸 Licensing & payments on Base    | Non-exclusive licenses paid in **USDC/ETH on Base L2**, with verified on-chain transfers.     |
-| 🧮 Revenue & performance insights  | Dashboard showing sessions, licenses sold, and revenue over time.                            |
-| 💬 Encrypted collab messaging      | **Waku** P2P encrypted messaging between musicians and creators for follow-up and custom work.|
-| 💳 Fiat bridge                     | **Halliday** on-ramp lets users move from card/fiat to on-chain payments where needed.       |
-
----
-
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```mermaid
-flowchart LR
-    subgraph Musician
-      A[Email/OTP Login<br/>Coinbase CDP] --> B[Auto Wallet (EOA)]
-      B --> C[Upload Audio<br/>Vercel Blob]
-      C --> D[Metadata + Pricing<br/>PostgreSQL/Prisma]
-      D --> E[Pin Metadata<br/>IPFS / Pinata]
-      E --> F[Register IP Asset<br/>Story Protocol SDK]
+graph LR
+    subgraph Musician Flow
+    A[Email / OTP] -->|Coinbase CDP| B(Wallet Created)
+    B --> C{Upload Audio}
+    C -->|Vercel Blob + Zod| D[Metadata Validation]
+    D -->|Pinata| E[IPFS Storage]
+    E -->|Story Protocol| F[[IP Asset Registered]]
     end
 
-    subgraph Catalog & Licensing
-      F --> G[Public Catalog<br/>IP-verified tracks]
-      G --> H[License Request<br/>Creator UI]
-      H --> I[USDC/ETH Payment<br/>Base L2]
-      I --> J[Payment Splitter<br/>SideBPaymentSplitter]
-      J --> K[Artist & Platform<br/>Payouts]
+    subgraph User Flow
+    G[Browse Catalog] --> H{License Track}
+    H -->|Base L2| I[Payment Splitter]
+    I --> J(Artist Payout) & K(Platform Fee)
+    J --> L[Waku Messaging]
     end
 
-    subgraph Collaboration
-      G -. Session Access .-> L[Waku P2P Messaging]
-      K -. Follow-up work .-> L
-      L --> M[Encrypted chat<br/>No central server]
-    end
+    F -.-> G
+```
 
-    
----
+## Tech Stack
 
-🧩 Tech Stack
-Frontend & UX
-Next.js 14 (App Router) · React 18 · TypeScript · TailwindCSS · shadcn/ui · Framer Motion
+### Frontend & UX
+*   **Next.js 14 (App Router)** — React Server Components for performance and SEO.
+*   **TailwindCSS + shadcn/ui** — Rapid, accessible, and premium UI development.
+*   **Framer Motion** — Smooth interactions and "surreal" micro-animations.
 
-Web3 & IP
-Story Protocol TypeScript SDK · Coinbase CDP Embedded Wallets · Base L2 · viem · Solidity (Foundry) · SideBPaymentSplitter
+### Web3 & IP
+*   **Story Protocol SDK** — Programmable IP layer for asset registration and licensing rights.
+*   **Coinbase CDP** — Embedded wallets for seamless onboarding (no keys required).
+*   **Base L2 & viem** — Fast, low-cost execution environment for payments.
+*   **SideBPaymentSplitter** — Custom Solidity contract for trustless royalty distribution.
 
-Data & Storage
-Prisma + PostgreSQL · Vercel Blob (audio) · IPFS/Pinata (metadata) · Zod (runtime validation)
+### Data & Storage
+*   **Prisma + PostgreSQL** — Relational data for users, catalog state, and indexing.
+*   **Vercel Blob** — High-performance audio streaming.
+*   **IPFS / Pinata** — Decentralized, immutable persistence for IP media files.
 
-Messaging & Infra
-Waku SDK (light node + protobuf) · Next.js Route Handlers · optional rate limiting · Halliday fiat on-ramp
+### Messaging & Infra
+*   **Waku SDK** — Decentralized, privacy-preserving communication layer.
+*   **Halliday** — (Optional) Fiat on-ramp for credit card payments.
 
----
+<details>
+<summary>🛠 <strong>For devs: Story + CDP in one glance</strong></summary>
 
-<details> <summary><b>🛠 More for devs</b> — Story + CDP in one flow</summary>
-[!IMPORTANT]
-Side B Sessions is built as a full IP licensing flow: from raw audio to Story IP asset, to verified Base L2 payment, to Waku-backed collaboration.
+<br>
 
+> [!IMPORTANT]
+> Full IP lifecycle handled: upload → IP registration → licensing → payment verification → messaging.
 
-// lib/storyClient.ts
-import { StoryClient } from '@story-protocol/core-sdk'
-import { http } from 'viem'
+```typescript
+// Example: Registering an IP Asset with Story Protocol SDK
+import { StoryClient, StoryConfig } from '@story-protocol/core-sdk';
 
-export const storyClient = StoryClient.newClient({
-  transport: http(process.env.STORY_RPC_URL!),
-  chainId: 'aeneid',
-  account: process.env.STORY_PRIVATE_KEY as `0x${string}`
-})
-
-// Register a track as IP asset
-export async function registerTrackAsIP(params: {
-  nftContract: `0x${string}`
-  tokenId: string
-  metadataURI: string
-  metadataHash: `0x${string}`
-}) {
-  return storyClient.ipAsset.register({
-    nftContract: params.nftContract,
-    tokenId: params.tokenId,
-    metadata: {
-      metadataURI: params.metadataURI,
-      metadataHash: params.metadataHash
-    }
-  })
+async function registerSideBTrack(audioHash: string, metadata: TrackMetadata) {
+  const client = StoryClient.newClient(config);
+  
+  const response = await client.ipAsset.register({
+    nftContract: SIDE_B_NFT_ADDRESS,
+    tokenId: metadata.tokenId,
+    ipMetadata: {
+      title: metadata.title,
+      hash: audioHash, // IPFS CID
+      mediaUrl: `ipfs://${audioHash}`,
+    },
+    txOptions: { waitForTransaction: true }
+  });
+  
+  return response.ipId; // The global Story Protocol IP Identifier
 }
+```
 
-
-// components/auth/CdpEmailLogin.tsx
-import { useCdpAuth } from '@coinbase/cdp-react'
-
-export function CdpEmailLogin() {
-  const { loginWithEmail } = useCdpAuth()
-
-  return (
-    <button
-      onClick={() => loginWithEmail({ emailRedirectTo: window.location.href })}
-      className="rounded-full px-4 py-2 text-sm border"
-    >
-      Sign in with email
-    </button>
-  )
-}
-Docs: Story Protocol1 · Coinbase CDP2 · Base3 · Waku4
-
----
+This project integrates [Story Protocol][1], [Coinbase CDP][2], [Base][3], and [Waku][4].
 
 </details>
-🏆 Buildathon
-Built for the Surreal World Assets Buildathon 2025 on Story Protocol.
 
----
+<br>
 
-<p align="center"> From México with ❤️‍🔥 </p>
+<p align="center">
+  <small>Built for the <strong>Surreal World Assets Buildathon 2025</strong> on Story Protocol.</small>
+</p>
 
----
+<div align="center">
+  <hr />
+  <p>From México with 🧡</p>
+</div>
 
-Footnotes
-Story Protocol docs — https://docs.story.foundation ↩
-
-Coinbase Developer Platform docs — https://docs.cdp.coinbase.com/ ↩
-
-Base network docs — https://docs.base.org/ ↩
-
-Waku protocol docs — https://docs.waku.org/ ↩
+[^1]: https://docs.storyprotocol.xyz
+[^2]: https://docs.cloud.coinbase.com/waas
+[^3]: https://docs.base.org
+[^4]: https://waku.org
