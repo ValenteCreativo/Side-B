@@ -40,15 +40,19 @@ export function VinylFlip({
     if (!flippable) {
         return (
             <div
-                className={cn("relative group", className)}
+                className={cn("relative group overflow-hidden", className)}
                 onMouseEnter={() => setShowParticles(true)}
                 onMouseLeave={() => setShowParticles(false)}
             >
                 <div className="w-full h-full relative bg-foreground text-background border-2 border-foreground overflow-hidden">
                     {back}
 
-                    {/* Particles appear on hover */}
-                    {showParticles && <VinylParticles isDark={true} />}
+                    {/* Particles appear on hover - contained within this div */}
+                    {showParticles && (
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <VinylParticles isDark={true} />
+                        </div>
+                    )}
 
                     {/* Decorative Corner */}
                     <div className="absolute bottom-0 left-0 w-8 h-8 border-r-2 border-t-2 border-background bg-foreground z-10" />

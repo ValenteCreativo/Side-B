@@ -40,7 +40,7 @@ export function MobileMenu() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsOpen(false)}
-                            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50"
+                            className="fixed inset-0 bg-background/95 backdrop-blur-md z-50"
                         />
 
                         {/* Drawer */}
@@ -49,7 +49,7 @@ export function MobileMenu() {
                             animate={{ x: 0 }}
                             exit={{ x: "-100%" }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed top-0 left-0 bottom-0 w-[80%] max-w-sm bg-background border-r border-border z-50 flex flex-col"
+                            className="fixed top-0 left-0 bottom-0 w-[80%] max-w-sm bg-background border-r-2 border-foreground z-50 flex flex-col shadow-[8px_0_0_0_rgba(0,0,0,0.1)]"
                         >
                             <div className="h-20 flex items-center justify-between px-6 border-b border-border">
                                 <span className="font-bold text-xl tracking-tight">SIDE B</span>
