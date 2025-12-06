@@ -140,7 +140,7 @@ function CatalogPage() {
       <PageHero
         title="THE CATALOG"
         subtitle="ARCHIVE_01"
-        description="Curated sounds from the underground. License directly from the source."
+        description="Independent sound from the underground. License authentic music with verified ownership."
         sideText="SIDE B"
       >
         <VinylFlip flippable={false}
