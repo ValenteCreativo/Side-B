@@ -26,7 +26,7 @@ export default function MyProfilePage() {
             <AppShell>
                 <div className="min-h-screen bg-background flex items-center justify-center">
                     <div className="text-center">
-                        <p className="font-mono text-muted-foreground">PLEASE_CONNECT_WALLET</p>
+                        <p className="font-mono text-muted-foreground">PLEASE_SIGN_IN_TO_VIEW_PROFILE</p>
                     </div>
                 </div>
             </AppShell>
