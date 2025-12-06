@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 const menuItems = [
     { icon: Home, label: "Home", href: "/" },
     { icon: Disc, label: "Catalog", href: "/catalog" },
+    { icon: User, label: "My Profile", href: "/my-profile" },
     { icon: Mic2, label: "My Studio", href: "/studio" },
     { icon: FileCheck, label: "My Licenses", href: "/licenses" },
     { icon: MessageSquare, label: "Messages", href: "/messages" },

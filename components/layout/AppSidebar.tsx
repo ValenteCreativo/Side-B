@@ -26,6 +26,7 @@ import { AuthModal } from "@/components/auth/AuthModal"
 const menuItems = [
     { icon: Disc, label: "Catalog", href: "/catalog" },
     { icon: Users, label: "Community", href: "/community" },
+    { icon: User, label: "My Profile", href: "/my-profile" },
     { icon: Mic2, label: "My Studio", href: "/studio" },
     { icon: FileCheck, label: "My Licenses", href: "/licenses" },
     { icon: MessageSquare, label: "Messages", href: "/messages" },
