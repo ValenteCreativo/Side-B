@@ -22,15 +22,12 @@ export default function GlobalRightsPage() {
                     sideText="SIDE B"
                 >
                     <VinylFlip flippable={false}
+                        variant="transparent"
                         className="w-64 h-64 ml-auto"
-                        front={
-                            <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
-                                <Globe className="w-32 h-32 animate-pulse-slow" />
-                            </div>
-                        }
+                        front={null}
                         back={
-                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-                                <span className="font-mono text-sm font-bold tracking-widest">
+                            <div className="w-full h-full flex items-center justify-center text-center">
+                                <span className="font-mono text-sm font-bold tracking-widest text-foreground">
                                     OWN
                                     <br />
                                     YOUR
