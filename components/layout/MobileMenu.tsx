@@ -70,7 +70,7 @@ export function MobileMenu() {
               transition={{ type: "spring", damping: 22, stiffness: 220 }}
               className="fixed inset-0 z-50 flex items-center justify-center px-4"
             >
-              <div className="relative w-full max-w-sm h-[65vh] max-h-[65vh] rounded-2xl translate-y-3 bg-white dark:bg-zinc-950 border border-bronze/40 shadow-[0_0_40px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden">
+              <div className="relative w-full max-w-sm h-[25vh] max-h-[65vh] rounded-2xl translate-y-3 bg-white dark:bg-zinc-950 border border-bronze/40 shadow-[0_0_40px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden">
                 {/* Header compacto con tache arriba derecha */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-bronze/30 bg-zinc-50/80 dark:bg-zinc-900/80">
                   <span className="font-semibold text-base tracking-tight text-foreground">
