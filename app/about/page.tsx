@@ -16,7 +16,7 @@ export default function AboutPage() {
                     description="An independent music marketplace for musicians to register and license their music as IP."
                     sideText="SIDE B"
                 >
-                    <VinylFlip flippable={false} flippable={false}
+                    <VinylFlip flippable={false}
                         className="w-64 h-64 ml-auto"
                         front={
                             <div className="w-full h-full flex items-center justify-center bg-foreground text-background">

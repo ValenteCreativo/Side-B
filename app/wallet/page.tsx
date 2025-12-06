@@ -211,7 +211,7 @@ export default function WalletPage() {
             description="Manage your digital assets and transactions"
             sideText="SIDE B"
           >
-            <VinylFlip flippable={false} flippable={false}
+            <VinylFlip flippable={false}
               className="w-64 h-64 ml-auto"
               front={
                 <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
@@ -248,7 +248,7 @@ export default function WalletPage() {
           description="Manage your digital assets and transactions"
           sideText="SIDE B"
         >
-          <VinylFlip flippable={false} flippable={false}
+          <VinylFlip flippable={false}
             className="w-64 h-64 ml-auto"
             front={
               <div className="w-full h-full flex items-center justify-center bg-foreground text-background">

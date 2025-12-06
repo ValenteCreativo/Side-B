@@ -55,7 +55,7 @@ function MessagesContent() {
                     description="Decentralized peer-to-peer messaging"
                     sideText="SIDE B"
                 >
-                    <VinylFlip flippable={false} flippable={false}
+                    <VinylFlip flippable={false}
                         className="w-64 h-64 ml-auto"
                         front={
                             <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
@@ -92,7 +92,7 @@ function MessagesContent() {
                 description="Decentralized peer-to-peer messaging"
                 sideText="SIDE B"
             >
-                <VinylFlip flippable={false} flippable={false}
+                <VinylFlip flippable={false}
                     className="w-64 h-64 ml-auto"
                     front={
                         <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
