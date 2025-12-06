@@ -4,76 +4,103 @@
 
 @layer base {
   :root {
-    /* Quantum Leap / Brutalist Palette */
-    --background: 0 0% 100%;
-    /* Pure White */
-    --foreground: 0 0% 0%;
-    /* Pure Black */
+    /* Quantum Leap 5.0 - Refined Brutalism Palette */
+
+    /* Backgrounds - Softer whites */
+    --background: 0 0% 98%;
+    /* zinc-50 equivalent */
+    --foreground: 240 10% 4%;
+    /* zinc-950 - softer black */
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card-foreground: 240 10% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 240 10% 4%;
 
-    --primary: 0 0% 0%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary - Refined black */
+    --primary: 240 6% 10%;
+    /* zinc-900 */
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 0 0% 90%;
-    /* Light Gray for hover states */
-    --secondary-foreground: 0 0% 0%;
+    /* Secondary - Expanded grays */
+    --secondary: 240 5% 96%;
+    /* zinc-100 */
+    --secondary-foreground: 240 6% 10%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+    /* zinc-600 */
 
-    --accent: 0 0% 0%;
+    /* Bronze Accent - Primary accent color */
+    --accent: 30 40% 50%;
+    /* Bronze */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 0% 0%;
-    --destructive-foreground: 0 0% 100%;
+    /* Destructive - Red with refinement */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 0%;
-    /* Black borders */
-    --input: 0 0% 100%;
-    --ring: 0 0% 0%;
+    /* Borders - Softer */
+    --border: 240 6% 90%;
+    /* zinc-200 */
+    --input: 240 6% 90%;
+    --ring: 30 40% 50%;
+    /* Bronze ring */
 
-    /* Subtle bronze accent */
-    --accent-bronze: 30 40% 45%;
+    /* Bronze variants */
+    --bronze: 30 40% 50%;
+    --bronze-light: 30 60% 70%;
+    --bronze-dark: 30 40% 40%;
 
-    --radius: 0rem;
-    /* Strict sharp corners */
+    /* Border radius tokens */
+    --radius-sm: 0.125rem;
+    /* 2px */
+    --radius-md: 0.25rem;
+    /* 4px */
+    --radius-lg: 0.5rem;
+    /* 8px */
+    --radius-xl: 0.75rem;
+    /* 12px */
+
+    /* Default radius - subtle */
+    --radius: 0.25rem;
   }
 
   .dark {
-    /* Inverted Quantum Leap */
-    --background: 0 0% 3%;
-    /* Almost Black */
-    --foreground: 0 0% 100%;
+    /* Dark Mode - Refined */
+    --background: 240 10% 4%;
+    /* zinc-950 */
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 3%;
-    --card-foreground: 0 0% 100%;
+    --card: 240 6% 10%;
+    /* zinc-900 */
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 3%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 240 6% 10%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 6% 10%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 240 4% 16%;
+    /* zinc-800 */
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
 
-    --accent: 0 0% 100%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 30 40% 50%;
+    /* Bronze stays same */
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 0% 100%;
-    --destructive-foreground: 0 0% 0%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 10%;
-    --ring: 0 0% 100%;
+    --border: 240 4% 16%;
+    /* zinc-800 */
+    --input: 240 4% 16%;
+    --ring: 30 40% 50%;
   }
 }
 
@@ -85,62 +112,140 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    /* Subtle grain texture */
     background-image:
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.01'/%3E%3C/svg%3E"),
-      repeating-linear-gradient(0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.005) 2px,
-        rgba(0, 0, 0, 0.005) 4px);
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.008'/%3E%3C/svg%3E");
     background-attachment: fixed;
   }
 
-  /* Massive Typography Utilities */
+  /* Refined Typography */
   h1 {
-    @apply font-bold tracking-tighter;
+    @apply font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply font-semibold tracking-tight;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-medium;
+  }
+
+  p {
+    @apply leading-relaxed;
   }
 }
 
 @layer utilities {
+
+  /* Typography Scale - Refined */
   .text-massive {
     font-size: clamp(3rem, 10vw, 8rem);
-    line-height: 0.9;
-    letter-spacing: -0.04em;
-    font-weight: 900;
-  }
-
-  .text-display {
-    font-size: clamp(2rem, 6vw, 4rem);
     line-height: 0.95;
     letter-spacing: -0.03em;
     font-weight: 800;
   }
 
-  /* Brutalist Borders */
-  .border-brutal {
-    @apply border-2 border-black dark:border-white;
+  .text-display {
+    font-size: clamp(2rem, 6vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-weight: 700;
   }
 
-  /* Bronze accent utilities */
-  .accent-bronze {
-    color: hsl(var(--accent-bronze));
+  .text-headline {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+  }
+
+  /* Border Utilities - Refined */
+  .border-refined {
+    @apply border border-zinc-200 dark:border-zinc-800;
+  }
+
+  .border-brutal {
+    @apply border-2 border-foreground;
+  }
+
+  /* Bronze Accent Utilities */
+  .text-bronze {
+    color: hsl(var(--bronze));
   }
 
   .border-bronze {
-    border-color: hsl(var(--accent-bronze));
+    border-color: hsl(var(--bronze));
   }
 
   .bg-bronze {
-    background-color: hsl(var(--accent-bronze));
+    background-color: hsl(var(--bronze));
+  }
+
+  .ring-bronze {
+    --tw-ring-color: hsl(var(--bronze));
+  }
+
+  /* Shadow System - Refined */
+  .shadow-refined {
+    box-shadow:
+      0 1px 2px 0 rgb(0 0 0 / 0.05),
+      0 1px 3px 0 rgb(0 0 0 / 0.05);
+  }
+
+  .shadow-refined-md {
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .shadow-refined-lg {
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
   .shadow-bronze {
-    box-shadow: 0 0 20px hsla(30, 40%, 45%, 0.3);
+    box-shadow: 0 0 20px hsla(30, 40%, 50%, 0.25);
   }
 
-  /* Grain Effect */
+  .shadow-bronze-lg {
+    box-shadow: 0 0 40px hsla(30, 40%, 50%, 0.3);
+  }
+
+  /* Transition Utilities */
+  .transition-refined {
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .transition-smooth {
+    transition: all 200ms ease-in-out;
+  }
+
+  /* Hover Effects */
+  .hover-lift {
+    @apply transition-refined hover:scale-[1.02] hover:shadow-refined-lg;
+  }
+
+  .hover-bronze {
+    @apply transition-refined hover:border-bronze hover:shadow-bronze;
+  }
+
+  /* Grain Effect - Subtle */
   .bg-grain {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+
+  /* Glassmorphism */
+  .glass {
+    @apply backdrop-blur-xl bg-white/80 dark:bg-zinc-900/80;
+  }
+
+  .glass-strong {
+    @apply backdrop-blur-2xl bg-white/90 dark:bg-zinc-900/90;
   }
 }
 
@@ -149,19 +254,32 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Refined */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-background;
+  @apply bg-zinc-100 dark:bg-zinc-900;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-foreground rounded-none;
+  @apply bg-zinc-300 dark:bg-zinc-700 rounded-sm;
+  transition: background-color 200ms;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-foreground/80;
+  @apply bg-bronze;
+}
+
+/* Selection */
+::selection {
+  background-color: hsl(var(--bronze) / 0.2);
+  @apply text-foreground;
+}
+
+/* Focus visible - Bronze ring */
+:focus-visible {
+  @apply outline-none ring-2 ring-bronze ring-offset-2 ring-offset-background;
 }
