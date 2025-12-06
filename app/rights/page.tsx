@@ -49,24 +49,27 @@ export default function GlobalRightsPage() {
                             <div className="p-3 bg-bronze/10 text-bronze rounded-sm">
                                 <Shield className="h-6 w-6" />
                             </div>
-                            <h2 className="text-2xl font-bold uppercase tracking-tight">Story Protocol Integration</h2>
+                            <h2 className="text-2xl font-bold uppercase tracking-tight">Verified Ownership</h2>
                         </div>
                         <div className="space-y-6">
                             <p className="text-lg font-light leading-relaxed">
-                                Every track uploaded to Side B is registered as intellectual property on{" "}
-                                <strong className="font-bold text-bronze">Story Protocol</strong>, a blockchain infrastructure for programmable IP.
-                                This means your music is protected, traceable, and yours to license globally.
+                                Every track you upload to Side B is automatically registered as <strong className="text-bronze">verified intellectual property</strong>.
+                                Your music is protected with blockchain verification—permanent, traceable proof of ownership that you can license globally.
+                            </p>
+                            <p className="text-muted-foreground font-light">
+                                Powered by Story Protocol, an infrastructure for programmable IP that makes your creative work legally protected and commercially viable.
+                                No complicated setup. No technical knowledge required. Just upload, and you're protected.
                             </p>
 
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div className="p-4 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 rounded-sm">
-                                    <h4 className="font-bold uppercase text-sm mb-2 text-muted-foreground">Blockchain</h4>
-                                    <p className="font-mono text-sm">Story Protocol Aeneid Testnet</p>
+                                    <h4 className="font-bold uppercase text-sm mb-2 text-muted-foreground">Technology</h4>
+                                    <p className="font-mono text-sm">Story Protocol (Blockchain IP Registry)</p>
                                 </div>
                                 <div className="p-4 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 rounded-sm">
-                                    <h4 className="font-bold uppercase text-sm mb-2 text-muted-foreground">Network Status</h4>
+                                    <h4 className="font-bold uppercase text-sm mb-2 text-muted-foreground">Status</h4>
                                     <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-600/20 rounded-sm font-mono uppercase">
-                                        Live
+                                        Active & Protecting Your Work
                                     </Badge>
                                 </div>
                             </div>
@@ -107,57 +110,57 @@ export default function GlobalRightsPage() {
 
                     {/* How It Works */}
                     <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-8 mb-8 shadow-refined">
-                        <h2 className="text-2xl font-bold uppercase tracking-tight mb-8">How IP Registration Works</h2>
+                        <h2 className="text-2xl font-bold uppercase tracking-tight mb-8">How Protection Works</h2>
                         <div className="space-y-8">
                             <Step
                                 number="01"
-                                title="Upload Your Track"
-                                description="Upload your session (jam, rehearsal, or produced track) to Side B."
+                                title="Upload Your Music"
+                                description="Upload your session—jam, rehearsal, demo, or produced track. Any original sound you create."
                             />
                             <Step
                                 number="02"
-                                title="NFT Minting"
-                                description="An NFT is minted on the SPG collection representing your music."
+                                title="Automatic Protection"
+                                description="Your music is instantly registered as verified intellectual property. You receive permanent proof of ownership."
                             />
                             <Step
                                 number="03"
-                                title="IP Registration"
-                                description="The NFT is registered as an IP Asset on Story Protocol with metadata."
+                                title="Blockchain Verification"
+                                description="All ownership records are stored on blockchain infrastructure—permanent, transparent, and globally recognized."
                             />
                             <Step
                                 number="04"
-                                title="License & Monetize"
-                                description="Your IP is now licensable. Creators can purchase licenses directly from you."
+                                title="License & Earn"
+                                description="Creators can license your protected work. You receive payment directly, with full transparency and proof of every transaction."
                             />
                             <Step
                                 number="05"
                                 title="Track Everything"
-                                description="All transactions are on-chain and viewable on StoryScan block explorer."
+                                description="View all licensing activity and ownership history. Every transaction is recorded and verifiable forever."
                             />
                         </div>
                     </div>
 
                     {/* Viewing Your IP Assets */}
                     <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-8 mb-8 shadow-refined">
-                        <h2 className="text-2xl font-bold uppercase tracking-tight mb-6">Viewing Your IP Assets</h2>
+                        <h2 className="text-2xl font-bold uppercase tracking-tight mb-6">Your Ownership Dashboard</h2>
                         <div className="space-y-6">
                             <p className="text-muted-foreground font-light">
-                                Once your track is uploaded and registered, you can view it on the Story Protocol
-                                block explorer (StoryScan). Each IP asset has:
+                                After uploading your music, view your verified ownership and licensing activity in your Studio.
+                                Every track includes permanent verification that you can share with anyone:
                             </p>
 
                             <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4 font-mono text-sm">
-                                <li>UNIQUE IP ID (ON-CHAIN IDENTIFIER)</li>
-                                <li>TRANSACTION HASH (PROOF OF REGISTRATION)</li>
-                                <li>NFT TOKEN ID WITHIN THE SPG COLLECTION</li>
-                                <li>METADATA (TITLE, DESCRIPTION, CONTENT TYPE)</li>
-                                <li>LICENSE HISTORY AND OWNERSHIP RECORDS</li>
+                                <li>UNIQUE OWNERSHIP IDENTIFIER (PERMANENT PROOF)</li>
+                                <li>REGISTRATION TIMESTAMP (WHEN YOU CLAIMED IT)</li>
+                                <li>VERIFICATION RECORD (BLOCKCHAIN PROOF)</li>
+                                <li>TRACK DETAILS (TITLE, DESCRIPTION, TYPE)</li>
+                                <li>LICENSING HISTORY (WHO LICENSED YOUR WORK)</li>
                             </ul>
 
                             <div className="mt-6 p-4 border-l-4 border-bronze bg-bronze/5">
                                 <p className="text-sm text-muted-foreground font-mono">
-                                    NOTE: After uploading a track, you'll see the transaction hash and IP ID in your Studio.
-                                    Click the explorer link to view your IP asset on StoryScan.
+                                    PRO TIP: After uploading, you'll see verification links in your Studio. Share these with anyone
+                                    who needs proof of your ownership—labels, publishers, collaborators, or licensing platforms.
                                 </p>
                             </div>
 
@@ -184,13 +187,16 @@ export default function GlobalRightsPage() {
 
                     {/* Future Features */}
                     <div className="border-2 border-dashed border-zinc-200 dark:border-zinc-800 p-8 opacity-70 hover:opacity-100 transition-opacity hover:border-bronze/50">
-                        <h2 className="text-2xl font-bold uppercase tracking-tight mb-6 text-muted-foreground">Coming Soon</h2>
+                        <h2 className="text-2xl font-bold uppercase tracking-tight mb-6 text-muted-foreground">What's Next</h2>
+                        <p className="text-muted-foreground font-light mb-4">
+                            We're building the future of independent music rights. Coming soon:
+                        </p>
                         <div className="space-y-3 font-mono text-sm text-muted-foreground">
-                            <p>🚀 CUSTOM LICENSING TERMS AND PRICING MODELS</p>
-                            <p>🚀 ROYALTY SPLITTING FOR COLLABORATIONS</p>
-                            <p>🚀 IP ASSET MARKETPLACE FOR TRADING RIGHTS</p>
-                            <p>🚀 DERIVATIVE WORK REGISTRATION (REMIXES, COVERS)</p>
-                            <p>🚀 REVENUE ANALYTICS AND PAYMENT DISTRIBUTION</p>
+                            <p>🚀 CUSTOM LICENSE TERMS (SET YOUR OWN RULES)</p>
+                            <p>🚀 SPLIT ROYALTIES WITH COLLABORATORS</p>
+                            <p>🚀 TRADE AND SELL OWNERSHIP RIGHTS</p>
+                            <p>🚀 REGISTER DERIVATIVE WORKS (REMIXES, COVERS)</p>
+                            <p>🚀 ADVANCED ANALYTICS AND REVENUE TRACKING</p>
                         </div>
                     </div>
                 </div>

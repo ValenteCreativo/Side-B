@@ -41,21 +41,28 @@ export default function AboutPage() {
                     {/* Mission Statement */}
                     <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-8 mb-12 shadow-refined hover:shadow-refined-lg transition-refined relative overflow-hidden group">
                         <div className="absolute top-0 left-0 w-1 h-full bg-bronze transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
-                        <h2 className="text-3xl font-bold mb-6 tracking-tighter uppercase">Our Mission</h2>
+                        <h2 className="text-3xl font-bold mb-6 tracking-tighter uppercase">The Manifesto</h2>
                         <div className="space-y-4 text-lg font-light leading-relaxed">
                             <p>
-                                Side B Sessions is revolutionizing how independent musicians share and monetize their creative work.
-                                We believe that every jam session, rehearsal, and raw recording has value—not just polished studio
-                                productions.
+                                <strong className="text-bronze">Music is not content.</strong> It's art. It's hours in rehearsal rooms, late nights experimenting,
+                                raw moments that never see a stage. While streaming platforms pay fractions and fame remains a lottery,
+                                Side B Sessions honors the craft itself.
                             </p>
                             <p>
-                                By combining Web3 technology with a powerful user experience, we empower musicians to:
+                                We built this platform for the independent underground—musicians who deserve ownership, fair compensation,
+                                and creative freedom. Here, you don't need followers. You need only your art.
                             </p>
-                            <ul className="list-disc list-inside space-y-2 ml-4 font-mono text-sm text-muted-foreground">
-                                <li><span className="text-foreground font-bold">OWN</span> THEIR INTELLECTUAL PROPERTY ON-CHAIN</li>
-                                <li><span className="text-foreground font-bold">LICENSE</span> THEIR MUSIC DIRECTLY TO CREATORS</li>
-                                <li><span className="text-foreground font-bold">BUILD</span> A COMMUNITY AROUND THEIR CREATIVE PROCESS</li>
-                                <li><span className="text-foreground font-bold">EARN</span> FROM THEIR "SIDE B" MOMENTS</li>
+                            <p className="text-bronze font-bold">
+                                Sign in with email. Upload your sound. Register it as intellectual property. License it globally.
+                            </p>
+                            <p>
+                                Zero blockchain knowledge required. Zero technical barriers. Just you, your music, and the rights you deserve.
+                            </p>
+                            <ul className="list-disc list-inside space-y-2 ml-4 font-mono text-sm text-muted-foreground pt-4">
+                                <li><span className="text-foreground font-bold">OWN</span> YOUR INTELLECTUAL PROPERTY WITH BLOCKCHAIN VERIFICATION</li>
+                                <li><span className="text-foreground font-bold">LICENSE</span> YOUR MUSIC DIRECTLY TO CREATORS WORLDWIDE</li>
+                                <li><span className="text-foreground font-bold">EARN</span> FROM YOUR ART, NOT YOUR FOLLOWER COUNT</li>
+                                <li><span className="text-foreground font-bold">CONNECT</span> WITH THE CREATIVE UNDERGROUND THROUGH ENCRYPTED MESSAGING</li>
                             </ul>
                         </div>
                     </div>
@@ -65,22 +72,22 @@ export default function AboutPage() {
                         <FeatureCard
                             icon={<Music className="h-6 w-6" />}
                             title="Raw & Authentic"
-                            description="Share your jam sessions, rehearsals, and unpolished recordings. Side B celebrates the creative process, not just the final product."
+                            description="Share your jam sessions, rehearsals, demos, and experimental tracks. Side B celebrates the creative process, the B-sides, the moments that define your artistic journey."
                         />
                         <FeatureCard
                             icon={<Shield className="h-6 w-6" />}
-                            title="IP Protection"
-                            description="Register your music as intellectual property on Story Protocol. Maintain ownership and control while licensing your work to creators."
+                            title="Verified Ownership"
+                            description="Every upload automatically registers your music as intellectual property with blockchain verification. Own your work, license on your terms, track everything transparently."
                         />
                         <FeatureCard
                             icon={<Users className="h-6 w-6" />}
-                            title="Community First"
-                            description="Connect with fellow musicians and creators. Follow, message, and discover new collaborators in a distraction-free environment."
+                            title="Creative Underground"
+                            description="Connect directly with fellow artists and creators through encrypted messaging. Build authentic relationships, discover collaborators, support independent sound."
                         />
                         <FeatureCard
                             icon={<Zap className="h-6 w-6" />}
-                            title="Web3 Powered"
-                            description="Built on Coinbase wallet infrastructure with Story Protocol IP registration. Transparent, secure, and decentralized."
+                            title="Seamless Experience"
+                            description="Sign in with email—no apps to download, no seed phrases, no complexity. Professional technology delivering a frictionless creative experience."
                         />
                     </div>
 
@@ -104,20 +111,24 @@ export default function AboutPage() {
 
                     {/* Tech Stack */}
                     <div className="border border-zinc-200 dark:border-zinc-800 p-8 bg-background shadow-refined">
-                        <h2 className="text-3xl font-bold mb-8 tracking-tighter uppercase">Built With</h2>
+                        <h2 className="text-3xl font-bold mb-8 tracking-tighter uppercase">Technology & Infrastructure</h2>
+                        <p className="text-muted-foreground mb-8 text-lg font-light leading-relaxed">
+                            Built with production-grade technology to deliver Web3 benefits with Web2 simplicity.
+                            Every component chosen for reliability, security, and user experience.
+                        </p>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-                            <TechItem label="Frontend" value="Next.js 14, React 18, TypeScript" />
-                            <TechItem label="Styling" value="Tailwind CSS, Radix UI, Framer Motion" />
+                            <TechItem label="Frontend" value="Next.js 14.2, React 18, TypeScript" />
+                            <TechItem label="Styling" value="Tailwind CSS, shadcn/ui, Framer Motion" />
                             <TechItem label="Database" value="Prisma ORM, PostgreSQL" />
-                            <TechItem label="Blockchain" value="Base Network (L2), Viem" />
-                            <TechItem label="Wallet" value="Coinbase CDP SDK" />
-                            <TechItem label="IP Registry" value="Story Protocol SDK" />
-                            <TechItem label="Messaging" value="Waku Protocol (encrypted P2P)" />
+                            <TechItem label="Authentication" value="Coinbase CDP (Email/OTP)" />
+                            <TechItem label="Blockchain" value="Base Network L2, Viem 2.21" />
+                            <TechItem label="IP Registry" value="Story Protocol SDK v1.0" />
+                            <TechItem label="Messaging" value="Waku P2P (End-to-End Encrypted)" />
                             <TechItem label="Storage" value="Vercel Blob, Pinata IPFS" />
-                            <TechItem label="Payments" value="USDC, ETH, Halliday Fiat On/Off-Ramp" />
-                            <TechItem label="APIs" value="Etherscan V2, Base RPC" />
-                            <TechItem label="Validation" value="Zod, ERC-20 Event Parsing" />
-                            <TechItem label="Design" value="Refined Brutalism, shadcn/ui" />
+                            <TechItem label="Payments" value="USDC/ETH, Halliday Fiat On-Ramp" />
+                            <TechItem label="Smart Contracts" value="Foundry, Solidity 0.8.20" />
+                            <TechItem label="Security" value="Zod Validation, ERC-20 Verification" />
+                            <TechItem label="Design System" value="Refined Brutalism Architecture" />
                         </div>
                     </div>
                 </div>

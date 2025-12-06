@@ -42,7 +42,7 @@ export function VinylParticles({ isDark = false }: VinylParticlesProps) {
                     grab: {
                         distance: 140,
                         links: {
-                            opacity: 0.5,
+                            opacity: 1.5,
                         },
                     },
                 },
@@ -55,8 +55,8 @@ export function VinylParticles({ isDark = false }: VinylParticlesProps) {
                     color: "#CD7F32", // Bronze
                     distance: 150,
                     enable: true,
-                    opacity: 0.3,
-                    width: 1,
+                    opacity: 1.3,
+                    width: 2,
                 },
                 move: {
                     direction: "none",
@@ -65,17 +65,17 @@ export function VinylParticles({ isDark = false }: VinylParticlesProps) {
                         default: "bounce",
                     },
                     random: false,
-                    speed: 1,
+                    speed: 0.5,
                     straight: false,
                 },
                 number: {
                     density: {
                         enable: true,
                     },
-                    value: 30,
+                    value: 100,
                 },
                 opacity: {
-                    value: 0.4,
+                    value: 1.5,
                 },
                 shape: {
                     type: "circle",

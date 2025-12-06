@@ -65,9 +65,9 @@ function MessagesContent() {
                         back={
                             <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
                                 <span className="font-mono text-sm font-bold tracking-widest text-bronze">
-                                    CONNECT
+                                    SIGN
                                     <br />
-                                    WALLET
+                                    IN
                                     <br />
                                     TO
                                     <br />
@@ -78,7 +78,7 @@ function MessagesContent() {
                     />
                 </PageHero>
                 <div className="container mx-auto px-4 py-12">
-                    <p className="text-center text-muted-foreground font-mono">PLEASE_CONNECT_WALLET</p>
+                    <p className="text-center text-muted-foreground font-mono">PLEASE_SIGN_IN_TO_START_MESSAGING</p>
                 </div>
             </div>
         )

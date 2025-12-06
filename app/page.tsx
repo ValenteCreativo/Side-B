@@ -19,11 +19,6 @@ export default function Home() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="z-10"
           >
-            <div className="inline-block border border-[hsl(var(--bronze)/0.5)] px-4 py-1 mb-8 rounded-full bg-[hsl(var(--bronze)/0.05)]">
-              <span className="font-mono text-xs font-bold tracking-[0.2em] uppercase text-bronze">
-                The B-Side of the Music Industry
-              </span>
-            </div>
             <h1 className="text-display mb-8 leading-[0.9] tracking-tight">
               SIDE <br />
               <span className="text-bronze">B</span>
@@ -77,7 +72,7 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pb-8"
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pb-10"
         >
           <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-muted-foreground">Scroll</span>
           <div className="w-[1px] h-12 bg-zinc-300 dark:bg-zinc-700" />
@@ -93,8 +88,12 @@ export default function Home() {
               <span className="text-bronze">ART.</span>
             </h2>
             <p className="text-xl md:text-3xl font-light leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-              Streaming pays fractions. Fame is a lottery. But the hours you spend rehearsing, creating, dreaming—they have value.
-              Side B honors the craft. Register your IP. License your work. Earn from your art, not your follower count.
+              Streaming platforms pay fractions. Fame remains a lottery. But the hours you spend in rehearsal rooms,
+              the late nights experimenting, the creative process itself—<span className="text-foreground font-bold">that has value</span>.
+            </p>
+            <p className="text-xl md:text-2xl font-light leading-relaxed text-muted-foreground max-w-3xl mx-auto mt-8">
+              Side B Sessions honors the craft. Sign in with email. Upload your sound. Register it as intellectual property.
+              License it globally. <span className="text-bronze font-bold">Earn from your art, not your follower count.</span>
             </p>
           </div>
         </div>
@@ -111,8 +110,8 @@ export default function Home() {
           />
           <FeatureCard
             icon={<Users className="h-10 w-10 text-bronze" />}
-            title="CONNECT & COLLABORATE"
-            description="Network with musicians and creators. Find collaborators, build community."
+            title="CREATIVE UNDERGROUND"
+            description="Connect with fellow artists through encrypted messaging. Build authentic relationships, discover collaborators, support independent sound."
             link="/community"
           />
           <FeatureCard
@@ -133,12 +132,13 @@ export default function Home() {
                 For Creators
               </span>
               <h2 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
-                Original music for <br />
-                <span className="text-bronze">your vision.</span>
+                Authentic sound for <br />
+                <span className="text-bronze">your creative vision.</span>
               </h2>
               <p className="text-xl md:text-2xl font-light leading-relaxed text-muted-foreground">
-                Films. Podcasts. Games. Videos. Find authentic, licensable music that elevates your work.
-                No stock libraries. No generic loops. Just real artists, real sound.
+                Films. Podcasts. Games. Content. Find original, licensable music with verified ownership.
+                No stock libraries. No generic loops. Just independent artists creating real sound.
+                Every track comes with blockchain-verified intellectual property rights—transparent, secure, permanent.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
