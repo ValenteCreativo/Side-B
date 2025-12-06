@@ -93,7 +93,7 @@ export default function LicensesPage() {
                     <PageHero
                         title="MY LICENSES"
                         subtitle="ACCESS_GRANTED"
-                        description="Your collection of licensed works and commercial rights."
+                        description="Your licensed music library with full commercial usage rights."
                         sideText="SIDE B"
                     >
                         <VinylFlip flippable={false}
@@ -130,7 +130,7 @@ export default function LicensesPage() {
                 <PageHero
                     title="MY LICENSES"
                     subtitle="ACCESS_GRANTED"
-                    description="Your collection of licensed works and commercial rights."
+                    description="Your licensed music library with full commercial usage rights."
                     sideText="SIDE B"
                 >
                     <VinylFlip flippable={false}
