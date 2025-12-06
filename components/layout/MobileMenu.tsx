@@ -40,6 +40,7 @@ export function MobileMenu() {
 
   return (
     <>
+      {/* Trigger igual que antes */}
       <Button
         variant="ghost"
         size="icon"
@@ -58,73 +59,73 @@ export function MobileMenu() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40"
             />
 
-            {/* Drawer */}
+            {/* Menú centrado tipo videojuego */}
             <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm bg-white dark:bg-zinc-950 border-r-2 border-bronze/30 z-50 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 22, stiffness: 220 }}
+              className="fixed inset-0 z-50 flex items-center justify-center px-4"
             >
-              {/* Header más compacto */}
-              <div className="h-16 flex items-center justify-between px-4 border-b-2 border-bronze/20 bg-zinc-50 dark:bg-zinc-900">
-                <span className="font-bold text-xl tracking-tight text-foreground">
-                  SIDE <span className="text-bronze">B</span>
-                </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsOpen(false)}
-                  className="hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-bronze transition-colors h-9 w-9"
-                  aria-label="Close menu"
-                >
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
+              <div className="relative w-full max-w-sm h-[75vh] max-h-[75vh] rounded-2xl bg-white dark:bg-zinc-950 border border-bronze/40 shadow-[0_0_40px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden">
+                {/* Header compacto con tache arriba derecha */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-bronze/30 bg-zinc-50/80 dark:bg-zinc-900/80">
+                  <span className="font-semibold text-base tracking-tight text-foreground">
+                    SIDE <span className="text-bronze">B</span> MENU
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsOpen(false)}
+                    className="hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-bronze transition-colors h-8 w-8"
+                    aria-label="Close menu"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
 
-              {/* Nav más denso: más items por pantalla */}
-              <nav className="flex-1 py-3 px-3 space-y-1 overflow-y-auto bg-white dark:bg-zinc-950">
-                {menuItems.map((item) => {
-                  const isActive = pathname === item.href
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setIsOpen(false)}
-                      className="block"
-                    >
-                      <div
-                        className={cn(
-                          "flex items-center gap-3 py-2.5 px-3 text-sm font-medium transition-all duration-200 rounded-md",
-                          isActive
-                            ? "text-foreground bg-bronze/10 border-l-4 border-bronze shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:border-l-4 hover:border-bronze/50 border-l-4 border-transparent",
-                        )}
+                {/* Navegación: ocupa casi todo, scrollable */}
+                <nav className="flex-1 py-2 px-3 space-y-1 overflow-y-auto">
+                  {menuItems.map((item) => {
+                    const isActive = pathname === item.href
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className="block"
                       >
-                        <item.icon
+                        <div
                           className={cn(
-                            "h-5 w-5 transition-colors flex-shrink-0",
+                            "flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md transition-all duration-200",
                             isActive
-                              ? "text-bronze"
-                              : "text-muted-foreground group-hover:text-bronze",
-                          )}
-                        />
-                        <span
-                          className={cn(
-                            "tracking-wide",
-                            isActive && "font-semibold",
+                              ? "text-foreground bg-bronze/15 border border-bronze/60 shadow-sm"
+                              : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/80 border border-transparent",
                           )}
                         >
-                          {item.label}
-                        </span>
-                      </div>
-                    </Link>
-                  )
-                })}
-              </nav>
+                          <item.icon
+                            className={cn(
+                              "h-5 w-5 flex-shrink-0",
+                              isActive ? "text-bronze" : "text-muted-foreground",
+                            )}
+                          />
+                          <span
+                            className={cn(
+                              "tracking-wide",
+                              isActive && "font-semibold",
+                            )}
+                          >
+                            {item.label}
+                          </span>
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </nav>
+              </div>
             </motion.div>
           </>
         )}
