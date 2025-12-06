@@ -2,7 +2,7 @@
 
 import { AppShell } from "@/components/layout/AppShell"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Music, Shield, Users, Zap, Info } from "lucide-react"
+import { Music, Shield, Users, Zap } from "lucide-react"
 import { PageHero } from "@/components/ui/PageHero"
 import { VinylFlip } from "@/components/ui/VinylFlip"
 
@@ -16,13 +16,16 @@ export default function AboutPage() {
                     description="An independent music marketplace for musicians to register and license their music as IP."
                     sideText="SIDE B"
                 >
-                    <VinylFlip
-                        variant="transparent"
+                    <VinylFlip flippable={false}
                         className="w-64 h-64 ml-auto"
-                        front={null}
+                        front={
+                            <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
+                                <Music className="w-32 h-32" />
+                            </div>
+                        }
                         back={
-                            <div className="w-full h-full flex items-center justify-center text-center">
-                                <span className="font-mono text-sm font-bold tracking-widest text-foreground">
+                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+                                <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                                     RAW
                                     <br />
                                     REAL
@@ -103,12 +106,18 @@ export default function AboutPage() {
                     <div className="border border-zinc-200 dark:border-zinc-800 p-8 bg-background shadow-refined">
                         <h2 className="text-3xl font-bold mb-8 tracking-tighter uppercase">Built With</h2>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-                            <TechItem label="Frontend" value="Next.js 14, React, TypeScript" />
-                            <TechItem label="Styling" value="Tailwind CSS, Radix UI" />
-                            <TechItem label="Database" value="Prisma, SQLite" />
-                            <TechItem label="Auth" value="Coinbase Wallet" />
-                            <TechItem label="IP Registry" value="Story Protocol" />
-                            <TechItem label="Design" value="Refined Brutalism" />
+                            <TechItem label="Frontend" value="Next.js 14, React 18, TypeScript" />
+                            <TechItem label="Styling" value="Tailwind CSS, Radix UI, Framer Motion" />
+                            <TechItem label="Database" value="Prisma ORM, PostgreSQL" />
+                            <TechItem label="Blockchain" value="Base Network (L2), Viem" />
+                            <TechItem label="Wallet" value="Coinbase CDP SDK" />
+                            <TechItem label="IP Registry" value="Story Protocol SDK" />
+                            <TechItem label="Messaging" value="Waku Protocol (encrypted P2P)" />
+                            <TechItem label="Storage" value="Vercel Blob, Pinata IPFS" />
+                            <TechItem label="Payments" value="USDC, ETH, Halliday Fiat On/Off-Ramp" />
+                            <TechItem label="APIs" value="Etherscan V2, Base RPC" />
+                            <TechItem label="Validation" value="Zod, ERC-20 Event Parsing" />
+                            <TechItem label="Design" value="Refined Brutalism, shadcn/ui" />
                         </div>
                     </div>
                 </div>

@@ -3,7 +3,7 @@
 import { AppShell } from "@/components/layout/AppShell"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Shield, FileCode, Globe, Lock } from "lucide-react"
+import { ExternalLink, Shield, FileCode } from "lucide-react"
 import { PageHero } from "@/components/ui/PageHero"
 import { VinylFlip } from "@/components/ui/VinylFlip"
 
@@ -21,13 +21,16 @@ export default function GlobalRightsPage() {
                     description="Powered by Story Protocol. Your music, your rules, everywhere."
                     sideText="SIDE B"
                 >
-                    <VinylFlip
-                        variant="transparent"
+                    <VinylFlip flippable={false}
                         className="w-64 h-64 ml-auto"
-                        front={null}
+                        front={
+                            <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
+                                <Shield className="w-32 h-32" />
+                            </div>
+                        }
                         back={
-                            <div className="w-full h-full flex items-center justify-center text-center">
-                                <span className="font-mono text-sm font-bold tracking-widest text-foreground">
+                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+                                <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                                     OWN
                                     <br />
                                     YOUR
