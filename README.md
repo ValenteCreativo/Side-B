@@ -16,6 +16,7 @@
 </div>
 
 ---
+
 <div align="center">
 
 ## 🎧 The Essence
@@ -27,6 +28,7 @@
 > [!NOTE]
 > We honor practice hours and songwriting, not personal brand / follower counts — IP rights and payouts flow from the music itself.
 </div>
+
 ---
 
 <div align="center">
@@ -44,9 +46,11 @@
 | 📊 Analytics for musicians | Dashboard tracks licenses, payouts, and who is using each track. |
 
 </div>
+
 ---
 
 <div align="center">
+
 ## 🏗️ Architecture Overview
 
 <details>
@@ -55,10 +59,10 @@
 ```mermaid
 flowchart TB
     %% --- MUSICIAN FLOW ---
-    subgraph 🎤 Musician
+    subgraph MUSICIAN["🎤 Musician"]
         A[Email/OTP Login<br/>Coinbase CDP]
         B[Wallet Created<br/>Base L2 EOA]
-        C[Upload Audio Drag & drop tools<br/>Vercel Blob]
+        C[Upload Audio<br/>Vercel Blob]
         D[Metadata & Pricing<br/>PostgreSQL/Prisma]
         E[Pin Metadata<br/>IPFS / Pinata]
         F[Register IP Asset<br/>Story Protocol]
@@ -66,21 +70,21 @@ flowchart TB
     end
 
     %% --- CREATOR FLOW ---
-    subgraph 🎬 Creator
+    subgraph CREATOR["🎬 Creator"]
         H[Browse Catalog<br/>IP-verified tracks]
-        I[License Purchase & Downloading options<br/>USDC/ETH on Base L2]
+        I[License Purchase & Download<br/>USDC/ETH on Base L2]
         J[Payment Splitter<br/>SideBPaymentSplitter]
         K[Artist Payout]
         L[Platform Fee]
     end
 
     %% --- MESSAGING ---
-    subgraph 💬 Messaging
+    subgraph MESSAGING["💬 Messaging"]
         M[Encrypted Chat<br/>Waku P2P]
     end
 
     %% --- FIAT BRIDGE (HALLIDAY) ---
-    subgraph 💳 Fiat Bridge
+    subgraph FIAT["💳 Fiat Bridge"]
         N[Halliday On-Ramp<br/>Card/Fiat → USDC/ETH]
     end
 
@@ -92,15 +96,16 @@ flowchart TB
     J --> L
 
     %% messaging connections
-    K -. follow-up collab .-> M
-    H -. custom work .-> M
+    K -. "follow-up collab" .-> M
+    H -. "custom work" .-> M
 
     %% halliday -> funding purchases
-    N -. funds wallet .-> I
+    N -. "funds wallet" .-> I
 ```
 </details>
 
 </div>
+
 ---
 
 <div align="center">
@@ -173,6 +178,7 @@ docs/
 </details>
 
 </div>
+
 ---
 
 <div align="center">
@@ -306,6 +312,7 @@ export async function pinMetadata(metadata: object) {
 </details>
 
 </div>
+
 ---
 
 <div align="center">
@@ -325,6 +332,7 @@ export async function pinMetadata(metadata: object) {
 | OpenZeppelin + Foundry | Smart contracts | Battle-tested ERC-20 libraries |
 
 </div>
+
 ---
 
 <div align="center">
@@ -333,13 +341,15 @@ export async function pinMetadata(metadata: object) {
 
 **[Surreal World Assets Buildathon 2025](https://www.encodeclub.com/programmes/surreal-world-assets-buildathon-2)** — proving Web3 IP rights can be as simple as email login.
 
-<div align="center">
+<p align="center">
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 MUSIC IS NOT CONTENT. IT'S ART. IT DESERVES BLOCKCHAIN RIGHTS.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
-</div>
+
+</p>
 
 **From México with** <img src="https://em-content.zobj.net/source/apple/391/fire_1f525.png" width="20" height="20" alt="❤️‍🔥" />
 
