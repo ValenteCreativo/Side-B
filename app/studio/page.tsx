@@ -33,7 +33,7 @@ function StudioPage() {
         <PageHero
           title="YOUR STUDIO"
           subtitle="COMMAND_CENTER"
-          description="Upload. Register. Monetize. Your creative command center."
+          description="Upload your sound. Register your ownership. Monetize your craft."
           sideText="SIDE B"
         >
           <VinylFlip flippable={false}
@@ -68,7 +68,7 @@ function StudioPage() {
       <PageHero
         title="YOUR STUDIO"
         subtitle="COMMAND_CENTER"
-        description="Upload. Register. Monetize. Your creative command center."
+        description="Upload your sound. Register your ownership. Monetize your craft."
         sideText="SIDE A"
       >
         <VinylFlip flippable={false}
