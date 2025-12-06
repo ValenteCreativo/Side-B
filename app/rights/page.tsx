@@ -21,7 +21,7 @@ export default function GlobalRightsPage() {
                     description="Powered by Story Protocol. Your music, your rules, everywhere."
                     sideText="SIDE B"
                 >
-                    <VinylFlip flippable={false}
+                    <VinylFlip
                         variant="transparent"
                         className="w-64 h-64 ml-auto"
                         front={null}

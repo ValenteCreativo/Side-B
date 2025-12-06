@@ -16,7 +16,7 @@ export default function AboutPage() {
                     description="An independent music marketplace for musicians to register and license their music as IP."
                     sideText="SIDE B"
                 >
-                    <VinylFlip flippable={false}
+                    <VinylFlip
                         variant="transparent"
                         className="w-64 h-64 ml-auto"
                         front={null}
@@ -82,8 +82,8 @@ export default function AboutPage() {
                     </div>
 
                     {/* The Story Behind Side B */}
-                    <div className="bg-foreground text-background p-8 mb-12 border border-zinc-200 dark:border-zinc-800 shadow-refined relative overflow-hidden">
-                        <div className="absolute -right-10 -top-10 w-40 h-40 bg-bronze/20 rounded-full blur-3xl pointer-events-none" />
+                    <div className="bg-zinc-50 dark:bg-zinc-900/50 p-8 mb-12 border border-zinc-200 dark:border-zinc-800 shadow-refined relative overflow-hidden">
+                        <div className="absolute -right-10 -top-10 w-40 h-40 bg-bronze/10 rounded-full blur-3xl pointer-events-none" />
                         <h2 className="text-3xl font-bold mb-6 tracking-tighter uppercase text-bronze">Why "Side B"?</h2>
                         <div className="space-y-4 text-lg font-light leading-relaxed opacity-90">
                             <p>
