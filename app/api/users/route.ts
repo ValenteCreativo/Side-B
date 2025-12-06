@@ -159,9 +159,44 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json(updatedUser)
   } catch (error) {
-    console.error('Failed to update user:', error)
+    console.error('Error updating user:', error)
     return NextResponse.json(
       { error: 'Failed to update user' },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * DELETE /api/users
+ * Delete user profile and all related data
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { userId } = body
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'User ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Delete user and all related data (cascade delete)
+    // Prisma will handle cascade deletes based on schema relationships
+    await prisma.user.delete({
+      where: { id: userId },
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'Profile deleted successfully'
+    })
+  } catch (error) {
+    console.error('Error deleting user:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete user' },
       { status: 500 }
     )
   }

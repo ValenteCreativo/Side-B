@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import { useRouter } from "next/navigation"
 import { useUser } from "@/components/auth/UserContext"
 import { AppShell } from "@/components/layout/AppShell"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -385,8 +386,128 @@ export default function ProfilePage() {
                             </Button>
                         </div>
                     </form>
+
+                    {/* Danger Zone */}
+                    <div className="bg-background border-2 border-red-500 p-6 shadow-[4px_4px_0px_0px_rgba(239,68,68,1)] mt-8">
+                        <div className="mb-6">
+                            <h3 className="text-xl font-bold uppercase tracking-tight text-red-500">Danger Zone</h3>
+                            <p className="text-sm text-muted-foreground font-mono">IRREVERSIBLE_ACTIONS</p>
+                        </div>
+                        <div className="space-y-4">
+                            <p className="text-sm">
+                                Deleting your profile will permanently remove all your data including sessions, licenses, and followers. This action cannot be undone.
+                            </p>
+                            <DeleteProfileButton userId={user.id} />
+                        </div>
+                    </div>
                 </div>
             </div>
         </AppShell>
+    )
+}
+
+// Delete Profile Button Component with Confirmation
+function DeleteProfileButton({ userId }: { userId: string }) {
+    const [showConfirm, setShowConfirm] = useState(false)
+    const [confirmText, setConfirmText] = useState("")
+    const [isDeleting, setIsDeleting] = useState(false)
+    const { toast } = useToast()
+    const router = useRouter()
+
+    const handleDelete = async () => {
+        if (confirmText !== "DELETE") {
+            toast({
+                title: "Confirmation required",
+                description: 'Please type "DELETE" to confirm',
+                variant: "destructive",
+            })
+            return
+        }
+
+        setIsDeleting(true)
+        try {
+            const response = await fetch("/api/users", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId }),
+            })
+
+            if (!response.ok) throw new Error("Failed to delete profile")
+
+            toast({
+                title: "Profile deleted",
+                description: "Your profile has been permanently deleted",
+            })
+
+            // Redirect to home page
+            setTimeout(() => {
+                window.location.href = "/"
+            }, 1500)
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to delete profile. Please try again.",
+                variant: "destructive",
+            })
+            setIsDeleting(false)
+        }
+    }
+
+    if (!showConfirm) {
+        return (
+            <Button
+                type="button"
+                variant="destructive"
+                onClick={() => setShowConfirm(true)}
+                className="rounded-none border-2 border-red-500"
+            >
+                DELETE PROFILE
+            </Button>
+        )
+    }
+
+    return (
+        <div className="space-y-4 p-4 border-2 border-red-500 bg-red-50 dark:bg-red-950/20">
+            <p className="font-bold text-red-500">Are you absolutely sure?</p>
+            <p className="text-sm">
+                Type <span className="font-mono font-bold">DELETE</span> to confirm:
+            </p>
+            <Input
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder="Type DELETE"
+                className="rounded-none border-2 border-red-500 font-mono"
+            />
+            <div className="flex gap-2">
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                        setShowConfirm(false)
+                        setConfirmText("")
+                    }}
+                    disabled={isDeleting}
+                    className="rounded-none border-2 border-foreground"
+                >
+                    CANCEL
+                </Button>
+                <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={handleDelete}
+                    disabled={isDeleting || confirmText !== "DELETE"}
+                    className="rounded-none border-2 border-red-500"
+                >
+                    {isDeleting ? (
+                        <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            DELETING...
+                        </>
+                    ) : (
+                        "CONFIRM DELETE"
+                    )}
+                </Button>
+            </div>
+        </div>
     )
 }
