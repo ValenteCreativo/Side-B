@@ -3,8 +3,8 @@
 <img src="https://red-causal-armadillo-397.mypinata.cloud/ipfs/bafybeifioittq7aoty5mduzvki3wwhqzrtgwvyhinzqkhb25zd4rqzpa5y" alt="Side B Sessions" width="80" />
 
 # 🎵 SIDE B SESSIONS
-### *On-chain IP for independent music.
-Register every riff. License legally. Earn without the algorithm.*
+
+### *On-chain IP for independent music. Register every riff. License legally. Earn without the algorithm.*
 
 [![Story Protocol](https://img.shields.io/badge/Story_Protocol-v1.0_RC-8B5CF6?style=for-the-badge&logo=ethereum&logoColor=white)](https://story.foundation)
 [![Coinbase CDP](https://img.shields.io/badge/Coinbase_CDP-Email/OTP-0052FF?style=for-the-badge&logo=coinbase&logoColor=white)](https://coinbase.com/cloud)
@@ -16,16 +16,20 @@ Register every riff. License legally. Earn without the algorithm.*
 </div>
 
 ---
+<div align="center">
 
 ## 🎧 The Essence
 
 **Problem:** Musicians don’t meaningfully profit from streaming unless they turn into content creators / influencers.  
+-
 **Core idea:** Side B Sessions turns voice notes, jams, and under-monetized tracks into IP that can be licensed and downloaded by filmmakers, content creators, videogame indie studios, or anyone needing authentic music for their productions.
 
 > [!NOTE]
-> We honor practice hours and songwriting, not personal brand/ follower counts— IP rights and payouts flow from the music itself.
-
+> We honor practice hours and songwriting, not personal brand / follower counts — IP rights and payouts flow from the music itself.
+</div>
 ---
+
+<div align="center">
 
 ## 💿 Feature Grid
 
@@ -35,46 +39,71 @@ Register every riff. License legally. Earn without the algorithm.*
 | ✉️ Email → wallet (Coinbase CDP) | Email/OTP login issues a non-custodial wallet without seed phrases. |
 | 📤 Audio upload + validation | Vercel Blob intake, format checks, then pinned to IPFS via Pinata. |
 | 💸 Licensing on Base + Halliday on-ramp | USDC/ETH licensing on Base; creators can on-ramp directly with fiat via Halliday. |
-| 🤝 Payment splitting / verification | Splitter verifies transfers before finalizing license delivery. |
-| 🔒 Waku encrypted messaging | E2E P2P chat so musicians and creators can finalize collabs privately. |
+| 🤝 Payment splitting / verification | ERC-20 Smart Contract verifies transfers before finalizing license delivery and enabling downloading options for commercial usage of the IP assets. |
+| 🔒 Waku encrypted messaging | E2E P2P chat so musicians and creators can plan collabs privately. |
 | 📊 Analytics for musicians | Dashboard tracks licenses, payouts, and who is using each track. |
 
+</div>
 ---
 
+<div align="center">
 ## 🏗️ Architecture Overview
 
+<details>
+  <summary>Show diagram</summary>
+
 ```mermaid
-flowchart LR
-  subgraph Musician
-    A[Email/OTP login]
-    B[Wallet created (CDP)]
-    C[Audio upload]
-    D[Metadata + pricing]
-    E[IPFS + Story IP asset]
-  end
+flowchart TB
+    %% --- MUSICIAN FLOW ---
+    subgraph 🎤 Musician
+        A[Email/OTP Login<br/>Coinbase CDP]
+        B[Wallet Created<br/>Base L2 EOA]
+        C[Upload Audio Drag & drop tools<br/>Vercel Blob]
+        D[Metadata & Pricing<br/>PostgreSQL/Prisma]
+        E[Pin Metadata<br/>IPFS / Pinata]
+        F[Register IP Asset<br/>Story Protocol]
+        G[Artist Dashboard<br/>Plays · Licenses · Revenue]
+    end
 
-  subgraph Creator
-    F[Browse catalog]
-    G[License purchase (Base)]
-    H[Payment splitter]
-    I[Artist payout]
-    J[Platform share]
-  end
+    %% --- CREATOR FLOW ---
+    subgraph 🎬 Creator
+        H[Browse Catalog<br/>IP-verified tracks]
+        I[License Purchase & Downloading options<br/>USDC/ETH on Base L2]
+        J[Payment Splitter<br/>SideBPaymentSplitter]
+        K[Artist Payout]
+        L[Platform Fee]
+    end
 
-  subgraph Messaging
-    K[Waku encrypted chat]
-  end
+    %% --- MESSAGING ---
+    subgraph 💬 Messaging
+        M[Encrypted Chat<br/>Waku P2P]
+    end
 
-  A --> B --> C --> D --> E
-  E --> F --> G --> H
-  H --> I
-  H --> J
-  H -. verification .-> E
-  I -. follow-up .-> K
-  G -. collaboration .-> K
+    %% --- FIAT BRIDGE (HALLIDAY) ---
+    subgraph 💳 Fiat Bridge
+        N[Halliday On-Ramp<br/>Card/Fiat → USDC/ETH]
+    end
+
+    %% --- FLOWS ---
+    A --> B --> C --> D --> E --> F --> G
+    F --> H
+    H --> I --> J
+    J --> K
+    J --> L
+
+    %% messaging connections
+    K -. follow-up collab .-> M
+    H -. custom work .-> M
+
+    %% halliday -> funding purchases
+    N -. funds wallet .-> I
 ```
+</details>
 
+</div>
 ---
+
+<div align="center">
 
 ## 🔧 Tech Stack
 
@@ -83,10 +112,16 @@ flowchart LR
 - **Data & Storage** — Prisma + PostgreSQL for catalog data, Vercel Blob for uploads, Pinata IPFS for permanence.
 - **Messaging & Infra** — Waku P2P encrypted messaging, Viem clients for on-chain reads, Foundry/OpenZeppelin for splits.
 
+</div>
+
 ---
 
+<div align="center">
+
+## 🛠 For devs: Installation process & Docs
+
 <details>
-<summary>🛠 For devs: Installation process</summary>
+  <summary>Show steps</summary>
 
 > [!IMPORTANT]
 > Full IP lifecycle in one stack: upload → IP registration → licensing → payment verification → encrypted messaging.
@@ -137,7 +172,10 @@ docs/
 
 </details>
 
+</div>
 ---
+
+<div align="center">
 
 ## 📂 Key Integrations — The Code
 
@@ -267,7 +305,10 @@ export async function pinMetadata(metadata: object) {
 
 </details>
 
+</div>
 ---
+
+<div align="center">
 
 ## 🎯 What Makes This Different
 
@@ -283,6 +324,7 @@ export async function pinMetadata(metadata: object) {
 | IPFS/Pinata[^pinata] | Metadata storage | Permanent, decentralized storage |
 | OpenZeppelin + Foundry | Smart contracts | Battle-tested ERC-20 libraries |
 
+</div>
 ---
 
 <div align="center">
@@ -291,11 +333,13 @@ export async function pinMetadata(metadata: object) {
 
 **[Surreal World Assets Buildathon 2025](https://www.encodeclub.com/programmes/surreal-world-assets-buildathon-2)** — proving Web3 IP rights can be as simple as email login.
 
+<div align="center">
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  MUSIC IS NOT CONTENT. IT'S ART. IT DESERVES BLOCKCHAIN RIGHTS.
+MUSIC IS NOT CONTENT. IT'S ART. IT DESERVES BLOCKCHAIN RIGHTS.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</div>
 
 **From México with** <img src="https://em-content.zobj.net/source/apple/391/fire_1f525.png" width="20" height="20" alt="❤️‍🔥" />
 
