@@ -1,16 +1,17 @@
 <div align="center">
 
-<img src="https://red-causal-armadillo-397.mypinata.cloud/ipfs/bafybeifioittq7aoty5mduzvki3wwhqzrtgwvyhinzqkhb25zd4rqzpa5y" alt="Side B Sessions" width="60" />
+<img src="https://red-causal-armadillo-397.mypinata.cloud/ipfs/bafybeifioittq7aoty5mduzvki3wwhqzrtgwvyhinzqkhb25zd4rqzpa5y" alt="Side B Sessions" width="80" />
 
 # 🎵 SIDE B SESSIONS
-### *The B-side of music IP — raw, authentic, unstoppable*
+### *On-chain IP for independent music.
+Register every riff. License legally. Earn without the algorithm.*
 
 [![Story Protocol](https://img.shields.io/badge/Story_Protocol-v1.0_RC-8B5CF6?style=for-the-badge&logo=ethereum&logoColor=white)](https://story.foundation)
 [![Coinbase CDP](https://img.shields.io/badge/Coinbase_CDP-Email/OTP-0052FF?style=for-the-badge&logo=coinbase&logoColor=white)](https://coinbase.com/cloud)
 [![Base L2](https://img.shields.io/badge/Base_L2-Mainnet-0052FF?style=for-the-badge&logo=ethereum&logoColor=white)](https://base.org)
 [![Waku P2P](https://img.shields.io/badge/Waku-P2P_Encrypted-000000?style=for-the-badge)](https://waku.org)
 
-**[Live Demo](https://side-b.vercel.app)** • **[docs/INSTALLATION.md](docs/INSTALLATION.md)**
+**[Live Demo](https://side-b-chi.vercel.app)** • **[docs/INSTALLATION.md](docs/INSTALLATION.md)**
 
 </div>
 
@@ -19,10 +20,10 @@
 ## 🎧 The Essence
 
 **Problem:** Musicians don’t meaningfully profit from streaming unless they turn into content creators / influencers.  
-**Core idea:** Side B Sessions turns voice notes, jams, and under-monetized tracks into IP that can be licensed and downloaded by creators.
+**Core idea:** Side B Sessions turns voice notes, jams, and under-monetized tracks into IP that can be licensed and downloaded by filmmakers, content creators, videogame indie studios, or anyone needing authentic music for their productions.
 
 > [!NOTE]
-> We honor practice hours and songwriting, not follower counts—IP rights and payouts flow from the music itself.
+> We honor practice hours and songwriting, not personal brand/ follower counts— IP rights and payouts flow from the music itself.
 
 ---
 
@@ -33,7 +34,7 @@
 | 🎵 Story Protocol IP-backed catalog | Every upload becomes a registered IP asset with provenance preserved. |
 | ✉️ Email → wallet (Coinbase CDP) | Email/OTP login issues a non-custodial wallet without seed phrases. |
 | 📤 Audio upload + validation | Vercel Blob intake, format checks, then pinned to IPFS via Pinata. |
-| 💸 Licensing & payments on Base | USDC/ETH licensing on Base with terms tied to each IP asset. |
+| 💸 Licensing on Base + Halliday on-ramp | USDC/ETH licensing on Base; creators can on-ramp directly with fiat via Halliday. |
 | 🤝 Payment splitting / verification | Splitter verifies transfers before finalizing license delivery. |
 | 🔒 Waku encrypted messaging | E2E P2P chat so musicians and creators can finalize collabs privately. |
 | 📊 Analytics for musicians | Dashboard tracks licenses, payouts, and who is using each track. |
@@ -45,23 +46,29 @@
 ```mermaid
 flowchart LR
   subgraph Musician
-    A[Email/OTP login] --> B[Wallet created (CDP)]
-    B --> C[Audio upload]
-    C --> D[Metadata + pricing]
-    D --> E[IPFS + Story IP asset]
+    A[Email/OTP login]
+    B[Wallet created (CDP)]
+    C[Audio upload]
+    D[Metadata + pricing]
+    E[IPFS + Story IP asset]
   end
 
   subgraph Creator
-    F[Browse catalog] --> G[License purchase on Base]
-    G --> H[Payment splitter]
-    H --> I[Artist payout] & J[Platform share]
+    F[Browse catalog]
+    G[License purchase (Base)]
+    H[Payment splitter]
+    I[Artist payout]
+    J[Platform share]
   end
 
   subgraph Messaging
     K[Waku encrypted chat]
   end
 
-  E --> F
+  A --> B --> C --> D --> E
+  E --> F --> G --> H
+  H --> I
+  H --> J
   H -. verification .-> E
   I -. follow-up .-> K
   G -. collaboration .-> K
@@ -71,7 +78,7 @@ flowchart LR
 
 ## 🔧 Tech Stack
 
-- **Frontend & UX** — Next.js 14 App Router, React 18, TypeScript, Tailwind + shadcn/ui for fast UI shipping.
+- **Frontend & UX** — Next.js 14 App Router, React 18, TypeScript, Tailwind + shadcn/ui for fast UI shipping + Particles.js for interactivity
 - **Web3 & IP** — Story Protocol SDK for IP assets, Coinbase CDP for email wallets, Base L2 for licensing payments.
 - **Data & Storage** — Prisma + PostgreSQL for catalog data, Vercel Blob for uploads, Pinata IPFS for permanence.
 - **Messaging & Infra** — Waku P2P encrypted messaging, Viem clients for on-chain reads, Foundry/OpenZeppelin for splits.
@@ -84,9 +91,11 @@ flowchart LR
 > [!IMPORTANT]
 > Full IP lifecycle in one stack: upload → IP registration → licensing → payment verification → encrypted messaging.
 
-1. `npm install` then `cp .env.example .env` — keys and env hints live in `docs/INSTALLATION.md`.
+1. `npm install` then `cp .env.example .env` — keys and env hints live in [`docs/INSTALLATION.md`](docs/INSTALLATION.md).
 2. `npx prisma generate && npx prisma db push` — prepare the catalog database.
-3. `npm run dev` — launches email/OTP auth, upload, licensing, and Waku chat locally.
+3. `npm run dev` — launches email/OTP auth, upload, licensing, Waku chat, Halliday on-ramp, and payment verification locally.
+
+Documentation vault lives below for Story, CDP, Base, Waku, payments, and deployment.
 
 ```typescript
 import { StoryClient } from '@story-protocol/core-sdk'
@@ -105,7 +114,6 @@ export async function registerTrack(ipfsHash: string, price: bigint) {
 
 Refs: Story[^story], CDP[^cdp], Base[^base], Waku[^waku].
 
-</details>
 
 ---
 
@@ -126,6 +134,8 @@ docs/
 ```
 
 **Quick start:** `docs/INSTALLATION.md` — full environment setup in under 5 minutes.
+
+</details>
 
 ---
 
@@ -268,35 +278,16 @@ export async function pinMetadata(metadata: object) {
 | Story Protocol[^story] | IP registry | Core blockchain IP infrastructure |
 | Coinbase CDP[^cdp] | Email wallets | Makes crypto invisible to users |
 | Waku Protocol[^waku] | Encrypted messaging | True decentralization + privacy |
-| Halliday [^halliday] | Fiat on-ramp | Credit card → crypto seamlessly |
+| Halliday[^halliday] | Fiat on-ramp | Credit card → crypto seamlessly |
 | Base L2[^base] | Payment chain | Low fees aligned with Story Protocol |
 | IPFS/Pinata[^pinata] | Metadata storage | Permanent, decentralized storage |
 | OpenZeppelin + Foundry | Smart contracts | Battle-tested ERC-20 libraries |
 
 ---
 
-## 🚀 Quick Start
+<div align="center">
 
-```bash
-# Clone and install
-git clone https://github.com/ValenteCreativo/Side-B.git
-cd Side-B && npm install
-
-# Environment (see docs/INSTALLATION.md for keys)
-cp .env.example .env
-
-# Database
-npx prisma generate && npx prisma db push
-
-# Run
-npm run dev
-```
-
-Visit `http://localhost:3000` to test email/OTP, uploads, licensing, and messaging.
-
----
-
-## 🏆 Built for Surreal World Assets
+## 🏆 Built for Surreal World Assets Buildathon
 
 **[Surreal World Assets Buildathon 2025](https://www.encodeclub.com/programmes/surreal-world-assets-buildathon-2)** — proving Web3 IP rights can be as simple as email login.
 
@@ -306,7 +297,9 @@ Visit `http://localhost:3000` to test email/OTP, uploads, licensing, and messagi
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**From México with** <img src="https://em-content.zobj.net/source/apple/391/fire_1f525.png" width="20" height="20" alt="" />
+**From México with** <img src="https://em-content.zobj.net/source/apple/391/fire_1f525.png" width="20" height="20" alt="❤️‍🔥" />
+
+</div>
 
 ---
 
@@ -314,5 +307,5 @@ Visit `http://localhost:3000` to test email/OTP, uploads, licensing, and messagi
 [^cdp]: Coinbase Developer Platform — embedded wallets with email/OTP auth. [docs.cdp.coinbase.com](https://docs.cdp.coinbase.com)
 [^base]: Base — low-fee L2 for licensing payments and settlement. [docs.base.org](https://docs.base.org)
 [^waku]: Waku — decentralized P2P messaging with end-to-end encryption. [docs.waku.org](https://docs.waku.org)
-[^Halliday]: Halliday - Fiat to Crypto provider using Stripe. [Halliday.xyz](https://halliday.xyz/)
-[^pinata]: Pinata - IPFS file storage. [Pinata.cloud](https://pinata.cloud/)
+[^halliday]: Halliday — fiat-to-crypto on-ramp for direct license purchases. [halliday.xyz](https://halliday.xyz/)
+[^pinata]: Pinata — IPFS file storage. [pinata.cloud](https://pinata.cloud/)
