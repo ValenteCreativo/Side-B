@@ -41,9 +41,9 @@ export default function GlobalRightsPage() {
 
                 <div className="container mx-auto px-4 py-12 max-w-4xl">
                     {/* Story Protocol Integration */}
-                    <div className="bg-background border-2 border-foreground p-8 mb-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                    <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-8 mb-8 shadow-refined hover:shadow-refined-lg transition-refined">
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="p-3 bg-foreground text-background rounded-none">
+                            <div className="p-3 bg-bronze/10 text-bronze rounded-sm">
                                 <Shield className="h-6 w-6" />
                             </div>
                             <h2 className="text-2xl font-bold uppercase tracking-tight">Story Protocol Integration</h2>
@@ -51,18 +51,18 @@ export default function GlobalRightsPage() {
                         <div className="space-y-6">
                             <p className="text-lg font-light leading-relaxed">
                                 Every track uploaded to Side B is registered as intellectual property on{" "}
-                                <strong className="font-bold">Story Protocol</strong>, a blockchain infrastructure for programmable IP.
+                                <strong className="font-bold text-bronze">Story Protocol</strong>, a blockchain infrastructure for programmable IP.
                                 This means your music is protected, traceable, and yours to license globally.
                             </p>
 
                             <div className="grid md:grid-cols-2 gap-6">
-                                <div className="p-4 border-2 border-foreground bg-muted/20">
-                                    <h4 className="font-bold uppercase text-sm mb-2">Blockchain</h4>
-                                    <p className="font-mono text-sm text-muted-foreground">Story Protocol Aeneid Testnet</p>
+                                <div className="p-4 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 rounded-sm">
+                                    <h4 className="font-bold uppercase text-sm mb-2 text-muted-foreground">Blockchain</h4>
+                                    <p className="font-mono text-sm">Story Protocol Aeneid Testnet</p>
                                 </div>
-                                <div className="p-4 border-2 border-foreground bg-muted/20">
-                                    <h4 className="font-bold uppercase text-sm mb-2">Network Status</h4>
-                                    <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-600 rounded-none font-mono uppercase">
+                                <div className="p-4 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 rounded-sm">
+                                    <h4 className="font-bold uppercase text-sm mb-2 text-muted-foreground">Network Status</h4>
+                                    <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-600/20 rounded-sm font-mono uppercase">
                                         Live
                                     </Badge>
                                 </div>
@@ -71,9 +71,9 @@ export default function GlobalRightsPage() {
                     </div>
 
                     {/* SPG NFT Contract */}
-                    <div className="bg-background border-2 border-foreground p-8 mb-8">
+                    <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-8 mb-8 shadow-refined">
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="p-3 bg-foreground text-background rounded-none">
+                            <div className="p-3 bg-zinc-100 dark:bg-zinc-800 text-foreground rounded-sm">
                                 <FileCode className="h-6 w-6" />
                             </div>
                             <h2 className="text-2xl font-bold uppercase tracking-tight">SPG NFT Collection Contract</h2>
@@ -85,14 +85,14 @@ export default function GlobalRightsPage() {
                                 intellectual property on-chain.
                             </p>
 
-                            <div className="bg-foreground text-background p-4 font-mono text-sm break-all border-2 border-foreground">
+                            <div className="bg-zinc-950 text-zinc-50 p-4 font-mono text-sm break-all border border-zinc-800 rounded-sm">
                                 {SPG_NFT_CONTRACT}
                             </div>
 
                             <div className="flex gap-2">
                                 <Button
                                     variant="outline"
-                                    className="rounded-none border-2 border-foreground hover:bg-foreground hover:text-background"
+                                    className="rounded-sm border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze transition-colors"
                                     onClick={() => window.open(`${STORY_EXPLORER_BASE}/address/${SPG_NFT_CONTRACT}`, '_blank')}
                                 >
                                     <ExternalLink className="h-4 w-4 mr-2" />
@@ -103,7 +103,7 @@ export default function GlobalRightsPage() {
                     </div>
 
                     {/* How It Works */}
-                    <div className="bg-background border-2 border-foreground p-8 mb-8">
+                    <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-8 mb-8 shadow-refined">
                         <h2 className="text-2xl font-bold uppercase tracking-tight mb-8">How IP Registration Works</h2>
                         <div className="space-y-8">
                             <Step
@@ -135,7 +135,7 @@ export default function GlobalRightsPage() {
                     </div>
 
                     {/* Viewing Your IP Assets */}
-                    <div className="bg-background border-2 border-foreground p-8 mb-8">
+                    <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-8 mb-8 shadow-refined">
                         <h2 className="text-2xl font-bold uppercase tracking-tight mb-6">Viewing Your IP Assets</h2>
                         <div className="space-y-6">
                             <p className="text-muted-foreground font-light">
@@ -151,7 +151,7 @@ export default function GlobalRightsPage() {
                                 <li>LICENSE HISTORY AND OWNERSHIP RECORDS</li>
                             </ul>
 
-                            <div className="mt-6 p-4 border-l-4 border-foreground bg-muted/20">
+                            <div className="mt-6 p-4 border-l-4 border-bronze bg-bronze/5">
                                 <p className="text-sm text-muted-foreground font-mono">
                                     NOTE: After uploading a track, you'll see the transaction hash and IP ID in your Studio.
                                     Click the explorer link to view your IP asset on StoryScan.
@@ -161,7 +161,7 @@ export default function GlobalRightsPage() {
                             <div className="flex gap-4 pt-4">
                                 <Button
                                     variant="outline"
-                                    className="rounded-none border-2 border-foreground hover:bg-foreground hover:text-background"
+                                    className="rounded-sm border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze transition-colors"
                                     onClick={() => window.open(STORY_EXPLORER_BASE, '_blank')}
                                 >
                                     <ExternalLink className="h-4 w-4 mr-2" />
@@ -169,7 +169,7 @@ export default function GlobalRightsPage() {
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    className="rounded-none border-2 border-foreground hover:bg-foreground hover:text-background"
+                                    className="rounded-sm border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze transition-colors"
                                     onClick={() => window.open(STORY_DOCS, '_blank')}
                                 >
                                     <ExternalLink className="h-4 w-4 mr-2" />
@@ -180,8 +180,8 @@ export default function GlobalRightsPage() {
                     </div>
 
                     {/* Future Features */}
-                    <div className="border-2 border-dashed border-foreground p-8 opacity-70 hover:opacity-100 transition-opacity">
-                        <h2 className="text-2xl font-bold uppercase tracking-tight mb-6">Coming Soon</h2>
+                    <div className="border-2 border-dashed border-zinc-200 dark:border-zinc-800 p-8 opacity-70 hover:opacity-100 transition-opacity hover:border-bronze/50">
+                        <h2 className="text-2xl font-bold uppercase tracking-tight mb-6 text-muted-foreground">Coming Soon</h2>
                         <div className="space-y-3 font-mono text-sm text-muted-foreground">
                             <p>🚀 CUSTOM LICENSING TERMS AND PRICING MODELS</p>
                             <p>🚀 ROYALTY SPLITTING FOR COLLABORATIONS</p>
@@ -199,11 +199,11 @@ export default function GlobalRightsPage() {
 function Step({ number, title, description }: { number: string, title: string, description: string }) {
     return (
         <div className="flex gap-6 items-start group">
-            <div className="flex-shrink-0 w-12 h-12 border-2 border-foreground flex items-center justify-center text-lg font-bold bg-background group-hover:bg-foreground group-hover:text-background transition-colors">
+            <div className="flex-shrink-0 w-12 h-12 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-lg font-bold bg-background group-hover:border-bronze group-hover:text-bronze transition-colors rounded-sm shadow-sm">
                 {number}
             </div>
             <div>
-                <h4 className="text-xl font-bold uppercase mb-2 tracking-tight">{title}</h4>
+                <h4 className="text-xl font-bold uppercase mb-2 tracking-tight group-hover:text-bronze transition-colors">{title}</h4>
                 <p className="text-muted-foreground font-light leading-relaxed">
                     {description}
                 </p>

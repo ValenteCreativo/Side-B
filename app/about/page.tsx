@@ -36,7 +36,8 @@ export default function AboutPage() {
 
                 <div className="container mx-auto px-4 py-12 max-w-4xl">
                     {/* Mission Statement */}
-                    <div className="bg-background border-2 border-foreground p-8 mb-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                    <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-8 mb-12 shadow-refined hover:shadow-refined-lg transition-refined relative overflow-hidden group">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-bronze transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
                         <h2 className="text-3xl font-bold mb-6 tracking-tighter uppercase">Our Mission</h2>
                         <div className="space-y-4 text-lg font-light leading-relaxed">
                             <p>
@@ -47,11 +48,11 @@ export default function AboutPage() {
                             <p>
                                 By combining Web3 technology with a powerful user experience, we empower musicians to:
                             </p>
-                            <ul className="list-disc list-inside space-y-2 ml-4 font-mono text-sm">
-                                <li>OWN THEIR INTELLECTUAL PROPERTY ON-CHAIN</li>
-                                <li>LICENSE THEIR MUSIC DIRECTLY TO CREATORS</li>
-                                <li>BUILD A COMMUNITY AROUND THEIR CREATIVE PROCESS</li>
-                                <li>EARN FROM THEIR "SIDE B" MOMENTS—THE RAW, UNFILTERED SESSIONS</li>
+                            <ul className="list-disc list-inside space-y-2 ml-4 font-mono text-sm text-muted-foreground">
+                                <li><span className="text-foreground font-bold">OWN</span> THEIR INTELLECTUAL PROPERTY ON-CHAIN</li>
+                                <li><span className="text-foreground font-bold">LICENSE</span> THEIR MUSIC DIRECTLY TO CREATORS</li>
+                                <li><span className="text-foreground font-bold">BUILD</span> A COMMUNITY AROUND THEIR CREATIVE PROCESS</li>
+                                <li><span className="text-foreground font-bold">EARN</span> FROM THEIR "SIDE B" MOMENTS</li>
                             </ul>
                         </div>
                     </div>
@@ -81,8 +82,9 @@ export default function AboutPage() {
                     </div>
 
                     {/* The Story Behind Side B */}
-                    <div className="bg-foreground text-background p-8 mb-12 border-2 border-foreground">
-                        <h2 className="text-3xl font-bold mb-6 tracking-tighter uppercase">Why "Side B"?</h2>
+                    <div className="bg-foreground text-background p-8 mb-12 border border-zinc-200 dark:border-zinc-800 shadow-refined relative overflow-hidden">
+                        <div className="absolute -right-10 -top-10 w-40 h-40 bg-bronze/20 rounded-full blur-3xl pointer-events-none" />
+                        <h2 className="text-3xl font-bold mb-6 tracking-tighter uppercase text-bronze">Why "Side B"?</h2>
                         <div className="space-y-4 text-lg font-light leading-relaxed opacity-90">
                             <p>
                                 In the vinyl era, the "Side B" of a record often contained the experimental tracks, the B-sides,
@@ -98,7 +100,7 @@ export default function AboutPage() {
                     </div>
 
                     {/* Tech Stack */}
-                    <div className="border-2 border-foreground p-8">
+                    <div className="border border-zinc-200 dark:border-zinc-800 p-8 bg-background shadow-refined">
                         <h2 className="text-3xl font-bold mb-8 tracking-tighter uppercase">Built With</h2>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                             <TechItem label="Frontend" value="Next.js 14, React, TypeScript" />
@@ -106,7 +108,7 @@ export default function AboutPage() {
                             <TechItem label="Database" value="Prisma, SQLite" />
                             <TechItem label="Auth" value="Coinbase Wallet" />
                             <TechItem label="IP Registry" value="Story Protocol" />
-                            <TechItem label="Design" value="Brutalist" />
+                            <TechItem label="Design" value="Refined Brutalism" />
                         </div>
                     </div>
                 </div>
@@ -117,12 +119,12 @@ export default function AboutPage() {
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
     return (
-        <div className="bg-background border-2 border-foreground p-6 hover:-translate-y-1 transition-transform duration-300 h-full">
+        <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-6 hover-lift hover:border-bronze/50 transition-all duration-300 h-full group">
             <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-foreground text-background rounded-none">
+                <div className="p-3 bg-zinc-100 dark:bg-zinc-800 text-foreground group-hover:bg-bronze group-hover:text-white transition-colors duration-300 rounded-sm">
                     {icon}
                 </div>
-                <h3 className="text-xl font-bold uppercase tracking-tight">{title}</h3>
+                <h3 className="text-xl font-bold uppercase tracking-tight group-hover:text-bronze transition-colors">{title}</h3>
             </div>
             <p className="text-muted-foreground font-light leading-relaxed">
                 {description}
@@ -134,7 +136,7 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode, titl
 function TechItem({ label, value }: { label: string, value: string }) {
     return (
         <div>
-            <p className="font-bold uppercase text-sm mb-1">{label}</p>
+            <p className="font-bold uppercase text-sm mb-1 text-bronze">{label}</p>
             <p className="text-muted-foreground font-mono text-xs">{value}</p>
         </div>
     )
