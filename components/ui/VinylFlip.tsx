@@ -1,18 +1,27 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { VinylParticles } from "./VinylParticles"
 
 interface VinylFlipProps {
     front: React.ReactNode
     back: React.ReactNode
     className?: string
     direction?: "horizontal" | "vertical"
+    flippable?: boolean // New prop: true for landing, false for app pages
 }
 
-export function VinylFlip({ front, back, className, direction = "horizontal" }: VinylFlipProps) {
+export function VinylFlip({
+    front,
+    back,
+    className,
+    direction = "horizontal",
+    flippable = true
+}: VinylFlipProps) {
     const [isFlipped, setIsFlipped] = useState(false)
+    const [showParticles, setShowParticles] = useState(false)
 
     const flipVariants = {
         front: {
@@ -27,19 +36,28 @@ export function VinylFlip({ front, back, className, direction = "horizontal" }: 
         }
     }
 
-    const contentVariants = {
-        front: {
-            opacity: 1,
-            z: 0,
-            transition: { duration: 0.3 }
-        },
-        back: {
-            opacity: 0,
-            z: -100,
-            transition: { duration: 0.3 }
-        }
+    // If not flippable, show static back side with particles on hover
+    if (!flippable) {
+        return (
+            <div
+                className={cn("relative group", className)}
+                onMouseEnter={() => setShowParticles(true)}
+                onMouseLeave={() => setShowParticles(false)}
+            >
+                <div className="w-full h-full relative bg-foreground text-background border-2 border-foreground overflow-hidden">
+                    {back}
+
+                    {/* Particles appear on hover */}
+                    {showParticles && <VinylParticles isDark={true} />}
+
+                    {/* Decorative Corner */}
+                    <div className="absolute bottom-0 left-0 w-8 h-8 border-r-2 border-t-2 border-background bg-foreground z-10" />
+                </div>
+            </div>
+        )
     }
 
+    // Original flippable behavior for landing page
     return (
         <div
             className={cn("relative perspective-1000 group cursor-pointer", className)}

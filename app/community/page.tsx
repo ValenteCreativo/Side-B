@@ -167,7 +167,7 @@ export default function CommunityPage() {
                     description="Discover independent musicians and connect with the creative underground."
                     sideText="SIDE B"
                 >
-                    <VinylFlip
+                    <VinylFlip flippable={false} flippable={false}
                         className="w-64 h-64 ml-auto"
                         front={
                             <div className="w-full h-full flex items-center justify-center bg-foreground text-background">

@@ -36,7 +36,7 @@ function StudioPage() {
           description="Upload. Register. Monetize. Your creative command center."
           sideText="SIDE B"
         >
-          <VinylFlip
+          <VinylFlip flippable={false} flippable={false}
             className="w-64 h-64 ml-auto"
             front={
               <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
@@ -71,7 +71,7 @@ function StudioPage() {
         description="Upload. Register. Monetize. Your creative command center."
         sideText="SIDE A"
       >
-        <VinylFlip
+        <VinylFlip flippable={false} flippable={false}
           className="w-64 h-64 ml-auto"
           front={
             <div className="w-full h-full flex items-center justify-center bg-foreground text-background">

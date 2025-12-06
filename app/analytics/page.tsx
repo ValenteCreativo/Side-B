@@ -64,7 +64,7 @@ export default function AnalyticsPage() {
             description="Track your performance and growth metrics"
             sideText="SIDE B"
           >
-            <VinylFlip
+            <VinylFlip flippable={false} flippable={false}
               className="w-64 h-64 ml-auto"
               front={
                 <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
@@ -101,7 +101,7 @@ export default function AnalyticsPage() {
           description="Track your performance and growth metrics"
           sideText="SIDE B"
         >
-          <VinylFlip
+          <VinylFlip flippable={false} flippable={false}
             className="w-64 h-64 ml-auto"
             front={
               <div className="w-full h-full flex items-center justify-center bg-foreground text-background">

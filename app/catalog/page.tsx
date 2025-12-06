@@ -143,7 +143,7 @@ function CatalogPage() {
         description="Curated sounds from the underground. License directly from the source."
         sideText="SIDE B"
       >
-        <VinylFlip
+        <VinylFlip flippable={false} flippable={false}
           className="w-64 h-64 ml-auto"
           front={
             <div className="w-full h-full flex items-center justify-center bg-foreground text-background">
