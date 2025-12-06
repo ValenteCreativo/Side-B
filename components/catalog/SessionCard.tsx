@@ -91,7 +91,7 @@ export function SessionCard({ session }: SessionCardProps) {
     setIsLicensing(true)
 
     try {
-      // Step 1: Get payment details (calculates 2% platform fee split)
+      // Step 1: Get payment details (calculates 3% platform fee split)
       const paymentResponse = await fetch('/api/payments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

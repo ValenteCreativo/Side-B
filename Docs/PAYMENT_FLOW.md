@@ -2,10 +2,10 @@
 
 ## Overview
 
-Side B uses a **peer-to-peer (P2P) payment model** with a **2% platform fee** on each transaction. This means:
+Side B uses a **peer-to-peer (P2P) payment model** with a **3% platform fee** on each transaction. This means:
 
-- **98%** of the payment goes directly to the artist
-- **2%** goes to the Side B platform as a service fee
+- **97%** of the payment goes directly to the artist
+- **3%** goes to the Side B platform as a service fee
 - **No custody**: Side B never holds user funds
 
 ## Payment Flow
@@ -18,7 +18,7 @@ When a buyer clicks "License" on a track:
 // User clicks License button on SessionCard
 handleLicense() →
   POST /api/payments →
-  Calculate fee split (98% artist, 2% platform)
+  Calculate fee split (97% artist, 3% platform)
 ```
 
 ### 2. Payment Details Calculation
@@ -27,20 +27,20 @@ The backend calculates the payment split:
 
 ```typescript
 // /api/payments/route.ts
-const PLATFORM_FEE_PERCENTAGE = 0.02
+const PLATFORM_FEE_PERCENTAGE = 0.03
 const totalAmount = session.priceUsd
-const platformFee = totalAmount * 0.02  // 2% platform fee
-const artistAmount = totalAmount - platformFee  // 98% to artist
+const platformFee = totalAmount * 0.03  // 3% platform fee
+const artistAmount = totalAmount - platformFee  // 97% to artist
 
 Returns:
 {
   artistPayment: {
     recipient: "0x...artist_wallet",
-    amount: 9.80  // for $10 track
+    amount: 9.70  // for $10 track
   },
   platformFee: {
     recipient: "0x...platform_wallet",
-    amount: 0.20  // for $10 track
+    amount: 0.30  // for $10 track
   },
   total: {
     amount: 10.00
@@ -89,7 +89,7 @@ Deploy a smart contract that automatically splits payments:
 ```solidity
 contract PaymentSplitter {
     address public platformWallet;
-    uint256 public platformFeePercentage = 2; // 2%
+    uint256 public platformFeePercentage = 3; // 3%
 
     function purchaseLicense(address artist, uint256 amount) external payable {
         uint256 platformFee = (amount * platformFeePercentage) / 100;
@@ -117,13 +117,13 @@ contract PaymentSplitter {
 Send two separate transactions:
 
 ```typescript
-// Transaction 1: Pay artist (98%)
+// Transaction 1: Pay artist (97%)
 await window.ethereum.request({
   method: 'eth_sendTransaction',
   params: [{ to: artistWallet, value: artistAmount }]
 })
 
-// Transaction 2: Pay platform (2%)
+// Transaction 2: Pay platform (3%)
 await window.ethereum.request({
   method: 'eth_sendTransaction',
   params: [{ to: platformWallet, value: platformFee }]
@@ -170,7 +170,7 @@ const amountInWei = '0x' + (priceUsd * 1e6).toString(16)
 Add to `.env`:
 
 ```bash
-# Platform wallet receives 2% fee from each transaction
+# Platform wallet receives 3% fee from each transaction
 PLATFORM_WALLET_ADDRESS="0x...your_platform_wallet"
 NEXT_PUBLIC_PLATFORM_WALLET="0x...your_platform_wallet"
 ```
@@ -256,11 +256,11 @@ Calculate payment split and return details.
   "paymentDetails": {
     "artistPayment": {
       "recipient": "0x...artist",
-      "amount": 9.80
+      "amount": 9.70
     },
     "platformFee": {
       "recipient": "0x...platform",
-      "amount": 0.20
+      "amount": 0.30
     },
     "total": { "amount": 10.00 }
   }

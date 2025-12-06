@@ -65,7 +65,7 @@ Built with Story Protocol • Base Network • Waku Protocol • [Documentation]
 - USDC and ETH payments on Base Network (L2)
 - Fiat on/off-ramp via Halliday
 - Payment verification via ERC-20 event parsing
-- Platform fee: 2% on all transactions
+- Platform fee: 3% on all transactions
 - Transaction history via Etherscan API V2
 
 #### **Wallet Infrastructure**
@@ -104,7 +104,7 @@ Built with Story Protocol • Base Network • Waku Protocol • [Documentation]
 - Halliday API (fiat on/off-ramp)
 - Etherscan API V2 (transaction history)
 - Base RPC (payment verification)
-- 2% platform fee on all transactions
+- 3% platform fee on all transactions
 
 **Storage & Database**
 - Prisma ORM 5.22.0
@@ -174,7 +174,7 @@ COINBASE_API_KEY_NAME="your-api-key-name"
 COINBASE_API_KEY_SECRET="your-api-key-secret"
 NEXT_PUBLIC_COINBASE_CLIENT_API_KEY="your-client-api-key"
 
-# Platform Wallet - Side B Revenue (2% fee)
+# Platform Wallet - Side B Revenue (3% fee)
 PLATFORM_WALLET_ADDRESS="your-platform-wallet-address"
 NEXT_PUBLIC_PLATFORM_WALLET="your-platform-wallet-address"
 
