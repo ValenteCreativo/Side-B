@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="public/catalog-art.png" alt="Side B Sessions" width="96" />
+  <img src="https://red-causal-armadillo-397.mypinata.cloud/ipfs/bafybeifioittq7aoty5mduzvki3wwhqzrtgwvyhinzqkhb25zd4rqzpa5y" alt="Side B Sessions" width="44" />
 
   <h1>Side B Sessions</h1>
   <p><i>Licensing the music that algorithms ignore.</i></p>
@@ -80,6 +80,10 @@ flowchart LR
       K -. Follow-up work .-> L
       L --> M[Encrypted chat<br/>No central server]
     end
+
+    
+---
+
 🧩 Tech Stack
 Frontend & UX
 Next.js 14 (App Router) · React 18 · TypeScript · TailwindCSS · shadcn/ui · Framer Motion
@@ -93,12 +97,13 @@ Prisma + PostgreSQL · Vercel Blob (audio) · IPFS/Pinata (metadata) · Zod (run
 Messaging & Infra
 Waku SDK (light node + protobuf) · Next.js Route Handlers · optional rate limiting · Halliday fiat on-ramp
 
+---
+
 <details> <summary><b>🛠 More for devs</b> — Story + CDP in one flow</summary>
 [!IMPORTANT]
 Side B Sessions is built as a full IP licensing flow: from raw audio to Story IP asset, to verified Base L2 payment, to Waku-backed collaboration.
 
-ts
-Copiar código
+
 // lib/storyClient.ts
 import { StoryClient } from '@story-protocol/core-sdk'
 import { http } from 'viem'
@@ -125,8 +130,8 @@ export async function registerTrackAsIP(params: {
     }
   })
 }
-ts
-Copiar código
+
+
 // components/auth/CdpEmailLogin.tsx
 import { useCdpAuth } from '@coinbase/cdp-react'
 
@@ -144,12 +149,18 @@ export function CdpEmailLogin() {
 }
 Docs: Story Protocol1 · Coinbase CDP2 · Base3 · Waku4
 
+---
+
 </details>
 🏆 Buildathon
 Built for the Surreal World Assets Buildathon 2025 on Story Protocol.
 
+---
+
 <p align="center"> From México with ❤️‍🔥 </p>
-Copiar código
+
+---
+
 Footnotes
 Story Protocol docs — https://docs.story.foundation ↩
 
