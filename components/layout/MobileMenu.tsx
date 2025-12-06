@@ -27,7 +27,7 @@ export function MobileMenu() {
 
     return (
         <>
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(true)}>
+            <Button variant="ghost" size="icon" onClick={() => setIsOpen(true)} className="hover:bg-zinc-100 dark:hover:bg-zinc-800">
                 <Menu className="h-6 w-6" />
             </Button>
 
@@ -49,16 +49,16 @@ export function MobileMenu() {
                             animate={{ x: 0 }}
                             exit={{ x: "-100%" }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed top-0 left-0 bottom-0 w-[80%] max-w-sm bg-background border-r-2 border-foreground z-50 flex flex-col shadow-[8px_0_0_0_rgba(0,0,0,0.1)]"
+                            className="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm bg-background border-r border-zinc-200 dark:border-zinc-800 z-50 flex flex-col shadow-2xl"
                         >
-                            <div className="h-20 flex items-center justify-between px-6 border-b border-border">
+                            <div className="h-20 flex items-center justify-between px-6 border-b border-zinc-200 dark:border-zinc-800">
                                 <span className="font-bold text-xl tracking-tight">SIDE B</span>
-                                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+                                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="hover:bg-zinc-100 dark:hover:bg-zinc-800">
                                     <X className="h-6 w-6" />
                                 </Button>
                             </div>
 
-                            <nav className="flex-1 py-8 px-6 space-y-4">
+                            <nav className="flex-1 py-8 px-6 space-y-2 overflow-y-auto">
                                 {menuItems.map((item) => {
                                     const isActive = pathname === item.href
                                     return (
@@ -68,12 +68,12 @@ export function MobileMenu() {
                                             onClick={() => setIsOpen(false)}
                                         >
                                             <div className={cn(
-                                                "flex items-center gap-4 py-4 text-lg transition-colors border-b border-border",
+                                                "flex items-center gap-4 py-4 px-4 text-lg transition-all duration-200 rounded-sm",
                                                 isActive
-                                                    ? "text-foreground font-medium"
-                                                    : "text-muted-foreground hover:text-foreground"
+                                                    ? "text-foreground font-medium bg-zinc-100 dark:bg-zinc-900"
+                                                    : "text-muted-foreground hover:text-foreground hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
                                             )}>
-                                                <item.icon className="h-6 w-6" />
+                                                <item.icon className={cn("h-6 w-6", isActive && "text-bronze")} />
                                                 {item.label}
                                             </div>
                                         </Link>

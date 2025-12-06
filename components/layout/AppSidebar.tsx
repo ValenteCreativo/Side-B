@@ -44,12 +44,12 @@ export function AppSidebar() {
     return (
         <motion.div
             animate={{ width: isCollapsed ? 80 : 280 }}
-            className="hidden lg:flex flex-col h-screen border-r border-border bg-background z-50 relative"
+            className="hidden lg:flex flex-col h-screen border-r border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 z-50 relative transition-all duration-300"
         >
             {/* Header */}
-            <div className="h-20 flex items-center px-6 border-b border-border">
-                <Link href="/" className="flex items-center gap-3 overflow-hidden">
-                    <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+            <div className="h-20 flex items-center px-6 border-b border-zinc-200 dark:border-zinc-800 bg-background">
+                <Link href="/" className="flex items-center gap-3 overflow-hidden group">
+                    <div className="w-8 h-8 flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 duration-300">
                         <img src="/assets/catalog-art.png" alt="Side B" className="w-full h-full object-contain" />
                     </div>
                     <AnimatePresence>
@@ -68,24 +68,24 @@ export function AppSidebar() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 py-8 px-4 space-y-2">
+            <nav className="flex-1 py-8 px-4 space-y-2 overflow-y-auto custom-scrollbar">
                 {menuItems.map((item) => {
                     const isActive = pathname === item.href
                     return (
                         <Link key={item.href} href={item.href}>
                             <div className={cn(
-                                "flex items-center gap-4 px-4 py-3 transition-colors group relative",
+                                "flex items-center gap-4 px-4 py-3 transition-all duration-300 group relative rounded-sm",
                                 isActive
-                                    ? "text-foreground font-medium"
-                                    : "text-muted-foreground hover:text-foreground"
+                                    ? "text-foreground font-medium bg-white dark:bg-zinc-900 shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/50"
                             )}>
                                 {isActive && (
                                     <motion.div
                                         layoutId="activeNav"
-                                        className="absolute left-0 top-0 bottom-0 w-1 bg-bronze"
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-bronze rounded-r-full"
                                     />
                                 )}
-                                <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive && "fill-current")} />
+                                <item.icon className={cn("h-5 w-5 flex-shrink-0 transition-colors", isActive ? "text-bronze" : "group-hover:text-foreground")} />
                                 <AnimatePresence>
                                     {!isCollapsed && (
                                         <motion.span
@@ -105,7 +105,7 @@ export function AppSidebar() {
             </nav>
 
             {/* Auth Section */}
-            <div className="p-4 border-t border-border">
+            <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 bg-background">
                 {!user ? (
                     <Button
                         variant="default"
@@ -130,10 +130,12 @@ export function AppSidebar() {
                 ) : (
                     <Link href="/settings">
                         <div className={cn(
-                            "flex items-center gap-3 px-4 py-3 transition-colors hover:bg-secondary rounded-sm",
+                            "flex items-center gap-3 px-4 py-3 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800",
                             isCollapsed && "justify-center px-0"
                         )}>
-                            <User className="h-5 w-5 flex-shrink-0" />
+                            <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 border border-zinc-200 dark:border-zinc-700">
+                                <User className="h-4 w-4 text-muted-foreground" />
+                            </div>
                             <AnimatePresence>
                                 {!isCollapsed && (
                                     <motion.div
@@ -143,7 +145,7 @@ export function AppSidebar() {
                                         className="flex flex-col overflow-hidden"
                                     >
                                         <span className="text-xs text-muted-foreground">Signed in as</span>
-                                        <span className="font-mono text-sm truncate">
+                                        <span className="font-mono text-sm truncate font-medium">
                                             {truncateAddress(user.walletAddress)}
                                         </span>
                                     </motion.div>
@@ -155,12 +157,12 @@ export function AppSidebar() {
             </div>
 
             {/* Collapse Toggle */}
-            <div className="p-4 border-t border-border">
+            <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 bg-background">
                 <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="w-full justify-center hover:bg-secondary rounded-none"
+                    className="w-full justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm"
                 >
                     {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                 </Button>
