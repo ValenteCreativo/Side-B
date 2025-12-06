@@ -44,8 +44,8 @@ function StudioPage() {
               </div>
             }
             back={
-              <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-                <span className="font-mono text-sm font-bold tracking-widest">
+              <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+                <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                   RECORD
                   <br />
                   UPLOAD
@@ -79,8 +79,8 @@ function StudioPage() {
             </div>
           }
           back={
-            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-              <span className="font-mono text-sm font-bold tracking-widest">
+            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+              <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                 RECORD
                 <br />
                 UPLOAD
@@ -97,9 +97,9 @@ function StudioPage() {
         <div className="grid gap-12 lg:grid-cols-[400px_1fr]">
           {/* Upload Form - Floating Panel */}
           <div className="lg:sticky lg:top-24 h-fit">
-            <div className="bg-background border-2 border-foreground p-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
-              <div className="p-4 border-b-2 border-foreground bg-muted/20">
-                <h3 className="font-bold uppercase tracking-widest text-sm">New Session</h3>
+            <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-1 shadow-refined rounded-md">
+              <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 rounded-t-sm">
+                <h3 className="font-bold uppercase tracking-widest text-sm text-bronze">New Session</h3>
               </div>
               <div className="p-4">
                 <UploadSessionForm onSuccess={handleUploadSuccess} />
@@ -109,9 +109,9 @@ function StudioPage() {
 
           {/* Session List */}
           <div key={refreshKey} className="min-h-[500px]">
-            <div className="mb-8 flex items-center justify-between border-b-2 border-foreground pb-4">
+            <div className="mb-8 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
               <h2 className="text-2xl font-bold tracking-tight uppercase">Your Sessions</h2>
-              <div className="h-2 w-2 bg-foreground rounded-full animate-pulse" />
+              <div className="h-1.5 w-1.5 bg-bronze rounded-full animate-pulse" />
             </div>
             <SessionList />
           </div>

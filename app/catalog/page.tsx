@@ -151,8 +151,8 @@ function CatalogPage() {
             </div>
           }
           back={
-            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-              <span className="font-mono text-sm font-bold tracking-widest">
+            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+              <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                 DISCOVER
                 <br />
                 UNHEARD
@@ -168,7 +168,7 @@ function CatalogPage() {
       <main className="container mx-auto px-6 py-12">
         {/* Filters */}
         <div className="mb-12 flex justify-center">
-          <div className="bg-background border-2 border-foreground p-2 inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+          <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-2 inline-block shadow-refined rounded-md">
             <FilterBar
               contentType={contentType}
               moodTag={moodTag}
@@ -191,12 +191,12 @@ function CatalogPage() {
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-foreground mx-auto mb-4" />
+              <Loader2 className="h-12 w-12 animate-spin text-bronze mx-auto mb-4" />
               <p className="text-muted-foreground font-mono text-lg tracking-widest">LOADING_DATA...</p>
             </div>
           </div>
         ) : filteredSessions.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-foreground/20 p-12">
+          <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-zinc-200 dark:border-zinc-800 p-12 rounded-md bg-zinc-50/50 dark:bg-zinc-900/50">
             <Music className="h-16 w-16 text-muted-foreground mb-6 opacity-50" />
             <h3 className="text-2xl font-bold mb-2 tracking-tight">NO_SESSIONS_FOUND</h3>
             <p className="text-muted-foreground mb-8 font-light text-lg">
@@ -206,7 +206,7 @@ function CatalogPage() {
             </p>
             {sessions.length === 0 && (
               <Link href="/studio">
-                <Button size="lg" className="rounded-none border-2 border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background transition-all duration-300">
+                <Button size="lg" className="rounded-sm border border-zinc-200 dark:border-zinc-800 bg-transparent text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-refined">
                   GO TO STUDIO
                 </Button>
               </Link>
@@ -214,18 +214,18 @@ function CatalogPage() {
           </div>
         ) : (
           <div>
-            <div className="mb-8 flex items-center justify-between px-2 border-b-2 border-foreground pb-4">
-              <p className="font-mono text-sm font-bold uppercase tracking-widest">
+            <div className="mb-8 flex items-center justify-between px-2 border-b border-zinc-200 dark:border-zinc-800 pb-4">
+              <p className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">
                 {filteredSessions.length} {filteredSessions.length === 1 ? 'TRACK' : 'TRACKS'} AVAILABLE
               </p>
-              <div className="h-2 w-2 bg-foreground rounded-full animate-pulse" />
+              <div className="h-1.5 w-1.5 bg-bronze rounded-full animate-pulse" />
             </div>
 
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredSessions.map((session) => (
                 <div key={session.id} className="group relative">
-                  <div className="absolute inset-0 bg-foreground translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300" />
-                  <div className="relative bg-background border-2 border-foreground p-4 hover:-translate-y-1 transition-transform duration-300 h-full">
+                  <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-900 translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300 rounded-md" />
+                  <div className="relative bg-background border border-zinc-200 dark:border-zinc-800 p-4 hover-lift h-full rounded-md shadow-sm">
                     <VinylTrack
                       id={session.id}
                       title={session.title}

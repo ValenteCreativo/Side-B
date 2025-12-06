@@ -209,32 +209,32 @@ export function SessionCard({ session }: SessionCardProps) {
   }
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col group hover:border-bronze/50 transition-refined">
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
               {session.title}
               {session.collection && (
-                <Badge variant="secondary" className="text-xs font-normal">
+                <Badge variant="secondary" className="text-[10px] font-normal tracking-wide">
                   {session.collection.title}
                 </Badge>
               )}
             </CardTitle>
-            <CardDescription className="mt-1.5">
+            <CardDescription className="mt-1.5 font-mono text-xs">
               by {session.owner.displayName || truncateAddress(session.owner.walletAddress)}
             </CardDescription>
           </div>
 
-          <Badge variant="outline">
+          <Badge variant="outline" className="text-[10px] uppercase tracking-wider">
             {session.contentType.replace('_', ' ')}
           </Badge>
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col space-y-4">
+      <CardContent className="flex-1 flex flex-col space-y-6">
         {/* Description */}
-        <p className="text-sm text-muted-foreground line-clamp-2">
+        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
           {session.description}
         </p>
 
@@ -242,7 +242,7 @@ export function SessionCard({ session }: SessionCardProps) {
         {session.moodTags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {session.moodTags.map((tag, idx) => (
-              <Badge key={idx} variant="secondary" className="text-xs">
+              <Badge key={idx} variant="secondary" className="text-[10px] px-2 py-0.5 font-normal">
                 {tag}
               </Badge>
             ))}
@@ -250,9 +250,9 @@ export function SessionCard({ session }: SessionCardProps) {
         )}
 
         {/* Audio Player - Free Preview for Everyone */}
-        <div className="flex-1 space-y-2">
+        <div className="flex-1 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
               Free Preview
             </p>
             {isLicensed && (
@@ -272,24 +272,24 @@ export function SessionCard({ session }: SessionCardProps) {
               </Button>
             )}
           </div>
-          <audio controls className="w-full" preload="metadata">
+          <audio controls className="w-full h-8" preload="metadata">
             <source src={session.audioUrl} type="audio/mpeg" />
             Your browser does not support the audio element.
           </audio>
           {!isLicensed && (
-            <p className="text-xs text-muted-foreground italic">
+            <p className="text-[10px] text-muted-foreground italic">
               License required for download & commercial use
             </p>
           )}
         </div>
 
         {/* Price and License Button */}
-        <div className="space-y-3 pt-2">
-          <div className="flex items-center justify-between gap-4">
+        <div className="space-y-3 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center justify-between gap-4 pt-4">
             <div>
-              <p className="text-2xl font-bold">{formatPrice(session.priceUsd)}</p>
+              <p className="text-2xl font-bold tracking-tight">{formatPrice(session.priceUsd)}</p>
               {session.licenseCount !== undefined && session.licenseCount > 0 && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   {session.licenseCount} {session.licenseCount === 1 ? 'license' : 'licenses'} sold
                 </p>
               )}
@@ -299,6 +299,7 @@ export function SessionCard({ session }: SessionCardProps) {
               onClick={handleLicense}
               disabled={isLicensing || isLicensed}
               className="shrink-0"
+              size="lg"
             >
               {isLicensed ? (
                 <>
@@ -320,7 +321,7 @@ export function SessionCard({ session }: SessionCardProps) {
               suggestedAmount={session.priceUsd}
               variant="outline"
               size="sm"
-              className="w-full rounded-none border-foreground text-xs uppercase tracking-wider"
+              className="w-full rounded-sm border-zinc-200 dark:border-zinc-800 text-[10px] uppercase tracking-wider hover:border-bronze hover:text-bronze transition-colors"
             >
               <DollarSign className="h-3 w-3 mr-2" />
               Need Crypto? Buy USDC
@@ -330,12 +331,12 @@ export function SessionCard({ session }: SessionCardProps) {
 
         {/* Story Protocol Info */}
         {session.storyAssetId && (
-          <div className="rounded-md bg-primary/5 p-2.5 text-xs">
+          <div className="rounded-sm bg-zinc-50 dark:bg-zinc-900 p-3 text-xs border border-zinc-100 dark:border-zinc-800">
             <div className="flex items-center gap-2">
-              <ExternalLink className="h-3 w-3 text-primary shrink-0" />
+              <ExternalLink className="h-3 w-3 text-bronze shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-primary">Registered IP</p>
-                <p className="text-muted-foreground font-mono truncate">
+                <p className="font-medium text-foreground">Registered IP</p>
+                <p className="text-muted-foreground font-mono truncate text-[10px]">
                   {session.storyAssetId}
                 </p>
               </div>
