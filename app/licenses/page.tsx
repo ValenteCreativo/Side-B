@@ -104,8 +104,8 @@ export default function LicensesPage() {
                                 </div>
                             }
                             back={
-                                <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-                                    <span className="font-mono text-sm font-bold tracking-widest">
+                                <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+                                    <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                                         COMMERCIAL
                                         <br />
                                         RIGHTS
@@ -141,8 +141,8 @@ export default function LicensesPage() {
                             </div>
                         }
                         back={
-                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-                                <span className="font-mono text-sm font-bold tracking-widest">
+                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+                                <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                                     COMMERCIAL
                                     <br />
                                     RIGHTS
@@ -158,18 +158,18 @@ export default function LicensesPage() {
                     {/* Stats */}
                     {licenses.length > 0 && (
                         <div className="grid md:grid-cols-3 gap-6 mb-12">
-                            <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
-                                <div className="text-4xl font-bold mb-2">{licenses.length}</div>
+                            <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-6 shadow-refined rounded-md">
+                                <div className="text-4xl font-bold mb-2 text-foreground">{licenses.length}</div>
                                 <div className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Total Licenses</div>
                             </div>
-                            <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
-                                <div className="text-4xl font-bold mb-2">
+                            <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-6 shadow-refined rounded-md">
+                                <div className="text-4xl font-bold mb-2 text-foreground">
                                     {formatPrice(licenses.reduce((sum, l) => sum + l.session.priceUsd, 0))}
                                 </div>
                                 <div className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Total Invested</div>
                             </div>
-                            <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
-                                <div className="text-4xl font-bold mb-2">
+                            <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-6 shadow-refined rounded-md">
+                                <div className="text-4xl font-bold mb-2 text-foreground">
                                     {new Set(licenses.map(l => l.session.owner.walletAddress)).size}
                                 </div>
                                 <div className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Artists Supported</div>
@@ -179,17 +179,17 @@ export default function LicensesPage() {
 
                     {/* Licenses List */}
                     {isLoading ? (
-                        <div className="py-20 text-center border-2 border-dashed border-foreground/20">
+                        <div className="py-20 text-center border border-dashed border-zinc-200 dark:border-zinc-800 rounded-md">
                             <p className="font-mono text-muted-foreground animate-pulse">LOADING_LICENSES...</p>
                         </div>
                     ) : licenses.length === 0 ? (
-                        <div className="py-20 text-center border-2 border-dashed border-foreground/20">
+                        <div className="py-20 text-center border border-dashed border-zinc-200 dark:border-zinc-800 rounded-md">
                             <Music className="h-16 w-16 mx-auto mb-6 text-muted-foreground opacity-50" />
                             <p className="text-muted-foreground mb-8 font-light text-lg">You haven't licensed any tracks yet</p>
                             <Button
                                 onClick={() => window.location.href = '/catalog'}
                                 size="lg"
-                                className="rounded-none border-2 border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background transition-all duration-300"
+                                className="rounded-sm border border-zinc-200 dark:border-zinc-800 bg-transparent text-foreground hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-refined shadow-sm"
                             >
                                 BROWSE CATALOG
                             </Button>
@@ -198,8 +198,8 @@ export default function LicensesPage() {
                         <div className="space-y-6">
                             {licenses.map((license) => (
                                 <div key={license.id} className="group relative">
-                                    <div className="absolute inset-0 bg-foreground translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300" />
-                                    <div className="relative bg-background border-2 border-foreground p-6 hover:-translate-y-1 transition-transform duration-300">
+                                    <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-800/50 translate-x-2 translate-y-2 rounded-md transition-transform duration-300 group-hover:translate-x-3 group-hover:translate-y-3" />
+                                    <div className="relative bg-background border border-zinc-200 dark:border-zinc-800 p-6 rounded-md shadow-refined hover-lift">
                                         <div className="flex flex-col md:flex-row items-start justify-between gap-6">
                                             <div className="flex-1">
                                                 <h3 className="text-2xl font-bold mb-2 tracking-tight">
@@ -209,11 +209,11 @@ export default function LicensesPage() {
                                                     <span className="font-mono uppercase">
                                                         by {license.session.owner.displayName || "Anonymous Artist"}
                                                     </span>
-                                                    <div className="h-1 w-1 bg-foreground rounded-full" />
-                                                    <Badge variant="outline" className="rounded-none border-foreground font-mono">
+                                                    <div className="h-1 w-1 bg-zinc-300 dark:bg-zinc-700 rounded-full" />
+                                                    <Badge variant="outline" className="rounded-sm border-zinc-200 dark:border-zinc-800 font-mono text-xs">
                                                         {license.session.contentType}
                                                     </Badge>
-                                                    <div className="h-1 w-1 bg-foreground rounded-full" />
+                                                    <div className="h-1 w-1 bg-zinc-300 dark:bg-zinc-700 rounded-full" />
                                                     <div className="flex items-center gap-2 font-mono text-xs">
                                                         <Calendar className="h-3 w-3" />
                                                         <span>
@@ -228,7 +228,7 @@ export default function LicensesPage() {
                                                 <div className="flex flex-wrap gap-3">
                                                     <Button
                                                         onClick={() => handleDownload(license.session.audioUrl, license.session.title)}
-                                                        className="rounded-none bg-foreground text-background hover:bg-foreground/90"
+                                                        className="rounded-sm bg-foreground text-background hover:bg-foreground/90 shadow-refined hover-lift"
                                                     >
                                                         <Download className="h-4 w-4 mr-2" />
                                                         DOWNLOAD AUDIO
@@ -241,7 +241,7 @@ export default function LicensesPage() {
                                                                 '_blank'
                                                             )}
                                                             variant="outline"
-                                                            className="rounded-none border-foreground hover:bg-foreground hover:text-background"
+                                                            className="rounded-sm border-zinc-200 dark:border-zinc-800 hover-bronze hover:text-bronze"
                                                         >
                                                             <ExternalLink className="h-4 w-4 mr-2" />
                                                             STORY PROTOCOL
@@ -255,7 +255,7 @@ export default function LicensesPage() {
                                                                 '_blank'
                                                             )}
                                                             variant="outline"
-                                                            className="rounded-none border-foreground hover:bg-foreground hover:text-background"
+                                                            className="rounded-sm border-zinc-200 dark:border-zinc-800 hover-bronze hover:text-bronze"
                                                         >
                                                             <ExternalLink className="h-4 w-4 mr-2" />
                                                             LICENSE TX
@@ -264,19 +264,37 @@ export default function LicensesPage() {
                                                 </div>
                                             </div>
 
-                                            <div className="text-right border-l-2 border-foreground pl-6 min-w-[150px]">
-                                                <div className="text-3xl font-bold mb-1">
+                                            <div className="text-right border-l border-zinc-200 dark:border-zinc-800 pl-6 min-w-[150px]">
+                                                <div className="text-3xl font-bold mb-1 text-bronze">
                                                     {formatPrice(license.session.priceUsd)}
                                                 </div>
                                                 <div className="text-xs font-mono uppercase tracking-widest text-muted-foreground">License Fee</div>
 
-                                                <div className="mt-6 pt-6 border-t border-border">
+                                                <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800">
                                                     <h4 className="text-xs font-bold uppercase tracking-widest mb-3">Terms</h4>
                                                     <ul className="text-[10px] font-mono text-muted-foreground space-y-1 text-left">
-                                                        <li>[X] NON-EXCLUSIVE</li>
-                                                        <li>[X] COMMERCIAL USE</li>
-                                                        <li>[X] ATTRIBUTION</li>
-                                                        <li>[ ] RESALE</li>
+                                                        <li className="flex items-center gap-2">
+                                                            <div className="w-3 h-3 border border-zinc-300 dark:border-zinc-700 flex items-center justify-center">
+                                                                <div className="w-2 h-2 bg-foreground" />
+                                                            </div>
+                                                            NON-EXCLUSIVE
+                                                        </li>
+                                                        <li className="flex items-center gap-2">
+                                                            <div className="w-3 h-3 border border-zinc-300 dark:border-zinc-700 flex items-center justify-center">
+                                                                <div className="w-2 h-2 bg-foreground" />
+                                                            </div>
+                                                            COMMERCIAL USE
+                                                        </li>
+                                                        <li className="flex items-center gap-2">
+                                                            <div className="w-3 h-3 border border-zinc-300 dark:border-zinc-700 flex items-center justify-center">
+                                                                <div className="w-2 h-2 bg-foreground" />
+                                                            </div>
+                                                            ATTRIBUTION
+                                                        </li>
+                                                        <li className="flex items-center gap-2 opacity-50">
+                                                            <div className="w-3 h-3 border border-zinc-300 dark:border-zinc-700" />
+                                                            RESALE
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </div>

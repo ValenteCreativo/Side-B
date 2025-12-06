@@ -63,8 +63,8 @@ function MessagesContent() {
                             </div>
                         }
                         back={
-                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-                                <span className="font-mono text-sm font-bold tracking-widest">
+                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+                                <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                                     CONNECT
                                     <br />
                                     WALLET
@@ -100,8 +100,8 @@ function MessagesContent() {
                         </div>
                     }
                     back={
-                        <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-                            <span className="font-mono text-sm font-bold tracking-widest">
+                        <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+                            <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                                 {conversation.length}
                                 <br />
                                 MESSAGES
@@ -114,7 +114,7 @@ function MessagesContent() {
             <div className="container mx-auto px-4 py-12">
                 {/* Waku Status */}
                 {error && (
-                    <Card className="rounded-none border-2 border-red-500 mb-6">
+                    <Card className="rounded-md border border-red-500 mb-6 shadow-sm">
                         <CardContent className="p-4">
                             <div className="flex items-center gap-2 text-red-500">
                                 <AlertCircle className="h-5 w-5" />
@@ -125,20 +125,20 @@ function MessagesContent() {
                 )}
 
                 {!isReady && !error && (
-                    <Card className="rounded-none border-2 border-foreground mb-6">
+                    <Card className="rounded-md border border-zinc-200 dark:border-zinc-800 mb-6 shadow-sm">
                         <CardContent className="p-4">
                             <div className="flex items-center gap-2">
-                                <Loader2 className="h-5 w-5 animate-spin" />
-                                <p className="font-mono text-sm">CONNECTING_TO_WAKU_NETWORK...</p>
+                                <Loader2 className="h-5 w-5 animate-spin text-bronze" />
+                                <p className="font-mono text-sm text-muted-foreground">CONNECTING_TO_WAKU_NETWORK...</p>
                             </div>
                         </CardContent>
                     </Card>
                 )}
 
                 {isReady && (
-                    <Card className="rounded-none border-2 border-green-500 mb-6">
+                    <Card className="rounded-md border border-green-500/50 mb-6 shadow-sm bg-green-50/10 dark:bg-green-900/10">
                         <CardContent className="p-4">
-                            <div className="flex items-center gap-2 text-green-500">
+                            <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                                 <p className="font-mono text-sm">WAKU_CONNECTED</p>
                             </div>
@@ -149,9 +149,9 @@ function MessagesContent() {
                 {/* Messaging Interface */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Recipient Selection */}
-                    <Card className="rounded-none border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
-                        <CardHeader className="border-b-2 border-foreground">
-                            <CardTitle className="font-mono uppercase tracking-widest text-sm">
+                    <Card className="rounded-md border border-zinc-200 dark:border-zinc-800 shadow-refined">
+                        <CardHeader className="border-b border-zinc-100 dark:border-zinc-800">
+                            <CardTitle className="font-mono uppercase tracking-widest text-sm text-muted-foreground">
                                 Recipient
                             </CardTitle>
                         </CardHeader>
@@ -160,7 +160,7 @@ function MessagesContent() {
                                 value={selectedUser}
                                 onChange={(e) => setSelectedUser(e.target.value)}
                                 placeholder="0x..."
-                                className="rounded-none border-2 border-foreground font-mono text-sm"
+                                className="rounded-sm border-zinc-200 dark:border-zinc-800 font-mono text-sm focus-visible:ring-bronze shadow-sm"
                             />
                             <p className="text-xs text-muted-foreground mt-2 font-mono">
                                 Enter wallet address to message
@@ -169,15 +169,15 @@ function MessagesContent() {
                     </Card>
 
                     {/* Conversation */}
-                    <Card className="lg:col-span-2 rounded-none border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
-                        <CardHeader className="border-b-2 border-foreground">
-                            <CardTitle className="font-mono uppercase tracking-widest text-sm">
+                    <Card className="lg:col-span-2 rounded-md border border-zinc-200 dark:border-zinc-800 shadow-refined">
+                        <CardHeader className="border-b border-zinc-100 dark:border-zinc-800">
+                            <CardTitle className="font-mono uppercase tracking-widest text-sm text-muted-foreground">
                                 {selectedUser ? `Chat with ${truncateAddress(selectedUser)}` : 'Select a user'}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0">
                             {/* Messages */}
-                            <div className="h-96 overflow-y-auto p-4 space-y-4">
+                            <div className="h-96 overflow-y-auto p-4 space-y-4 bg-zinc-50/30 dark:bg-zinc-900/30">
                                 {conversation.length === 0 ? (
                                     <div className="h-full flex items-center justify-center">
                                         <div className="text-center">
@@ -197,13 +197,13 @@ function MessagesContent() {
                                                     className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
                                                 >
                                                     <div
-                                                        className={`max-w-[70%] p-3 border-2 border-foreground ${isOwn
-                                                            ? 'bg-foreground text-background'
-                                                            : 'bg-background text-foreground'
+                                                        className={`max-w-[70%] p-3 rounded-md border ${isOwn
+                                                            ? 'bg-foreground text-background border-foreground'
+                                                            : 'bg-background text-foreground border-zinc-200 dark:border-zinc-700 shadow-sm'
                                                             }`}
                                                     >
                                                         <p className="text-sm break-words">{msg.content}</p>
-                                                        <p className="text-xs opacity-70 mt-1 font-mono">
+                                                        <p className={`text-[10px] mt-1 font-mono ${isOwn ? 'text-background/70' : 'text-muted-foreground'}`}>
                                                             {formatDistanceToNow(msg.timestamp, { addSuffix: true })}
                                                         </p>
                                                     </div>
@@ -216,7 +216,7 @@ function MessagesContent() {
                             </div>
 
                             {/* Send Message */}
-                            <div className="border-t-2 border-foreground p-4">
+                            <div className="border-t border-zinc-100 dark:border-zinc-800 p-4 bg-background rounded-b-md">
                                 <div className="flex gap-2">
                                     <Input
                                         value={messageText}
@@ -224,12 +224,13 @@ function MessagesContent() {
                                         onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                         placeholder="Type a message..."
                                         disabled={!isReady || !selectedUser}
-                                        className="rounded-none border-2 border-foreground font-mono"
+                                        className="rounded-sm border-zinc-200 dark:border-zinc-800 font-mono focus-visible:ring-bronze shadow-sm"
                                     />
                                     <Button
                                         onClick={handleSend}
                                         disabled={!messageText.trim() || !selectedUser || isSending || !isReady}
-                                        className="rounded-none border-2 border-foreground"
+                                        className="rounded-sm border border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze shadow-sm"
+                                        variant="outline"
                                     >
                                         {isSending ? (
                                             <Loader2 className="h-4 w-4 animate-spin" />
@@ -244,10 +245,11 @@ function MessagesContent() {
                 </div>
 
                 {/* Info */}
-                <Card className="rounded-none border-2 border-foreground/20 mt-6">
+                <Card className="rounded-md border border-zinc-200 dark:border-zinc-800 mt-6 bg-zinc-50/50 dark:bg-zinc-900/50">
                     <CardContent className="p-4">
-                        <p className="text-xs text-muted-foreground font-mono">
-                            ℹ️ Messages are sent via Waku, a decentralized P2P network. Your messages are
+                        <p className="text-xs text-muted-foreground font-mono flex items-center gap-2">
+                            <AlertCircle className="h-3 w-3" />
+                            Messages are sent via Waku, a decentralized P2P network. Your messages are
                             encrypted and only visible to you and the recipient.
                         </p>
                     </CardContent>
@@ -263,7 +265,7 @@ export default function MessagesPage() {
             <WakuProvider>
                 <Suspense fallback={
                     <div className="min-h-screen bg-background flex items-center justify-center">
-                        <p className="font-mono">LOADING_MESSAGES...</p>
+                        <p className="font-mono animate-pulse text-muted-foreground">LOADING_MESSAGES...</p>
                     </div>
                 }>
                     <MessagesContent />

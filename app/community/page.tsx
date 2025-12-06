@@ -175,8 +175,8 @@ export default function CommunityPage() {
                             </div>
                         }
                         back={
-                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-                                <span className="font-mono text-sm font-bold tracking-widest">
+                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+                                <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                                     CONNECT
                                     <br />
                                     COLLABORATE
@@ -198,14 +198,14 @@ export default function CommunityPage() {
                                 placeholder="SEARCH_MUSICIANS..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10 rounded-none border-2 border-foreground h-12 font-mono uppercase placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                className="pl-10 rounded-sm border-zinc-200 dark:border-zinc-800 h-12 font-mono uppercase placeholder:text-muted-foreground/50 focus-visible:ring-bronze shadow-refined"
                             />
                         </div>
                     </div>
 
                     {/* Musicians Grid */}
                     {filteredMusicians.length === 0 ? (
-                        <div className="py-20 text-center border-2 border-dashed border-foreground/20">
+                        <div className="py-20 text-center border border-dashed border-zinc-200 dark:border-zinc-800 rounded-md bg-zinc-50/50 dark:bg-zinc-900/50">
                             <p className="font-mono text-muted-foreground">
                                 {searchQuery ? "NO_MUSICIANS_FOUND" : "NO_MUSICIANS_YET"}
                             </p>
@@ -225,22 +225,22 @@ export default function CommunityPage() {
                                         className="group relative cursor-pointer"
                                         onClick={() => handleViewProfile(musician.id)}
                                     >
-                                        <div className="absolute inset-0 bg-foreground translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300" />
-                                        <div className="relative bg-background border-2 border-foreground p-6 hover:-translate-y-1 transition-transform duration-300 h-full flex flex-col items-center text-center">
-                                            <Avatar className="h-24 w-24 mb-6 border-2 border-foreground rounded-none">
+                                        <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-900 translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300 rounded-md" />
+                                        <div className="relative bg-background border border-zinc-200 dark:border-zinc-800 p-6 hover:-translate-y-1 transition-transform duration-300 h-full flex flex-col items-center text-center rounded-md shadow-sm">
+                                            <Avatar className="h-24 w-24 mb-6 border border-zinc-200 dark:border-zinc-800 rounded-full shadow-refined">
                                                 {musician.avatarUrl && (
-                                                    <AvatarImage src={musician.avatarUrl} alt={musician.displayName || "User"} className="rounded-none" />
+                                                    <AvatarImage src={musician.avatarUrl} alt={musician.displayName || "User"} className="rounded-full" />
                                                 )}
-                                                <AvatarFallback className="bg-foreground text-background text-2xl font-bold rounded-none">
+                                                <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800 text-foreground text-2xl font-bold rounded-full">
                                                     {initials}
                                                 </AvatarFallback>
                                             </Avatar>
 
-                                            <h3 className="text-xl font-bold mb-2 tracking-tight uppercase">
+                                            <h3 className="text-xl font-bold mb-2 tracking-tight uppercase group-hover:text-bronze transition-colors">
                                                 {musician.displayName || "Anonymous"}
                                             </h3>
 
-                                            <Badge variant="outline" className="mb-4 rounded-none border-foreground font-mono">
+                                            <Badge variant="outline" className="mb-4 rounded-sm border-zinc-200 dark:border-zinc-800 font-mono text-[10px] text-muted-foreground">
                                                 MUSICIAN
                                             </Badge>
 
@@ -259,7 +259,7 @@ export default function CommunityPage() {
                                                 </div>
                                             </div>
 
-                                            <div className="mt-auto w-full pt-6 border-t border-border">
+                                            <div className="mt-auto w-full pt-6 border-t border-zinc-100 dark:border-zinc-800">
                                                 {!isOwnProfile ? (
                                                     <div className="flex gap-2 w-full">
                                                         <Button
@@ -269,7 +269,7 @@ export default function CommunityPage() {
                                                             }}
                                                             variant={musician.isFollowing ? "outline" : "default"}
                                                             size="sm"
-                                                            className="flex-1 rounded-none border-2 border-foreground"
+                                                            className={`flex-1 rounded-sm ${musician.isFollowing ? 'border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze' : 'shadow-refined hover:shadow-refined-md'}`}
                                                         >
                                                             <Users className="h-4 w-4 mr-2" />
                                                             {musician.isFollowing ? "UNFOLLOW" : "FOLLOW"}
@@ -281,7 +281,7 @@ export default function CommunityPage() {
                                                             }}
                                                             variant="outline"
                                                             size="sm"
-                                                            className="rounded-none border-2 border-foreground"
+                                                            className="rounded-sm border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze"
                                                         >
                                                             <MessageCircle className="h-4 w-4" />
                                                         </Button>
@@ -294,7 +294,7 @@ export default function CommunityPage() {
                                                         }}
                                                         variant="outline"
                                                         size="sm"
-                                                        className="w-full rounded-none border-2 border-foreground hover:bg-foreground hover:text-background"
+                                                        className="w-full rounded-sm border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900"
                                                     >
                                                         EDIT PROFILE
                                                     </Button>

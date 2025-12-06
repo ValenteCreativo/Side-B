@@ -181,8 +181,8 @@ export default function ProfilePage() {
                                 </div>
                             }
                             back={
-                                <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-                                    <span className="font-mono text-sm font-bold tracking-widest">
+                                <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+                                    <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                                         CONTROL
                                         <br />
                                         YOUR
@@ -222,8 +222,8 @@ export default function ProfilePage() {
                             </div>
                         }
                         back={
-                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border-2 border-foreground p-4 text-center">
-                                <span className="font-mono text-sm font-bold tracking-widest">
+                            <div className="w-full h-full flex items-center justify-center bg-background text-foreground border border-zinc-200 dark:border-zinc-800 p-4 text-center rounded-md shadow-refined">
+                                <span className="font-mono text-sm font-bold tracking-widest text-bronze">
                                     CONTROL
                                     <br />
                                     YOUR
@@ -238,15 +238,15 @@ export default function ProfilePage() {
                 <div className="relative z-10 container mx-auto px-4 py-12 max-w-3xl">
                     <form onSubmit={handleSubmit} className="space-y-8">
                         {/* Avatar Section */}
-                        <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                        <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-6 shadow-refined rounded-md">
                             <div className="mb-6">
                                 <h3 className="text-xl font-bold uppercase tracking-tight">Avatar</h3>
                                 <p className="text-sm text-muted-foreground font-mono">YOUR_DIGITAL_FACE • STORED_ON_IPFS</p>
                             </div>
                             <div className="flex items-center gap-6">
-                                <Avatar className="h-24 w-24 border-2 border-foreground rounded-none">
-                                    {avatarPreview && <AvatarImage src={avatarPreview} alt="Profile" className="rounded-none" />}
-                                    <AvatarFallback className="bg-foreground text-background text-2xl font-bold rounded-none">
+                                <Avatar className="h-24 w-24 border border-zinc-200 dark:border-zinc-800 rounded-full shadow-refined">
+                                    {avatarPreview && <AvatarImage src={avatarPreview} alt="Profile" className="rounded-full" />}
+                                    <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800 text-foreground text-2xl font-bold rounded-full">
                                         {initials}
                                     </AvatarFallback>
                                 </Avatar>
@@ -263,7 +263,7 @@ export default function ProfilePage() {
                                         variant="outline"
                                         onClick={handleAvatarClick}
                                         disabled={isUploadingAvatar}
-                                        className="rounded-none border-2 border-foreground hover:bg-foreground hover:text-background"
+                                        className="rounded-sm border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze"
                                     >
                                         {isUploadingAvatar ? (
                                             <>
@@ -285,7 +285,7 @@ export default function ProfilePage() {
                         </div>
 
                         {/* Basic Info */}
-                        <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                        <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-6 shadow-refined rounded-md">
                             <div className="mb-6">
                                 <h3 className="text-xl font-bold uppercase tracking-tight">Basic Information</h3>
                                 <p className="text-sm text-muted-foreground font-mono">PUBLIC_ARTIST_DATA</p>
@@ -298,7 +298,7 @@ export default function ProfilePage() {
                                         value={formData.displayName}
                                         onChange={(e) => handleChange("displayName", e.target.value)}
                                         placeholder="YOUR_ARTIST_NAME"
-                                        className="rounded-none border-2 border-foreground focus-visible:ring-0"
+                                        className="rounded-sm border-zinc-200 dark:border-zinc-800 focus-visible:ring-bronze shadow-sm"
                                     />
                                 </div>
 
@@ -310,7 +310,7 @@ export default function ProfilePage() {
                                         onChange={(e) => handleChange("bio", e.target.value)}
                                         placeholder="TELL_US_ABOUT_YOUR_MUSIC..."
                                         rows={5}
-                                        className="rounded-none border-2 border-foreground focus-visible:ring-0 resize-none"
+                                        className="rounded-sm border-zinc-200 dark:border-zinc-800 focus-visible:ring-bronze resize-none shadow-sm"
                                     />
                                     <p className="text-xs text-muted-foreground font-mono">
                                         DISPLAYED_ON_PUBLIC_PROFILE
@@ -320,7 +320,7 @@ export default function ProfilePage() {
                         </div>
 
                         {/* Social Links */}
-                        <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                        <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-6 shadow-refined rounded-md">
                             <div className="mb-6">
                                 <h3 className="text-xl font-bold uppercase tracking-tight">Social Links</h3>
                                 <p className="text-sm text-muted-foreground font-mono">CONNECT_YOUR_PRESENCE</p>
@@ -333,7 +333,7 @@ export default function ProfilePage() {
                                         value={formData.twitter}
                                         onChange={(e) => handleChange("twitter", e.target.value)}
                                         placeholder="@USERNAME"
-                                        className="rounded-none border-2 border-foreground focus-visible:ring-0"
+                                        className="rounded-sm border-zinc-200 dark:border-zinc-800 focus-visible:ring-bronze shadow-sm"
                                     />
                                 </div>
 
@@ -344,7 +344,7 @@ export default function ProfilePage() {
                                         value={formData.instagram}
                                         onChange={(e) => handleChange("instagram", e.target.value)}
                                         placeholder="@USERNAME"
-                                        className="rounded-none border-2 border-foreground focus-visible:ring-0"
+                                        className="rounded-sm border-zinc-200 dark:border-zinc-800 focus-visible:ring-bronze shadow-sm"
                                     />
                                 </div>
 
@@ -356,14 +356,14 @@ export default function ProfilePage() {
                                         onChange={(e) => handleChange("website", e.target.value)}
                                         placeholder="HTTPS://YOURWEBSITE.COM"
                                         type="url"
-                                        className="rounded-none border-2 border-foreground focus-visible:ring-0"
+                                        className="rounded-sm border-zinc-200 dark:border-zinc-800 focus-visible:ring-bronze shadow-sm"
                                     />
                                 </div>
                             </div>
                         </div>
 
                         {/* Wallet Info (Read-only) */}
-                        <div className="bg-background border-2 border-foreground p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                        <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-6 shadow-refined rounded-md">
                             <div className="mb-6">
                                 <h3 className="text-xl font-bold uppercase tracking-tight">Wallet Address</h3>
                                 <p className="text-sm text-muted-foreground font-mono">CONNECTED_WALLET (READ_ONLY)</p>
@@ -371,16 +371,16 @@ export default function ProfilePage() {
                             <Input
                                 value={user.walletAddress || ""}
                                 readOnly
-                                className="font-mono text-sm bg-muted/50 rounded-none border-2 border-foreground"
+                                className="font-mono text-sm bg-zinc-50 dark:bg-zinc-900/50 rounded-sm border-zinc-200 dark:border-zinc-800 shadow-sm text-muted-foreground"
                             />
                         </div>
 
                         {/* Submit Button */}
                         <div className="flex justify-end gap-4 pt-4">
-                            <Button type="button" variant="outline" disabled={isLoading} className="rounded-none border-2 border-foreground hover:bg-foreground hover:text-background">
+                            <Button type="button" variant="outline" disabled={isLoading} className="rounded-sm border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900">
                                 CANCEL
                             </Button>
-                            <Button type="submit" disabled={isLoading} className="rounded-none bg-foreground text-background hover:bg-foreground/90">
+                            <Button type="submit" disabled={isLoading} className="rounded-sm bg-foreground text-background hover:bg-foreground/90 shadow-refined hover:shadow-refined-md">
                                 <Save className="h-4 w-4 mr-2" />
                                 {isLoading ? "SAVING..." : "SAVE CHANGES"}
                             </Button>
@@ -388,13 +388,13 @@ export default function ProfilePage() {
                     </form>
 
                     {/* Danger Zone */}
-                    <div className="bg-background border-2 border-red-500 p-6 shadow-[4px_4px_0px_0px_rgba(239,68,68,1)] mt-8">
+                    <div className="bg-red-50/10 border border-red-200 dark:border-red-900/50 p-6 shadow-sm rounded-md mt-8">
                         <div className="mb-6">
                             <h3 className="text-xl font-bold uppercase tracking-tight text-red-500">Danger Zone</h3>
                             <p className="text-sm text-muted-foreground font-mono">IRREVERSIBLE_ACTIONS</p>
                         </div>
                         <div className="space-y-4">
-                            <p className="text-sm">
+                            <p className="text-sm text-muted-foreground">
                                 Deleting your profile will permanently remove all your data including sessions, licenses, and followers. This action cannot be undone.
                             </p>
                             <DeleteProfileButton userId={user.id} />
@@ -459,7 +459,7 @@ function DeleteProfileButton({ userId }: { userId: string }) {
                 type="button"
                 variant="destructive"
                 onClick={() => setShowConfirm(true)}
-                className="rounded-none border-2 border-red-500"
+                className="rounded-sm border border-red-500 shadow-sm hover:shadow-md"
             >
                 DELETE PROFILE
             </Button>
@@ -467,16 +467,16 @@ function DeleteProfileButton({ userId }: { userId: string }) {
     }
 
     return (
-        <div className="space-y-4 p-4 border-2 border-red-500 bg-red-50 dark:bg-red-950/20">
+        <div className="space-y-4 p-4 border border-red-500 bg-red-50 dark:bg-red-950/20 rounded-md">
             <p className="font-bold text-red-500">Are you absolutely sure?</p>
-            <p className="text-sm">
-                Type <span className="font-mono font-bold">DELETE</span> to confirm:
+            <p className="text-sm text-muted-foreground">
+                Type <span className="font-mono font-bold text-foreground">DELETE</span> to confirm:
             </p>
             <Input
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
                 placeholder="Type DELETE"
-                className="rounded-none border-2 border-red-500 font-mono"
+                className="rounded-sm border-red-500 font-mono focus-visible:ring-red-500"
             />
             <div className="flex gap-2">
                 <Button
@@ -487,7 +487,7 @@ function DeleteProfileButton({ userId }: { userId: string }) {
                         setConfirmText("")
                     }}
                     disabled={isDeleting}
-                    className="rounded-none border-2 border-foreground"
+                    className="rounded-sm border-zinc-200 dark:border-zinc-800"
                 >
                     CANCEL
                 </Button>
@@ -496,7 +496,7 @@ function DeleteProfileButton({ userId }: { userId: string }) {
                     variant="destructive"
                     onClick={handleDelete}
                     disabled={isDeleting || confirmText !== "DELETE"}
-                    className="rounded-none border-2 border-red-500"
+                    className="rounded-sm border border-red-500 shadow-sm"
                 >
                     {isDeleting ? (
                         <>
