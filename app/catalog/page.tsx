@@ -167,24 +167,22 @@ function CatalogPage() {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-12">
         {/* Filters */}
-        <div className="mb-12 flex justify-center">
-          <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-2 inline-block shadow-refined rounded-md">
-            <FilterBar
-              contentType={contentType}
-              moodTag={moodTag}
-              searchQuery={searchQuery}
-              selectedArtist={selectedArtist}
-              priceRange={priceRange}
-              artists={artists}
-              maxPrice={maxPrice}
-              onContentTypeChange={setContentType}
-              onMoodTagChange={setMoodTag}
-              onSearchQueryChange={setSearchQuery}
-              onArtistChange={setSelectedArtist}
-              onPriceRangeChange={setPriceRange}
-              onClearFilters={handleClearFilters}
-            />
-          </div>
+        <div className="mb-12">
+          <FilterBar
+            contentType={contentType}
+            moodTag={moodTag}
+            searchQuery={searchQuery}
+            selectedArtist={selectedArtist}
+            priceRange={priceRange}
+            artists={artists}
+            maxPrice={maxPrice}
+            onContentTypeChange={setContentType}
+            onMoodTagChange={setMoodTag}
+            onSearchQueryChange={setSearchQuery}
+            onArtistChange={setSelectedArtist}
+            onPriceRangeChange={setPriceRange}
+            onClearFilters={handleClearFilters}
+          />
         </div>
 
         {/* Results */}
