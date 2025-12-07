@@ -4,238 +4,371 @@
 
 # 🎵 SIDE B SESSIONS
 
-### *On-chain IP for independent music. Register every riff. License legally. Earn without the algorithm.*
+### *On-chain IP for independent music*
 
-<div align="center">
-
-#### Protocol & On-chain IP
-[![Story Protocol](https://img.shields.io/badge/Story_Protocol-IP_Licensing-8B5CF6?style=for-the-badge&logo=ethereum&logoColor=white)](https://story.foundation)
-[![Base L2](https://img.shields.io/badge/Base_L2-Mainnet-0052FF?style=for-the-badge&logo=base&logoColor=white)](https://base.org)
-
-#### Access & Payments
-[![Coinbase CDP](https://img.shields.io/badge/Coinbase_CDP-Email_/_OTP-0052FF?style=for-the-badge&logo=coinbase&logoColor=white)](https://coinbase.com/cloud)
-[![Halliday](https://img.shields.io/badge/Halliday-Fiat_On-Ramp-00C853?style=for-the-badge)](https://halliday.xyz/)
-
-#### Peer-to-Peer Networking & Privacy
-[![Waku P2P](https://img.shields.io/badge/Waku-P2P_Encrypted_Messaging-000000?style=for-the-badge)](https://waku.org)
-
-#### Smart Contracts & Security
-[![Foundry](https://img.shields.io/badge/Foundry-Forge_/_Cast-7E3BF2?style=for-the-badge&logo=rust&logoColor=white)](https://github.com/foundry-rs/foundry)
-[![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-Contract_Security-00A3FF?style=for-the-badge&logo=openzeppelin&logoColor=white)](https://openzeppelin.com/contracts/)
-
-#### Storage, DB & Hosting
-[![Pinata](https://img.shields.io/badge/Pinata-IPFS_Storage-13B5EC?style=for-the-badge)](https://pinata.cloud/)
-[![Neon](https://img.shields.io/badge/Neon-PostgreSQL-24B47E?style=for-the-badge&logo=postgresql&logoColor=white)](https://neon.tech/)
-[![Vercel](https://img.shields.io/badge/Vercel-Frontend_Hosting-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
+**Built for musicians who won't play the influencer game — and creators who need real music.**
 
 </div>
 
 ---
-
-<div align="center">
 
 ## 🎧 The Essence
 
-**Problem:** Musicians don’t meaningfully profit from streaming unless they turn into content creators / influencers.  
+<div align="center">
 
+> **The Problem**
+> Musicians don't meaningfully profit from streaming unless they become content creators or influencers.
+> The algorithm rewards personal brand over artistry. Practice hours and songwriting don't pay bills.
 
-**Core idea:** Side B Sessions turns voice notes, jams, and under-monetized tracks into IP that can be licensed and downloaded by filmmakers, content creators, videogame indie studios, or anyone needing authentic music for their productions.
-
-
-> We honor practice hours and songwriting, not personal brand / follower counts — IP rights and payouts flow from the music itself.
 </div>
----
+
+**Our Solution:** Side B Sessions transforms voice notes, jams, and under-monetized tracks into licensable IP assets that filmmakers, content creators, and indie game studios can discover and license directly.
+
+This is a **marketplace** where musicians and visual artists meet — not just a licensing platform. It's also a **collaboration space** where sonic creatives who excel musically but struggle with video can connect with visual artists who understand their sound and co-create together.
+
+**IP rights are the foundation:** We use [Story Protocol](https://story.foundation) to guarantee that rights, provenance, and payouts are handled correctly — on-chain, transparent, and automatic. Every upload becomes a registered IP asset. Every license is traceable. Every payment settles fairly.
 
 <div align="center">
 
-## 💿 Feature Grid
-
-| Feature | What it does |
-| --- | --- |
-| 🎵 Story Protocol IP-backed catalog | Every upload becomes a registered IP asset with provenance preserved. |
-| ✉️ Email → wallet (Coinbase CDP) | Email/OTP login issues a non-custodial wallet without seed phrases. |
-| 📤 Audio upload + validation | Vercel Blob intake, format checks, then pinned to IPFS via Pinata. |
-| 💸 Licensing on Base + Halliday on-ramp | USDC/ETH licensing on Base; creators can on-ramp directly with fiat via Halliday. |
-| 🤝 Payment splitting / verification | ERC-20 Smart Contract verifies transfers before finalizing license delivery and enabling downloading options for commercial usage of the IP assets. |
-| 🔒 Waku encrypted messaging | E2E P2P chat so musicians and creators can plan collabs privately. |
-| 📊 Analytics for musicians | Dashboard tracks licenses, payouts, and who is using each track. |
+> *We honor practice hours and songwriting, not follower counts — IP rights flow from the music itself.*
 
 </div>
 
 ---
 
-<div align="center">
+## 🎬 How It Works
+
+<details open>
+<summary><b>User Flow — From Upload to Payout</b></summary>
+
+<br/>
+
+**For Musicians:**
+1. **Sign in** with email/OTP → get a non-custodial wallet automatically (Coinbase CDP)
+2. **Upload** your track or jam → audio stored on Vercel Blob, validated, pinned to IPFS via Pinata
+3. **Register** as IP asset → Story Protocol creates on-chain provenance for your work
+4. **Set pricing** → define licensing terms and prices in USDC/ETH
+5. **Track analytics** → see who licenses your music, how much you earn, usage stats
+
+**For Creators:**
+1. **Browse** the catalog → discover IP-verified tracks ready for licensing
+2. **Preview & License** → stream previews, purchase licenses with USDC/ETH on Base L2
+3. **Fiat on-ramp** → use credit card via Halliday if you don't have crypto
+4. **Payment verified** → smart contract confirms transfer before unlocking downloads
+5. **Download & Use** → commercial-grade licenses for film, content, games, etc.
+
+**For Collaboration:**
+- **Encrypted messaging** via Waku → coordinate custom work, negotiate extras, plan visual collaborations privately
+- **Direct connections** → musicians find visual artists, filmmakers discover sound designers
+
+</details>
+
+---
+
+## 💿 Feature Overview
+
+| Feature | What It Does | Why It Matters |
+|---------|-------------|----------------|
+| 🎯 **IP Registration** | Every upload becomes a Story Protocol IP asset with on-chain provenance | Protects your rights before anyone can use your music |
+| ✉️ **Email → Wallet** | Coinbase CDP creates non-custodial wallets via email/OTP | No seed phrases, no friction — just email login |
+| 🎵 **Audio Pipeline** | Upload validation → IPFS pinning → metadata storage | Permanent, decentralized storage for your tracks |
+| 💸 **Licensing on Base** | USDC/ETH payments on Base L2 with low fees | Fast, cheap transactions aligned with Story Protocol |
+| 💳 **Fiat On-Ramp** | Halliday integration for credit card purchases | Creators without crypto can still buy licenses |
+| 🤝 **Payment Verification** | Smart contract verifies transfers before unlocking downloads | No manual approval — trustless and instant |
+| 🔒 **Encrypted Chat** | Waku P2P messaging for private collaboration planning | End-to-end encrypted, decentralized communication |
+| 📊 **Artist Dashboard** | Track licenses, revenue, and usage analytics | Full transparency on who's using your music |
+| 🎨 **Creator Discovery** | Browse by genre, mood, instrumentation | Find the perfect sound for your project |
+
+---
+
 ## 🏗️ Architecture Overview
+
 <details>
-  <summary>Show diagram</summary>
+<summary><b>System Diagram — Full Stack Flow</b></summary>
+
+<br/>
 
 ```mermaid
 flowchart TB
-    %% --- MUSICIAN FLOW ---
-    subgraph MUSICIAN["🎤 Musician"]
+    %% Musician Flow
+    subgraph MUSICIAN["🎤 Musician Journey"]
         A[Email/OTP Login<br/>Coinbase CDP]
         B[Wallet Created<br/>Base L2 EOA]
         C[Upload Audio<br/>Vercel Blob]
         D[Metadata & Pricing<br/>PostgreSQL/Prisma]
-        E[Pin Metadata<br/>IPFS / Pinata]
+        E[Pin to IPFS<br/>Pinata Gateway]
         F[Register IP Asset<br/>Story Protocol]
-        G[Artist Dashboard<br/>Plays · Licenses · Revenue]
+        G[Dashboard<br/>Licenses · Revenue · Analytics]
     end
 
-    %% --- CREATOR FLOW ---
-    subgraph CREATOR["🎬 Creator"]
-        H[Browse Catalog<br/>IP-verified tracks]
-        I[License Purchase & Download<br/>USDC/ETH on Base L2]
-        J[Payment Splitter<br/>SideBPaymentSplitter]
-        K[Artist Payout]
-        L[Platform Fee]
+    %% Creator Flow
+    subgraph CREATOR["🎬 Creator Journey"]
+        H[Browse Catalog<br/>IP-verified Tracks]
+        I[License Purchase<br/>USDC/ETH on Base]
+        J[Payment Splitter<br/>Smart Contract]
+        K[Musician Payout<br/>Automated Split]
+        L[Platform Fee<br/>Revenue Share]
     end
 
-    %% --- MESSAGING ---
-    subgraph MESSAGING["💬 Messaging"]
-        M[Encrypted Chat<br/>Waku P2P]
+    %% Messaging
+    subgraph MESSAGING["💬 Collaboration"]
+        M[Encrypted Chat<br/>Waku P2P Messaging]
     end
 
-    %% --- FIAT BRIDGE (HALLIDAY) ---
-    subgraph FIAT["💳 Fiat Bridge"]
-        N[Halliday On-Ramp<br/>Card/Fiat → USDC/ETH]
+    %% Fiat Bridge
+    subgraph FIAT["💳 Fiat Gateway"]
+        N[Halliday On-Ramp<br/>Card → USDC/ETH]
     end
 
-    %% --- FLOWS ---
+    %% Connections
     A --> B --> C --> D --> E --> F --> G
     F --> H
     H --> I --> J
     J --> K
     J --> L
 
-    %% messaging connections
-    K -. "follow-up collab" .-> M
-    H -. "custom work" .-> M
+    %% Messaging flows
+    K -. "custom work" .-> M
+    H -. "collaboration" .-> M
 
-    %% halliday -> funding purchases
-    N -. "funds wallet" .-> I
+    %% Fiat funding
+    N -. "fund wallet" .-> I
 ```
-</details> 
 
-</div>
+</details>
 
 ---
-
-<div align="center">
 
 ## 🔧 Tech Stack
 
-- **Frontend & UX** — Next.js 14 App Router, React 18, TypeScript, Tailwind + shadcn/ui for fast UI shipping + Particles.js for interactivity
-- **Web3 & IP** — Story Protocol SDK for IP assets, Coinbase CDP for email wallets, Base L2 for licensing payments.
-- **Data & Storage** — Prisma + PostgreSQL for catalog data, Vercel Blob for uploads, Pinata IPFS for permanence.
-- **Messaging & Infra** — Waku P2P encrypted messaging, Viem clients for on-chain reads, Foundry/OpenZeppelin for splits.
+<div align="center">
+
+> **One stack. Full IP lifecycle. Web3 UX that feels like Web2.**
 
 </div>
 
+### Web3 & IP Infrastructure
+
+[![Story Protocol](https://img.shields.io/badge/Story_Protocol-IP_Registry-8B5CF6?style=for-the-badge&logo=ethereum&logoColor=white)](https://story.foundation)
+[![Base L2](https://img.shields.io/badge/Base_L2-Payment_Chain-0052FF?style=for-the-badge&logo=base&logoColor=white)](https://base.org)
+[![Coinbase CDP](https://img.shields.io/badge/Coinbase_CDP-Email_Wallets-0052FF?style=for-the-badge&logo=coinbase&logoColor=white)](https://coinbase.com/cloud)
+[![Halliday](https://img.shields.io/badge/Halliday-Fiat_Gateway-00C853?style=for-the-badge)](https://halliday.xyz/)
+[![Waku](https://img.shields.io/badge/Waku-P2P_Messaging-000000?style=for-the-badge)](https://waku.org)
+
+- **Story Protocol SDK** — IP asset registration, licensing workflows, on-chain provenance
+- **Base L2** — USDC/ETH payments, low fees, Story Protocol alignment
+- **Coinbase CDP** — Email/OTP authentication, non-custodial wallets, no seed phrases
+- **Halliday** — Credit card → crypto on-ramp for seamless fiat purchases
+- **Waku** — Decentralized P2P messaging with end-to-end encryption
+
+### Frontend & User Experience
+
+[![Next.js](https://img.shields.io/badge/Next.js_14-App_Router-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React_18-TypeScript-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![Tailwind](https://img.shields.io/badge/Tailwind_CSS-Styling-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+
+- **Next.js 14** — App Router, server components, optimized routing
+- **React 18** — TypeScript-first, modern hooks, concurrent features
+- **Tailwind + shadcn/ui** — Rapid UI development with accessible components
+- **Particles.js** — Interactive visual effects for artist branding
+
+### Smart Contracts & Security
+
+[![Foundry](https://img.shields.io/badge/Foundry-Forge_·_Cast-7E3BF2?style=for-the-badge&logo=rust&logoColor=white)](https://github.com/foundry-rs/foundry)
+[![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-Contracts-00A3FF?style=for-the-badge&logo=openzeppelin&logoColor=white)](https://openzeppelin.com/contracts/)
+[![Viem](https://img.shields.io/badge/Viem-Ethereum_Client-4B5563?style=for-the-badge)](https://viem.sh)
+
+- **Foundry** — Solidity testing, deployment, contract scripting
+- **OpenZeppelin** — Battle-tested ERC-20, payment splitter contracts
+- **Viem** — Type-safe Ethereum interactions, transaction verification
+
+### Storage, Database & Infrastructure
+
+[![Pinata](https://img.shields.io/badge/Pinata-IPFS_Storage-13B5EC?style=for-the-badge)](https://pinata.cloud/)
+[![Neon](https://img.shields.io/badge/Neon-PostgreSQL-24B47E?style=for-the-badge&logo=postgresql&logoColor=white)](https://neon.tech/)
+[![Vercel](https://img.shields.io/badge/Vercel-Hosting-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
+
+- **Pinata IPFS** — Permanent metadata and asset storage
+- **Neon PostgreSQL** — Serverless database for catalog and analytics
+- **Vercel Blob** — Audio upload intake and validation
+- **Prisma** — Type-safe database ORM
+
 ---
 
-<div align="center">
-
-## 🛠 For devs: Installation process & Docs
+## 🛠 For Devs: Setup & Code
 
 <details>
-  <summary>Show steps</summary>
+<summary><b>Quick Start — Installation</b></summary>
 
-> [!IMPORTANT]
-> Full IP lifecycle in one stack: upload → IP registration → licensing → payment verification → encrypted messaging.
+<br/>
 
-1. `npm install` then `cp .env.example .env` — keys and env hints live in [`docs/INSTALLATION.md`](docs/INSTALLATION.md).
-2. `npx prisma generate && npx prisma db push` — prepare the catalog database.
-3. `npm run dev` — launches email/OTP auth, upload, licensing, Waku chat, Halliday on-ramp, and payment verification locally.
+### Prerequisites
+- Node.js 18+
+- PostgreSQL (or use Neon serverless)
+- API keys for: Coinbase CDP, Story Protocol, Pinata, Halliday
 
-Documentation vault lives below for Story, CDP, Base, Waku, payments, and deployment.
+### Setup Steps
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Copy environment template
+cp .env.example .env
+
+# 3. Configure your .env with API keys
+# See docs/INSTALLATION.md for detailed key setup
+
+# 4. Initialize database
+npx prisma generate
+npx prisma db push
+
+# 5. Run development server
+npm run dev
+```
+
+### Environment Variables
+
+Key integrations require these environment variables:
+
+```bash
+# Story Protocol
+STORY_RPC_URL=
+STORY_PRIVATE_KEY=
+SPG_CONTRACT=
+
+# Coinbase CDP
+COINBASE_API_KEY_NAME=
+COINBASE_API_KEY_SECRET=
+
+# Base L2
+BASE_RPC_URL=
+BASE_PRIVATE_KEY=
+
+# IPFS / Pinata
+PINATA_JWT=
+PINATA_GATEWAY=
+
+# Halliday
+HALLIDAY_API_KEY=
+
+# Database
+DATABASE_URL=
+
+# Waku
+WAKU_CONTENT_TOPIC=
+```
+
+Full setup guide: [`docs/INSTALLATION.md`](docs/INSTALLATION.md)
+
+</details>
+
+<details>
+<summary><b>Documentation Vault</b></summary>
+
+<br/>
+
+> Comprehensive guides for every integration
+
+```
+docs/
+├── 📘 INSTALLATION.md          Complete setup guide + .env.example
+├── 🏗️  ARCHITECTURE.md          System design and data flow diagrams
+├── 🔐 COINBASE_INTEGRATION.md  CDP wallet setup and authentication
+├── 🎯 STORY_PROTOCOL.md         IP registration workflows
+├── 💬 WAKU_MESSAGING.md         P2P messaging implementation
+├── 💳 PAYMENT_FLOWS.md          ERC-20 verification + Halliday
+├── 📦 SMART_CONTRACTS.md        Foundry setup + OpenZeppelin
+└── 🚀 DEPLOYMENT.md             Production deployment checklist
+```
+
+**Start here:** [`docs/INSTALLATION.md`](docs/INSTALLATION.md) — full environment setup in under 5 minutes
+
+</details>
+
+<details>
+<summary><b>Quick Code Example — Story Protocol IP Registration</b></summary>
+
+<br/>
 
 ```typescript
 import { StoryClient } from '@story-protocol/core-sdk'
 import { http } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
 
-const story = StoryClient.newClient({ transport: http(process.env.STORY_RPC_URL!) })
-
-export async function registerTrack(ipfsHash: string, price: bigint) {
-  return story.ipAsset.register({
-    nftContract: process.env.SPG_CONTRACT!,
-    tokenId: '1',
-    metadata: { metadataURI: ipfsHash, licensingFee: price }
-  })
-}
-```
-
-Refs: Story[^story], CDP[^cdp], Base[^base], Waku[^waku].
-
-
----
-
-## 📖 Documentation Vault
-
-> Comprehensive integration guides, architecture diagrams, and API references.
-
-```
-docs/
-├── 📘 INSTALLATION.md          Complete setup guide with .env.example
-├── 🏗️  ARCHITECTURE.md          System design and data flow diagrams
-├── 🔐 COINBASE_INTEGRATION.md  CDP wallet setup and authentication
-├── 🎯 STORY_PROTOCOL.md         IP registration workflows and contracts
-├── 💬 WAKU_MESSAGING.md         P2P messaging implementation details
-├── 💳 PAYMENT_FLOWS.md          ERC-20 verification and Halliday integration
-├── 📦 SMART_CONTRACTS.md        Foundry setup and OpenZeppelin usage
-└── 🚀 DEPLOYMENT.md             Production deployment checklist
-```
-
-**Quick start:** `docs/INSTALLATION.md` — full environment setup in under 5 minutes.
-
-</details>
-
-</div>
----
-
-<div align="center">
-
-## 📂 Key Integrations — The Code
-
-<details>
-<summary><b>🎯 Story Protocol IP Registration</b> — <code>lib/story.ts</code></summary>
-
-```typescript
-import { StoryClient, StoryConfig } from '@story-protocol/core-sdk'
-import { createPublicClient, createWalletClient, http } from 'viem'
-import { aeneid } from '@story-protocol/core-sdk/chains'
-
+// Initialize Story Protocol client
 export const storyClient = StoryClient.newClient({
   transport: http(process.env.STORY_RPC_URL),
   chainId: 'aeneid',
   account: privateKeyToAccount(process.env.STORY_PRIVATE_KEY as `0x${string}`)
 })
 
-export async function registerIPAsset(nftContract: string, tokenId: string, metadata: object) {
+// Register track as IP asset
+export async function registerIPAsset(
+  ipfsHash: string,
+  nftContract: string,
+  tokenId: string
+) {
   const response = await storyClient.ipAsset.register({
     nftContract,
     tokenId,
     metadata: {
       metadataURI: ipfsHash,
-      metadataHash: keccak256(ipfsHash),
-      nftMetadataHash: keccak256(nftMetadata)
+      metadataHash: keccak256(ipfsHash)
     }
   })
 
-  return response.ipId
+  return response.ipId // On-chain IP identifier
 }
 ```
 
-**Used in:** `app/api/sessions/route.ts`
+See full implementation: [`lib/story.ts`](lib/story.ts)
 
 </details>
 
+---
+
+## 📂 Key Integrations — Code Map
+
+<div align="center">
+
+> **Every integration, one file. Clean separation of concerns.**
+
+</div>
+
+| Integration | Purpose | File Location |
+|------------|---------|---------------|
+| 🎯 **Story Protocol** | IP asset registration and licensing | [`lib/story.ts`](lib/story.ts) |
+| 🔐 **Coinbase CDP** | Email/OTP authentication and wallet creation | [`components/providers/CoinbaseProvider.tsx`](components/providers/CoinbaseProvider.tsx) |
+| 💬 **Waku Messaging** | P2P encrypted chat setup and message handling | [`components/waku/WakuProvider.tsx`](components/waku/WakuProvider.tsx) |
+| 💰 **Payment Verification** | ERC-20 transfer validation before license unlock | [`lib/payment-verification.ts`](lib/payment-verification.ts) |
+| 📌 **Pinata IPFS** | Metadata pinning and gateway access | [`lib/pinata.ts`](lib/pinata.ts) |
+| 💳 **Halliday** | Fiat on-ramp integration for credit card purchases | [`lib/halliday.ts`](lib/halliday.ts) |
+| 🎵 **Audio Upload** | Vercel Blob intake and validation pipeline | [`app/api/sessions/route.ts`](app/api/sessions/route.ts) |
+
 <details>
-<summary><b>🔐 Coinbase CDP Email Authentication</b> — <code>components/providers/CoinbaseProvider.tsx</code></summary>
+<summary><b>Detailed Integration Examples</b></summary>
 
+<br/>
+
+### Story Protocol — IP Registration
 ```typescript
-import { CoinbaseWalletSDK } from '@coinbase/wallet-sdk'
+// lib/story.ts
+export async function registerTrack(ipfsHash: string, price: bigint) {
+  return storyClient.ipAsset.register({
+    nftContract: process.env.SPG_CONTRACT!,
+    tokenId: generateTokenId(),
+    metadata: {
+      metadataURI: ipfsHash,
+      licensingFee: price
+    }
+  })
+}
+```
 
+### Coinbase CDP — Email Authentication
+```typescript
+// components/providers/CoinbaseProvider.tsx
 const sdk = new CoinbaseWalletSDK({
   appName: 'Side B Sessions',
   enableCDP: true,
@@ -246,20 +379,15 @@ const sdk = new CoinbaseWalletSDK({
 })
 
 const provider = sdk.makeWeb3Provider()
-await provider.request({ method: 'eth_requestAccounts', params: { loginType: 'email' } })
+await provider.request({
+  method: 'eth_requestAccounts',
+  params: { loginType: 'email' }
+})
 ```
 
-**Used in:** `components/auth/CoinbaseAuth.tsx`
-
-</details>
-
-<details>
-<summary><b>💬 Waku P2P Encrypted Messaging</b> — <code>components/waku/WakuProvider.tsx</code></summary>
-
+### Waku — Encrypted Messaging
 ```typescript
-import { createLightNode, waitForRemotePeer } from '@waku/sdk'
-import { Protocols } from '@waku/interfaces'
-
+// components/waku/WakuProvider.tsx
 const node = await createLightNode({
   defaultBootstrap: true,
   shardInfo: { contentTopics: ['/sideb/1/messages/proto'] }
@@ -267,107 +395,101 @@ const node = await createLightNode({
 
 await node.start()
 await waitForRemotePeer(node, [Protocols.LightPush, Protocols.Filter])
-
-await node.lightPush.send(encoder, { payload: encryptedMessage, timestamp: new Date() })
 ```
 
-**Used in:** `hooks/useWakuMessaging.ts`
-
-</details>
-
-<details>
-<summary><b>💰 ERC-20 Payment Verification</b> — <code>lib/payment-verification.ts</code></summary>
-
+### Payment Verification — Smart Contract
 ```typescript
-import { createPublicClient, http, parseAbi } from 'viem'
-import { base } from 'viem/chains'
-
-const USDC_CONTRACT = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
-
-export async function verifyPayment(txHash: string, expectedAmount: bigint, recipientAddress: string) {
-  const client = createPublicClient({ chain: base, transport: http(process.env.BASE_RPC_URL) })
+// lib/payment-verification.ts
+export async function verifyPayment(
+  txHash: string,
+  expectedAmount: bigint,
+  recipient: string
+) {
   const receipt = await client.getTransactionReceipt({ hash: txHash })
-  const transferEvent = receipt.logs.find(log => log.topics[0] === keccak256('Transfer(address,address,uint256)'))
+  const transferEvent = receipt.logs.find(
+    log => log.topics[0] === keccak256('Transfer(address,address,uint256)')
+  )
 
-  return transferEvent &&
-    transferEvent.topics[2] === recipientAddress &&
-    BigInt(transferEvent.data) >= expectedAmount
+  return transferEvent?.topics[2] === recipient &&
+         BigInt(transferEvent.data) >= expectedAmount
 }
 ```
 
-**Used in:** `app/api/payments/confirm/route.ts`
-
 </details>
 
-<details>
-<summary><b>📌 IPFS Metadata Pinning</b> — <code>lib/pinata.ts</code></summary>
-
-```typescript
-import { PinataSDK } from 'pinata-web3'
-
-const pinata = new PinataSDK({
-  pinataJwt: process.env.PINATA_JWT!,
-  pinataGateway: 'red-causal-armadillo-397.mypinata.cloud'
-})
-
-export async function pinMetadata(metadata: object) {
-  const result = await pinata.upload.json(metadata)
-  return {
-    ipfsHash: result.IpfsHash,
-    url: `https://red-causal-armadillo-397.mypinata.cloud/ipfs/${result.IpfsHash}`
-  }
-}
-```
-
-**Used in:** `app/api/sessions/route.ts`
-
-</details>
-
-</div>
 ---
-
-<div align="center">
 
 ## 🎯 What Makes This Different
 
-**Beyond the hackathon:** we integrated the full Web3 stack, not just Story Protocol.
+<div align="center">
 
-| Integration | Purpose | Why it matters |
-| --- | --- | --- |
-| Story Protocol[^story] | IP registry | Core blockchain IP infrastructure |
-| Coinbase CDP[^cdp] | Email wallets | Makes crypto invisible to users |
-| Waku Protocol[^waku] | Encrypted messaging | True decentralization + privacy |
-| Halliday[^halliday] | Fiat on-ramp | Credit card → crypto seamlessly |
-| Base L2[^base] | Payment chain | Low fees aligned with Story Protocol |
-| IPFS/Pinata[^pinata] | Metadata storage | Permanent, decentralized storage |
-| OpenZeppelin + Foundry | Smart contracts | Battle-tested ERC-20 libraries |
+> **This isn't just a Story Protocol demo. It's a complete Web3 music marketplace.**
 
 </div>
+
+### Core Differentiators
+
+- **🎵 Licensing over Streaming** — Musicians earn from usage rights, not play counts
+- **🤝 Direct Marketplace** — No intermediaries between musicians and creators
+- **✉️ Email → Crypto** — Onboarding feels like Web2, powered by Web3
+- **💬 Private Collaboration** — Encrypted P2P messaging for custom work negotiations
+- **🛡️ IP-First Architecture** — Story Protocol ensures rights are immutable and transparent
+- **💳 Fiat-Friendly** — Credit card on-ramp via Halliday removes crypto barriers
+- **📊 Full Transparency** — Artists see every license, every payment, every usage
+
+### Technical Integration Highlights
+
+<details open>
+<summary><b>Beyond the Hackathon — Full Stack Integration</b></summary>
+
+<br/>
+
+| Technology | Integration Purpose | Why It Matters |
+|-----------|-------------------|----------------|
+| **Story Protocol**[^story] | IP registry and licensing infrastructure | Core blockchain IP foundation — provenance for every track |
+| **Coinbase CDP**[^cdp] | Email/OTP wallet creation | Makes crypto invisible to users — no seed phrases, just email |
+| **Waku Protocol**[^waku] | Decentralized encrypted messaging | True privacy without centralized servers |
+| **Halliday**[^halliday] | Fiat-to-crypto on-ramp | Credit card → USDC seamlessly — no exchange accounts needed |
+| **Base L2**[^base] | Payment settlement chain | Low fees, fast finality, aligned with Story Protocol ecosystem |
+| **IPFS/Pinata**[^pinata] | Permanent metadata storage | Decentralized, immutable storage for track metadata |
+| **OpenZeppelin + Foundry** | Battle-tested smart contracts | Production-grade ERC-20 libraries and testing framework |
+
+</details>
+
 ---
+
+## 🏆 Built at Surreal World Assets Buildathon, intended to continue as the place where those musicians who don't want to play the influencer game, find a way to monetize their art and the creators find authentic sounds. 
 
 <div align="center">
 
-## 🏆 Built for Surreal World Assets Buildathon
+**[Surreal World Assets Buildathon 2025](https://www.encodeclub.com/programmes/surreal-world-assets-buildathon-2)**
 
-**[Surreal World Assets Buildathon 2025](https://www.encodeclub.com/programmes/surreal-world-assets-buildathon-2)** — proving Web3 IP rights can be as simple as email login.
+*Proving Web3 IP rights can be as simple as email login*
 
-<div align="center">
+<br/>
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MUSIC IS NOT CONTENT. IT'S ART. IT DESERVES BLOCKCHAIN RIGHTS.
+MUSIC IS NOT CONTENT. IT'S ART. IT DESERVES BLOCKCHAIN RIGHTS AND MONETIZATION BEYOND STREAMING COUNTS. 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
-</div>
 
-**From México with** <img src="https://em-content.zobj.net/source/apple/391/fire_1f525.png" width="20" height="20" alt="❤️‍🔥" />
+<br/>
+
+**Built for musicians, by a musician. From México with** <img src="https://em-content.zobj.net/source/apple/391/fire_1f525.png" width="20" height="20" alt="❤️‍🔥" />
 
 </div>
 
 ---
 
-[^story]: Story Protocol — programmable IP infrastructure for on-chain assets and licensing. [docs.story.foundation](https://docs.story.foundation)
-[^cdp]: Coinbase Developer Platform — embedded wallets with email/OTP auth. [docs.cdp.coinbase.com](https://docs.cdp.coinbase.com)
-[^base]: Base — low-fee L2 for licensing payments and settlement. [docs.base.org](https://docs.base.org)
-[^waku]: Waku — decentralized P2P messaging with end-to-end encryption. [docs.waku.org](https://docs.waku.org)
-[^halliday]: Halliday — fiat-to-crypto on-ramp for direct license purchases. [halliday.xyz](https://halliday.xyz/)
-[^pinata]: Pinata — IPFS file storage. [pinata.cloud](https://pinata.cloud/)
+[^story]: **Story Protocol** — Programmable IP infrastructure for on-chain assets and licensing. [docs.story.foundation](https://docs.story.foundation)
+
+[^cdp]: **Coinbase Developer Platform** — Embedded wallets with email/OTP authentication. [docs.cdp.coinbase.com](https://docs.cdp.coinbase.com)
+
+[^base]: **Base** — Ethereum L2 optimized for low-fee payments and Web3 applications. [docs.base.org](https://docs.base.org)
+
+[^waku]: **Waku** — Decentralized P2P messaging protocol with end-to-end encryption. [docs.waku.org](https://docs.waku.org)
+
+[^halliday]: **Halliday** — Fiat-to-crypto on-ramp for seamless credit card purchases. [halliday.xyz](https://halliday.xyz/)
+
+[^pinata]: **Pinata** — IPFS pinning service for permanent decentralized storage. [pinata.cloud](https://pinata.cloud/)
