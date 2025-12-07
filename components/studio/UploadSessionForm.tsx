@@ -193,7 +193,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
           <div className="space-y-2">
             <Label>Audio File *</Label>
             <AudioUploader
-              onUploadComplete={(url) => setFormData({ ...formData, audioUrl: url })}
+              onUploadComplete={(url) => setFormData(prev => ({ ...prev, audioUrl: url }))}
               disabled={isSubmitting}
             />
             <p className="text-xs text-muted-foreground font-mono">

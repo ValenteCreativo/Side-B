@@ -13,7 +13,9 @@ interface AudioUploaderProps {
 const ACCEPTED_FORMATS = {
     'audio/mpeg': ['.mp3'],
     'audio/mp4': ['.m4a'],
+    'audio/x-m4a': ['.m4a'], // Alternative M4A MIME type
     'audio/wav': ['.wav'],
+    'audio/x-wav': ['.wav'], // Alternative WAV MIME type
     'audio/flac': ['.flac'],
     'audio/ogg': ['.ogg'],
 }
@@ -31,10 +33,14 @@ export function AudioUploader({ onUploadComplete, disabled }: AudioUploaderProps
     const audioRef = useRef<HTMLAudioElement>(null)
 
     const validateFile = (file: File): string | null => {
-        // Check file type
-        const isValidType = Object.keys(ACCEPTED_FORMATS).includes(file.type)
-        if (!isValidType) {
-            return `Invalid file type. Accepted: ${Object.values(ACCEPTED_FORMATS).flat().join(', ')}`
+        // Check file type by MIME type or extension
+        const isValidMimeType = Object.keys(ACCEPTED_FORMATS).includes(file.type)
+        const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()
+        const allExtensions = Object.values(ACCEPTED_FORMATS).flat()
+        const isValidExtension = allExtensions.includes(fileExtension)
+
+        if (!isValidMimeType && !isValidExtension) {
+            return `Invalid file type. Accepted: ${allExtensions.join(', ')}`
         }
 
         // Check file size
