@@ -6,12 +6,27 @@
 
 ### *On-chain IP for independent music. Register every riff. License legally. Earn without the algorithm.*
 
-[![Story Protocol](https://img.shields.io/badge/Story_Protocol-v1.0_RC-8B5CF6?style=for-the-badge&logo=ethereum&logoColor=white)](https://story.foundation)
-[![Coinbase CDP](https://img.shields.io/badge/Coinbase_CDP-Email/OTP-0052FF?style=for-the-badge&logo=coinbase&logoColor=white)](https://coinbase.com/cloud)
-[![Base L2](https://img.shields.io/badge/Base_L2-Mainnet-0052FF?style=for-the-badge&logo=ethereum&logoColor=white)](https://base.org)
-[![Waku P2P](https://img.shields.io/badge/Waku-P2P_Encrypted-000000?style=for-the-badge)](https://waku.org)
+<div align="center">
 
-**[Live Demo](https://side-b-chi.vercel.app)** • **[docs/INSTALLATION.md](docs/INSTALLATION.md)**
+#### Protocol & On-chain IP
+[![Story Protocol](https://img.shields.io/badge/Story_Protocol-IP_Licensing-8B5CF6?style=for-the-badge&logo=ethereum&logoColor=white)](https://story.foundation)
+[![Base L2](https://img.shields.io/badge/Base_L2-Mainnet-0052FF?style=for-the-badge&logo=base&logoColor=white)](https://base.org)
+
+#### Access & Payments
+[![Coinbase CDP](https://img.shields.io/badge/Coinbase_CDP-Email_/_OTP-0052FF?style=for-the-badge&logo=coinbase&logoColor=white)](https://coinbase.com/cloud)
+[![Halliday](https://img.shields.io/badge/Halliday-Fiat_On-Ramp-00C853?style=for-the-badge)](https://halliday.xyz/)
+
+#### Peer-to-Peer Networking & Privacy
+[![Waku P2P](https://img.shields.io/badge/Waku-P2P_Encrypted_Messaging-000000?style=for-the-badge)](https://waku.org)
+
+#### Smart Contracts & Security
+[![Foundry](https://img.shields.io/badge/Foundry-Forge_/_Cast-7E3BF2?style=for-the-badge&logo=rust&logoColor=white)](https://github.com/foundry-rs/foundry)
+[![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-Contract_Security-00A3FF?style=for-the-badge&logo=openzeppelin&logoColor=white)](https://openzeppelin.com/contracts/)
+
+#### Storage, DB & Hosting
+[![Pinata](https://img.shields.io/badge/Pinata-IPFS_Storage-13B5EC?style=for-the-badge)](https://pinata.cloud/)
+[![Neon](https://img.shields.io/badge/Neon-PostgreSQL-24B47E?style=for-the-badge&logo=postgresql&logoColor=white)](https://neon.tech/)
+[![Vercel](https://img.shields.io/badge/Vercel-Frontend_Hosting-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
 
 </div>
 
@@ -22,13 +37,13 @@
 ## 🎧 The Essence
 
 **Problem:** Musicians don’t meaningfully profit from streaming unless they turn into content creators / influencers.  
--
+
+
 **Core idea:** Side B Sessions turns voice notes, jams, and under-monetized tracks into IP that can be licensed and downloaded by filmmakers, content creators, videogame indie studios, or anyone needing authentic music for their productions.
 
-> [!NOTE]
+
 > We honor practice hours and songwriting, not personal brand / follower counts — IP rights and payouts flow from the music itself.
 </div>
-
 ---
 
 <div align="center">
@@ -50,9 +65,7 @@
 ---
 
 <div align="center">
-
 ## 🏗️ Architecture Overview
-
 <details>
   <summary>Show diagram</summary>
 
@@ -102,7 +115,7 @@ flowchart TB
     %% halliday -> funding purchases
     N -. "funds wallet" .-> I
 ```
-</details>
+</details> 
 
 </div>
 
@@ -178,7 +191,6 @@ docs/
 </details>
 
 </div>
-
 ---
 
 <div align="center">
@@ -312,7 +324,6 @@ export async function pinMetadata(metadata: object) {
 </details>
 
 </div>
-
 ---
 
 <div align="center">
@@ -332,7 +343,6 @@ export async function pinMetadata(metadata: object) {
 | OpenZeppelin + Foundry | Smart contracts | Battle-tested ERC-20 libraries |
 
 </div>
-
 ---
 
 <div align="center">
@@ -341,15 +351,13 @@ export async function pinMetadata(metadata: object) {
 
 **[Surreal World Assets Buildathon 2025](https://www.encodeclub.com/programmes/surreal-world-assets-buildathon-2)** — proving Web3 IP rights can be as simple as email login.
 
-<p align="center">
-
+<div align="center">
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 MUSIC IS NOT CONTENT. IT'S ART. IT DESERVES BLOCKCHAIN RIGHTS.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
-
-</p>
+</div>
 
 **From México with** <img src="https://em-content.zobj.net/source/apple/391/fire_1f525.png" width="20" height="20" alt="❤️‍🔥" />
 
