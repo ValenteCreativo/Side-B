@@ -65,22 +65,6 @@ This is a **marketplace** where musicians and visual artists meet — not just a
 
 ---
 
-## 💿 Feature Overview
-
-| Feature | What It Does | Why It Matters |
-|---------|-------------|----------------|
-| 🎯 **IP Registration** | Every upload becomes a Story Protocol IP asset with on-chain provenance | Protects your rights before anyone can use your music |
-| ✉️ **Email → Wallet** | Coinbase CDP creates non-custodial wallets via email/OTP | No seed phrases, no friction — just email login |
-| 🎵 **Audio Pipeline** | Upload validation → IPFS pinning → metadata storage | Permanent, decentralized storage for your tracks |
-| 💸 **Licensing on Base** | USDC/ETH payments on Base L2 with low fees | Fast, cheap transactions aligned with Story Protocol |
-| 💳 **Fiat On-Ramp** | Halliday integration for credit card purchases | Creators without crypto can still buy licenses |
-| 🤝 **Payment Verification** | Smart contract verifies transfers before unlocking downloads | No manual approval — trustless and instant |
-| 🔒 **Encrypted Chat** | Waku P2P messaging for private collaboration planning | End-to-end encrypted, decentralized communication |
-| 📊 **Artist Dashboard** | Track licenses, revenue, and usage analytics | Full transparency on who's using your music |
-| 🎨 **Creator Discovery** | Browse by genre, mood, instrumentation | Find the perfect sound for your project |
-
----
-
 ## 🏗️ Architecture Overview
 
 <details>
@@ -328,7 +312,7 @@ See full implementation: [`lib/story.ts`](lib/story.ts)
 
 ---
 
-## 📂 Key Integrations — Code Map
+## 📂 Code Map — Key Integrations
 
 <div align="center">
 
@@ -347,7 +331,7 @@ See full implementation: [`lib/story.ts`](lib/story.ts)
 | 🎵 **Audio Upload** | Vercel Blob intake and validation pipeline | [`app/api/sessions/route.ts`](app/api/sessions/route.ts) |
 
 <details>
-<summary><b>Detailed Integration Examples</b></summary>
+<summary><b>View Code Snippets</b></summary>
 
 <br/>
 
@@ -423,60 +407,69 @@ export async function verifyPayment(
 
 <div align="center">
 
-> **This isn't just a Story Protocol demo. It's a complete Web3 music marketplace.**
+> **Not another streaming platform. Not another NFT marketplace. A new music economy.**
 
 </div>
 
-### Core Differentiators
+- **🎵 Licensing over Streaming** — Musicians earn real money from usage rights, not fractions of a cent per play
+- **🤝 Direct Marketplace** — Musicians and creators transact directly. No labels, no distributors, no middlemen taking cuts
+- **🎨 Collaboration Built-In** — Musicians who can't do video meet filmmakers who need authentic sound. Private messaging enables real partnerships
+- **✉️ Email = Web3 Wallet** — Your email is your wallet. No seed phrases to lose, no scary crypto UX
+- **💳 Credit Cards Work** — Creators can pay with Visa/Mastercard via Halliday. Crypto is invisible infrastructure
+- **🛡️ IP Rights First** — Every track is a Story Protocol IP asset. Rights are immutable, traceable, and enforceable
+- **📊 Full Transparency** — Artists see every license sold, every dollar earned, every usage of their work
+- **🔒 Private by Default** — Waku encrypted messaging means collaborations stay between you and your partner
 
-- **🎵 Licensing over Streaming** — Musicians earn from usage rights, not play counts
-- **🤝 Direct Marketplace** — No intermediaries between musicians and creators
-- **✉️ Email → Crypto** — Onboarding feels like Web2, powered by Web3
-- **💬 Private Collaboration** — Encrypted P2P messaging for custom work negotiations
-- **🛡️ IP-First Architecture** — Story Protocol ensures rights are immutable and transparent
-- **💳 Fiat-Friendly** — Credit card on-ramp via Halliday removes crypto barriers
-- **📊 Full Transparency** — Artists see every license, every payment, every usage
+**The vision:** A place where musicians who won't play the influencer game can monetize their art, and creators find authentic sounds instead of stock music library #47.
 
-### Technical Integration Highlights
+---
 
-<details open>
-<summary><b>Beyond the Hackathon — Full Stack Integration</b></summary>
+## 🗺️ Roadmap
+
+<details>
+<summary><b>Post-Hackathon Plans</b></summary>
 
 <br/>
 
-| Technology | Integration Purpose | Why It Matters |
-|-----------|-------------------|----------------|
-| **Story Protocol**[^story] | IP registry and licensing infrastructure | Core blockchain IP foundation — provenance for every track |
-| **Coinbase CDP**[^cdp] | Email/OTP wallet creation | Makes crypto invisible to users — no seed phrases, just email |
-| **Waku Protocol**[^waku] | Decentralized encrypted messaging | True privacy without centralized servers |
-| **Halliday**[^halliday] | Fiat-to-crypto on-ramp | Credit card → USDC seamlessly — no exchange accounts needed |
-| **Base L2**[^base] | Payment settlement chain | Low fees, fast finality, aligned with Story Protocol ecosystem |
-| **IPFS/Pinata**[^pinata] | Permanent metadata storage | Decentralized, immutable storage for track metadata |
-| **OpenZeppelin + Foundry** | Battle-tested smart contracts | Production-grade ERC-20 libraries and testing framework |
+## 🛣️ Roadmap — Side B (Post Hackathon - 2026)
+
+### **Q1 — Validate**
+- Onboard early creators and filmmakers
+- Analyze product usage, licensing flow, conversion funnels
+- Stress test database, uploads, streaming, and payments
+- Rapid iterations to fix friction and prove core value
+
+### **Q2 — Scale**
+- Infrastructure hardening for larger catalogs + higher traffic
+- Improve discovery flow for fast matches (genres, moods, tags)
+- Onboarding playbooks for small agencies and indie studios
+- Priority: **More tracks, more buyers, more transactions**
+
+### **Q3 — Grow**
+- Marketing + partnerships with film schools & indie communities
+- Curator playlists driving discovery and licensing momentum
+- Creator revenue dashboards and simple catalog tools
+- Target: sustainable marketplace liquidity
+
+### **Q4 — Expand**
+- Collaboration tools (royalty splits, showcases)
+- Extended licensing options and negotiation flow
+- Strategic expansions into new regions and integrations
+- Prepare for mobile + ecosystem services in 2026
 
 </details>
 
 ---
 
-## 🏆 Built at Surreal World Assets Buildathon, intended to continue as the place where those musicians who don't want to play the influencer game, find a way to monetize their art and the creators find authentic sounds. 
-
 <div align="center">
 
-**[Surreal World Assets Buildathon 2025](https://www.encodeclub.com/programmes/surreal-world-assets-buildathon-2)**
+🏆 Built at the <a href="https://www.encodeclub.com/programmes/surreal-world-assets-buildathon-2">
+Surreal World Assets Buildathon 2025</a> — empowering musicians to earn from their craft and helping visual storytellers discover authentic sounds.
 
-*Proving Web3 IP rights can be as simple as email login*
+Born at a Buildathon — continuing for the artists who won't play the "personal brand" game, and for the storytellers who need music with soul.
 
-<br/>
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MUSIC IS NOT CONTENT. IT'S ART. IT DESERVES BLOCKCHAIN RIGHTS AND MONETIZATION BEYOND STREAMING COUNTS. 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-<br/>
-
-**Built for musicians, by a musician. From México with** <img src="https://em-content.zobj.net/source/apple/391/fire_1f525.png" width="20" height="20" alt="❤️‍🔥" />
+**Built for musicians and artists — by one of them.**  
+From México with ❤️‍🔥
 
 </div>
 
