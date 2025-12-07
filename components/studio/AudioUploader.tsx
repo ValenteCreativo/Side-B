@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react'
 import { Upload, Music, X, CheckCircle2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/ui/use-toast'
 
 interface AudioUploaderProps {
     onUploadComplete: (url: string) => void
@@ -89,8 +89,11 @@ export function AudioUploader({ onUploadComplete, disabled }: AudioUploaderProps
     }
 
     const handleFile = async (file: File) => {
+        console.log('📁 File selected:', file.name, file.type, file.size)
+
         const error = validateFile(file)
         if (error) {
+            console.error('❌ Validation failed:', error)
             toast({
                 title: 'Invalid file',
                 description: error,
@@ -99,6 +102,7 @@ export function AudioUploader({ onUploadComplete, disabled }: AudioUploaderProps
             return
         }
 
+        console.log('✅ File validated, starting upload...')
         await uploadFile(file)
     }
 
@@ -106,10 +110,15 @@ export function AudioUploader({ onUploadComplete, disabled }: AudioUploaderProps
         (e: React.DragEvent) => {
             e.preventDefault()
             setIsDragging(false)
+            console.log('🎯 Drop event triggered')
 
-            if (disabled || isUploading) return
+            if (disabled || isUploading) {
+                console.log('⚠️ Upload blocked - disabled:', disabled, 'isUploading:', isUploading)
+                return
+            }
 
             const files = Array.from(e.dataTransfer.files)
+            console.log('📎 Files dropped:', files.length, files)
             if (files.length > 0) {
                 handleFile(files[0])
             }
@@ -128,8 +137,10 @@ export function AudioUploader({ onUploadComplete, disabled }: AudioUploaderProps
     }, [])
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log('📂 File input clicked')
         const files = e.target.files
         if (files && files.length > 0) {
+            console.log('📂 File selected via input:', files[0].name)
             handleFile(files[0])
         }
     }
