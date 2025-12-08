@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
         displayName: true,
         bio: true,
         avatarUrl: true,
+        role: true,
         _count: {
           select: {
             sessions: true,

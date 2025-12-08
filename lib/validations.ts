@@ -42,6 +42,7 @@ export const createSessionSchema = z.object({
 export const createLicenseSchema = z.object({
   sessionId: z.string().cuid(),
   buyerId: z.string().cuid(),
+  txHash: z.string().regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid transaction hash').optional().nullable(),
 })
 
 // Payment schemas

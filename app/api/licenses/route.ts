@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { sessionId, buyerId } = validation.data
+    const { sessionId, buyerId, txHash } = validation.data
 
     // Check if session exists
     const session = await prisma.session.findUnique({
@@ -51,17 +51,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // TODO: Process payment here
-    // For hackathon, we're skipping payment processing
-    // In production, integrate with payment provider (Stripe, crypto payment, etc.)
+    // Payment verification:
+    // If txHash is provided, it means payment was made via Web3 wallet
+    // In a production system, we would verify the transaction on-chain here
+    // using the payment-verification utilities
 
-    // Create license
+    // Create license with optional txHash
     const license = await prisma.license.create({
       data: {
         sessionId,
         buyerId,
-        // txHash would come from payment/blockchain transaction
-        txHash: null,
+        txHash: txHash || null,
       },
       include: {
         session: {

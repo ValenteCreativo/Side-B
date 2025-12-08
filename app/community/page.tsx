@@ -20,6 +20,7 @@ interface Musician {
     displayName: string | null
     bio: string | null
     avatarUrl: string | null
+    role: string
     _count: {
         sessions: number
         followers: number
@@ -237,11 +238,11 @@ export default function CommunityPage() {
                                             </Avatar>
 
                                             <h3 className="text-xl font-bold mb-2 tracking-tight uppercase group-hover:text-bronze transition-colors">
-                                                {musician.displayName || "Anonymous"}
+                                                {musician.displayName || (musician.role === 'CREATOR' ? 'Anonymous Creator' : 'Anonymous Musician')}
                                             </h3>
 
                                             <Badge variant="outline" className="mb-4 rounded-sm border-zinc-200 dark:border-zinc-800 font-mono text-[10px] text-muted-foreground">
-                                                MUSICIAN
+                                                {musician.role === 'CREATOR' ? 'CREATOR' : 'MUSICIAN'}
                                             </Badge>
 
                                             <p className="text-sm text-muted-foreground mb-6 line-clamp-2 min-h-[2.5rem] font-light">
