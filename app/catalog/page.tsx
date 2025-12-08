@@ -244,9 +244,9 @@ function CatalogPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="text-2xl font-bold tracking-tight mb-1">
-                        {category === 'JAM' && '🎸 Jam Sessions'}
-                        {category === 'REHEARSAL' && '🎹 Rehearsals'}
-                        {category === 'PRODUCED' && '🎵 Produced Tracks'}
+                        {category === 'JAM' && 'Jam Sessions'}
+                        {category === 'REHEARSAL' && 'Rehearsals'}
+                        {category === 'PRODUCED' && 'Produced Tracks'}
                       </h2>
                       <p className="text-sm text-muted-foreground font-mono">
                         {categorySessions.length} {categorySessions.length === 1 ? 'track' : 'tracks'}
