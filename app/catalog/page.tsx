@@ -246,6 +246,7 @@ function CatalogPage() {
                               id={session.id}
                               title={session.title}
                               artist={session.owner.displayName || truncateAddress(session.owner.walletAddress)}
+                              artistId={session.owner.id}
                               price={formatPrice(session.priceUsd)}
                               audioUrl={session.audioUrl}
                               storyTxHash={session.storyTxHash}
@@ -297,6 +298,7 @@ function CatalogPage() {
                           id={session.id}
                           title={session.title}
                           artist={session.owner.displayName || truncateAddress(session.owner.walletAddress)}
+                          artistId={session.owner.id}
                           price={formatPrice(session.priceUsd)}
                           audioUrl={session.audioUrl}
                           storyTxHash={session.storyTxHash}
