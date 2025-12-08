@@ -20,6 +20,7 @@ interface Session {
     priceUsd: number
     audioUrl: string
     storyAssetId: string | null
+    storyTxHash: string | null
     createdAt: string
     _count: {
         licenses: number
@@ -316,10 +317,17 @@ export default function ProfilePage() {
                                             </audio>
 
                                             {/* Story Protocol Badge */}
-                                            {session.storyAssetId && (
-                                                <div className="mt-3 flex items-center gap-2 text-[10px] text-muted-foreground font-mono border-t border-zinc-100 dark:border-zinc-800 pt-2">
-                                                    <ExternalLink className="h-3 w-3" />
-                                                    <span>REGISTERED IP: {session.storyAssetId.substring(0, 10)}...</span>
+                                            {session.storyTxHash && (
+                                                <div className="mt-3 flex items-center gap-2 text-[10px] font-mono border-t border-zinc-100 dark:border-zinc-800 pt-2">
+                                                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                                                    <a
+                                                        href={`https://aeneid.explorer.story.foundation/transactions/${session.storyTxHash}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-muted-foreground hover:text-bronze transition-colors hover:underline"
+                                                    >
+                                                        STORY IP: {session.storyTxHash.substring(0, 8)}...{session.storyTxHash.substring(session.storyTxHash.length - 6)}
+                                                    </a>
                                                 </div>
                                             )}
                                         </div>

@@ -88,7 +88,7 @@ export function TrackCard({ id, title, status, date, duration, storyTxHash, audi
                     <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
                         <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Story IP Asset</span>
                         <a
-                            href={`https://aeneid.explorer.story.foundation/tx/${storyTxHash}`}
+                            href={`https://aeneid.explorer.story.foundation/transactions/${storyTxHash}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-[10px] font-mono hover:underline truncate max-w-[150px]"

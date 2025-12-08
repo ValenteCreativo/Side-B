@@ -21,6 +21,7 @@ interface Session {
   priceUsd: number
   audioUrl: string
   storyAssetId: string | null
+  storyTxHash: string | null
   owner: {
     id: string
     walletAddress: string

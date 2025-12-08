@@ -83,7 +83,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
 
       // Show success toast with Story Protocol explorer link
       const explorerUrl = session.storyTxHash
-        ? `https://aeneid.explorer.story.foundation/tx/${session.storyTxHash}`
+        ? `https://aeneid.explorer.story.foundation/transactions/${session.storyTxHash}`
         : null
 
       if (explorerUrl) {

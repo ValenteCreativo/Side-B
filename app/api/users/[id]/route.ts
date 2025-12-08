@@ -37,6 +37,7 @@ export async function GET(
             priceUsd: true,
             audioUrl: true,
             storyAssetId: true,
+            storyTxHash: true,
             createdAt: true,
             _count: {
               select: {

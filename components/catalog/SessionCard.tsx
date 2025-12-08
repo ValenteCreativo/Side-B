@@ -20,6 +20,7 @@ interface SessionCardProps {
     priceUsd: number
     audioUrl: string
     storyAssetId: string | null
+    storyTxHash: string | null
     owner: {
       id: string
       walletAddress: string
@@ -330,18 +331,23 @@ export function SessionCard({ session }: SessionCardProps) {
         </div>
 
         {/* Story Protocol Info */}
-        {session.storyAssetId && (
-          <div className="rounded-sm bg-zinc-50 dark:bg-zinc-900 p-3 text-xs border border-zinc-100 dark:border-zinc-800">
+        {session.storyTxHash && (
+          <a
+            href={`https://aeneid.explorer.story.foundation/transactions/${session.storyTxHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block rounded-sm bg-zinc-50 dark:bg-zinc-900 p-3 text-xs border border-zinc-100 dark:border-zinc-800 hover:border-bronze/50 transition-colors"
+          >
             <div className="flex items-center gap-2">
               <ExternalLink className="h-3 w-3 text-bronze shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-foreground">Registered IP</p>
-                <p className="text-muted-foreground font-mono truncate text-[10px]">
-                  {session.storyAssetId}
+                <p className="font-medium text-foreground">Registered IP on Story Protocol</p>
+                <p className="text-muted-foreground font-mono truncate text-[10px] hover:text-bronze transition-colors">
+                  {session.storyTxHash.substring(0, 10)}...{session.storyTxHash.substring(session.storyTxHash.length - 8)}
                 </p>
               </div>
             </div>
-          </div>
+          </a>
         )}
       </CardContent>
     </Card>

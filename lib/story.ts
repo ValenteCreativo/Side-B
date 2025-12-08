@@ -102,7 +102,7 @@ export async function registerSessionAsIp(
     return {
       storyAssetId: mockAssetId,
       txHash: `0xmock${Date.now()}` as Hex,
-      explorerUrl: `https://aeneid.explorer.story.foundation/tx/0xmock${Date.now()}`,
+      explorerUrl: `https://aeneid.explorer.story.foundation/transactions/0xmock${Date.now()}`,
     }
   }
 
@@ -171,13 +171,13 @@ export async function registerSessionAsIp(
     console.log('✅ IP registered successfully on Story Protocol!')
     console.log(`   IP ID: ${ipId}`)
     console.log(`   Transaction: ${txHash}`)
-    console.log(`   Explorer: https://aeneid.explorer.story.foundation/tx/${txHash}`)
+    console.log(`   Explorer: https://aeneid.explorer.story.foundation/transactions/${txHash}`)
 
     return {
       storyAssetId: ipId,
       txHash: txHash,
       ipId: ipId,
-      explorerUrl: `https://aeneid.explorer.story.foundation/tx/${txHash}`,
+      explorerUrl: `https://aeneid.explorer.story.foundation/transactions/${txHash}`,
     }
   } catch (error) {
     console.error('❌ Story Protocol registration failed:', error)
@@ -223,7 +223,7 @@ export async function getIpAssetDetails(ipId: string) {
  */
 export function getExplorerUrl(txHashOrIpId: string): string {
   if (txHashOrIpId.startsWith('0x')) {
-    return `https://aeneid.explorer.story.foundation/tx/${txHashOrIpId}`
+    return `https://aeneid.explorer.story.foundation/transactions/${txHashOrIpId}`
   }
   return `https://aeneid.explorer.story.foundation/address/${txHashOrIpId}`
 }
