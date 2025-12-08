@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { parseMoodTags } from '@/lib/utils'
 
 /**
  * GET /api/users/[id]
@@ -78,10 +79,17 @@ export async function GET(
       isFollowing = !!follow
     }
 
-    return NextResponse.json({
+    // Parse moodTags for all sessions from JSON string to array
+    const formattedUser = {
       ...user,
+      sessions: user.sessions.map(session => ({
+        ...session,
+        moodTags: parseMoodTags(session.moodTags),
+      })),
       isFollowing,
-    })
+    }
+
+    return NextResponse.json(formattedUser)
   } catch (error) {
     console.error('Failed to fetch user:', error)
     return NextResponse.json(
