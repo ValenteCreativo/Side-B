@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useUser } from '@/components/auth/UserContext'
 import { FilterBar } from '@/components/catalog/FilterBar'
 import { VinylTrack } from '@/components/catalog/VinylTrack'
+import { PurchaseModal } from '@/components/purchase/PurchaseModal'
 import { Button } from '@/components/ui/button'
 import { truncateAddress, formatPrice } from '@/lib/utils'
 import { Music, Loader2, Disc } from 'lucide-react'
@@ -49,6 +50,10 @@ function CatalogPage() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100])
   const [maxPrice, setMaxPrice] = useState(100)
   const [artists, setArtists] = useState<Array<{ id: string; name: string }>>([])
+
+  // Purchase modal state
+  const [purchaseModalOpen, setPurchaseModalOpen] = useState(false)
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null)
 
   useEffect(() => {
     loadSessions()
@@ -134,6 +139,20 @@ function CatalogPage() {
     setSearchQuery('')
     setSelectedArtist('all')
     setPriceRange([0, maxPrice])
+  }
+
+  const handlePurchase = (sessionId: string) => {
+    const session = sessions.find(s => s.id === sessionId)
+    if (session) {
+      setSelectedSession(session)
+      setPurchaseModalOpen(true)
+    }
+  }
+
+  const handlePurchaseSuccess = () => {
+    setPurchaseModalOpen(false)
+    setSelectedSession(null)
+    loadSessions() // Refresh to update license counts
   }
 
   return (
@@ -253,6 +272,9 @@ function CatalogPage() {
                               description={session.description}
                               moodTags={session.moodTags}
                               contentType={session.contentType}
+                              ownerId={session.owner.id}
+                              currentUserId={user?.id}
+                              onPurchase={handlePurchase}
                             />
                           </div>
                         </div>
@@ -305,6 +327,9 @@ function CatalogPage() {
                           description={session.description}
                           moodTags={session.moodTags}
                           contentType={session.contentType}
+                          ownerId={session.owner.id}
+                          currentUserId={user?.id}
+                          onPurchase={handlePurchase}
                         />
                       </div>
                     </div>
@@ -315,6 +340,26 @@ function CatalogPage() {
           </div>
         )}
       </main>
+
+      {/* Purchase Modal */}
+      <PurchaseModal
+        isOpen={purchaseModalOpen}
+        onClose={() => {
+          setPurchaseModalOpen(false)
+          setSelectedSession(null)
+        }}
+        session={selectedSession ? {
+          id: selectedSession.id,
+          title: selectedSession.title,
+          description: selectedSession.description,
+          priceUsd: selectedSession.priceUsd,
+          contentType: selectedSession.contentType,
+          ownerWalletAddress: selectedSession.owner.walletAddress,
+          ownerDisplayName: selectedSession.owner.displayName || undefined,
+        } : null}
+        buyerId={user?.id || ''}
+        onSuccess={handlePurchaseSuccess}
+      />
     </div>
   )
 }

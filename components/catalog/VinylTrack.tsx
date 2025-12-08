@@ -2,10 +2,11 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Play, Pause, ExternalLink } from "lucide-react"
+import { Play, Pause, ExternalLink, ShoppingCart } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { AnalogWaveform } from "./AnalogWaveform"
 import { usePlayer } from "@/components/player/PlayerContext"
 
@@ -21,9 +22,12 @@ interface VinylTrackProps {
     description?: string
     moodTags?: string[]
     contentType?: string
+    ownerId?: string
+    currentUserId?: string
+    onPurchase?: (id: string) => void
 }
 
-export function VinylTrack({ id, title, artist, artistId, price, audioUrl, imageUrl, storyTxHash, description, moodTags, contentType }: VinylTrackProps) {
+export function VinylTrack({ id, title, artist, artistId, price, audioUrl, imageUrl, storyTxHash, description, moodTags, contentType, ownerId, currentUserId, onPurchase }: VinylTrackProps) {
     const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayer()
     const isThisPlaying = currentTrack?.id === id && isPlaying
     const [showAllTags, setShowAllTags] = useState(false)
@@ -137,14 +141,29 @@ export function VinylTrack({ id, title, artist, artistId, price, audioUrl, image
                     )}
                 </div>
 
-                {/* Price & Waveform */}
+                {/* Price, Waveform & Cart */}
                 <div className="mt-auto flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
                     <div className="flex flex-col">
                         <span className="font-mono text-sm font-medium">{price}</span>
                         <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">USDC</span>
                     </div>
-                    <div className="h-8 w-16 text-bronze">
-                        <AnalogWaveform isPlaying={isThisPlaying} color="currentColor" />
+                    <div className="flex items-center gap-2">
+                        <div className="h-8 w-12 text-bronze">
+                            <AnalogWaveform isPlaying={isThisPlaying} color="currentColor" />
+                        </div>
+                        {onPurchase && currentUserId && ownerId !== currentUserId && (
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="rounded-sm h-8 w-8 p-0 border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    onPurchase(id)
+                                }}
+                            >
+                                <ShoppingCart className="h-3.5 w-3.5" />
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>
