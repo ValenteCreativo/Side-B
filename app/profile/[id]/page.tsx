@@ -285,8 +285,8 @@ export default function ProfilePage() {
                                         const placeholderImage =
                                             session.contentType === 'REHEARSAL' ? '/hero-art.png' :
                                             session.contentType === 'PRODUCED' ? '/studio-art.png' :
-                                            '/catalog-art.png'
-
+                                            session.contentType === 'JAM SESSION' ? '/catalog-art.png' :
+                                            '/profile-art.png'
                                         return (
                                             <div
                                                 key={session.id}
