@@ -7,9 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Music, Users, MessageCircle, ExternalLink, Calendar } from "lucide-react"
+import { Music, Users, MessageCircle, ExternalLink, Calendar, Play, Pause, ShoppingCart } from "lucide-react"
 import { useUser } from "@/components/auth/UserContext"
 import { useToast } from "@/components/ui/use-toast"
+import { usePlayer } from "@/components/player/PlayerContext"
+import Image from "next/image"
 
 interface Session {
     id: string
@@ -51,6 +53,7 @@ export default function ProfilePage() {
     const router = useRouter()
     const { user } = useUser()
     const { toast } = useToast()
+    const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayer()
     const [profile, setProfile] = useState<ProfileData | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isFollowing, setIsFollowing] = useState(false)
@@ -270,80 +273,154 @@ export default function ProfilePage() {
                         <CardContent>
                             {!profile.sessions || profile.sessions.length === 0 ? (
                                 <div className="text-center py-12 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-md bg-zinc-50/50 dark:bg-zinc-900/50">
+                                    <Music className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                                     <p className="font-mono text-muted-foreground">NO_TRACKS_UPLOADED_YET</p>
                                 </div>
                             ) : (
-                                <div className="space-y-4">
-                                    {profile.sessions.map((session) => (
-                                        <div
-                                            key={session.id}
-                                            className="p-4 border border-zinc-200 dark:border-zinc-800 rounded-md hover:border-[hsl(var(--bronze)/0.5)] transition-colors bg-background/50"
-                                        >
-                                            <div className="flex items-start justify-between gap-4 mb-3">
-                                                <div className="flex-1">
-                                                    <h3 className="font-bold text-lg mb-1 tracking-tight">{session.title}</h3>
-                                                    <p className="text-sm text-muted-foreground line-clamp-2 font-light">
-                                                        {session.description}
-                                                    </p>
-                                                </div>
-                                                <div className="text-right">
-                                                    <Badge variant="outline" className="mb-2 rounded-sm border-zinc-200 dark:border-zinc-800 font-mono text-[10px]">
-                                                        {session.contentType.replace('_', ' ')}
-                                                    </Badge>
-                                                    <div className="flex flex-col">
-                                                        <span className="text-sm font-bold font-mono text-bronze">${session.priceUsd}</span>
-                                                        <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">USDC</span>
+                                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                    {profile.sessions.map((session) => {
+                                        const isThisPlaying = currentTrack?.id === session.id && isPlaying
+
+                                        // Determine placeholder image based on content type
+                                        const placeholderImage =
+                                            session.contentType === 'REHEARSAL' ? '/hero-art.png' :
+                                            session.contentType === 'PRODUCED' ? '/studio-art.png' :
+                                            '/catalog-art.png'
+
+                                        return (
+                                            <div
+                                                key={session.id}
+                                                className="group relative bg-background border-2 border-zinc-200 dark:border-zinc-800 hover:border-bronze transition-all duration-300 rounded-md shadow-refined hover:shadow-refined-lg overflow-hidden"
+                                            >
+                                                {/* Album Art / Placeholder */}
+                                                <div className="relative aspect-square bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
+                                                    <Image
+                                                        src={placeholderImage}
+                                                        alt={session.title}
+                                                        fill
+                                                        className="object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                                                    />
+
+                                                    {/* Play Button Overlay */}
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                                                        <button
+                                                            onClick={() => {
+                                                                if (currentTrack?.id === session.id) {
+                                                                    togglePlay()
+                                                                } else {
+                                                                    playTrack({
+                                                                        id: session.id,
+                                                                        title: session.title,
+                                                                        artist: profile.displayName || "Unknown Artist",
+                                                                        audioUrl: session.audioUrl,
+                                                                    })
+                                                                }
+                                                            }}
+                                                            className={`w-16 h-16 flex items-center justify-center rounded-full transition-all duration-300 ${
+                                                                isThisPlaying
+                                                                    ? 'bg-bronze text-white shadow-refined scale-100'
+                                                                    : 'bg-background/90 text-foreground border-2 border-zinc-200 dark:border-zinc-800 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100'
+                                                            }`}
+                                                        >
+                                                            {isThisPlaying ? (
+                                                                <Pause className="h-7 w-7 fill-current" />
+                                                            ) : (
+                                                                <Play className="h-7 w-7 ml-1" />
+                                                            )}
+                                                        </button>
                                                     </div>
-                                                    {session._count.licenses > 0 && (
-                                                        <p className="text-xs text-muted-foreground font-mono mt-1">
-                                                            {session._count.licenses} {session._count.licenses === 1 ? 'LICENSE' : 'LICENSES'}
+
+                                                    {/* Status Badge */}
+                                                    <div className="absolute top-3 left-3">
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="rounded-sm bg-background/90 backdrop-blur-sm border-zinc-200 dark:border-zinc-800 font-mono text-[10px]"
+                                                        >
+                                                            {session.contentType.replace('_', ' ')}
+                                                        </Badge>
+                                                    </div>
+
+                                                    {/* Story Protocol Badge */}
+                                                    {session.storyAssetId && (
+                                                        <div className="absolute top-3 right-3">
+                                                            <Badge className="rounded-sm bg-bronze/90 backdrop-blur-sm text-white border-bronze font-mono text-[10px]">
+                                                                ✓ IP
+                                                            </Badge>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Track Info */}
+                                                <div className="p-4">
+                                                    <div className="mb-3">
+                                                        <h3 className="font-bold text-base leading-tight mb-1 tracking-tight line-clamp-2">
+                                                            {session.title}
+                                                        </h3>
+                                                        <p className="text-xs text-muted-foreground line-clamp-2 font-light">
+                                                            {session.description}
                                                         </p>
+                                                    </div>
+
+                                                    {/* Mood Tags */}
+                                                    {session.moodTags.length > 0 && (
+                                                        <div className="flex flex-wrap gap-1.5 mb-3">
+                                                            {session.moodTags.slice(0, 3).map((tag, idx) => (
+                                                                <Badge key={idx} variant="secondary" className="text-[9px] rounded-sm bg-zinc-100 dark:bg-zinc-800 text-muted-foreground px-2 py-0">
+                                                                    #{tag}
+                                                                </Badge>
+                                                            ))}
+                                                            {session.moodTags.length > 3 && (
+                                                                <Badge variant="secondary" className="text-[9px] rounded-sm bg-zinc-100 dark:bg-zinc-800 text-muted-foreground px-2 py-0">
+                                                                    +{session.moodTags.length - 3}
+                                                                </Badge>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Price & Actions */}
+                                                    <div className="flex items-center justify-between pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-lg font-bold font-mono text-bronze">${session.priceUsd}</span>
+                                                            <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider">USDC</span>
+                                                        </div>
+
+                                                        <div className="flex items-center gap-2">
+                                                            {session._count.licenses > 0 && (
+                                                                <span className="text-[10px] text-muted-foreground font-mono">
+                                                                    {session._count.licenses} sold
+                                                                </span>
+                                                            )}
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                className="rounded-sm h-8 px-3 border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze"
+                                                                onClick={() => router.push(`/catalog?track=${session.id}`)}
+                                                            >
+                                                                <ShoppingCart className="h-3.5 w-3.5" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Story Protocol Link */}
+                                                    {session.storyTxHash && (
+                                                        <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                                                            <a
+                                                                href={`https://aeneid.explorer.story.foundation/transactions/${session.storyTxHash}`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground hover:text-bronze transition-colors group/link"
+                                                            >
+                                                                <ExternalLink className="h-3 w-3" />
+                                                                <span className="group-hover/link:underline">
+                                                                    {session.storyTxHash.substring(0, 8)}...{session.storyTxHash.substring(session.storyTxHash.length - 6)}
+                                                                </span>
+                                                            </a>
+                                                        </div>
                                                     )}
                                                 </div>
                                             </div>
-
-                                            {/* Mood Tags */}
-                                            {session.moodTags.length > 0 && (
-                                                <div className="flex flex-wrap gap-2 mb-4">
-                                                    {session.moodTags.map((tag, idx) => (
-                                                        <Badge key={idx} variant="secondary" className="text-[10px] rounded-sm bg-zinc-100 dark:bg-zinc-800 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-700">
-                                                            #{tag}
-                                                        </Badge>
-                                                    ))}
-                                                </div>
-                                            )}
-
-                                            {/* Audio Player */}
-                                            <audio
-                                                controls
-                                                className="w-full h-12 rounded-sm border border-zinc-200 dark:border-zinc-800 shadow-sm"
-                                                preload="metadata"
-                                                style={{
-                                                    backgroundColor: 'hsl(var(--background))',
-                                                    accentColor: 'hsl(var(--bronze))',
-                                                    filter: 'brightness(1.05) contrast(1.05)',
-                                                }}
-                                            >
-                                                <source src={session.audioUrl} type="audio/mpeg" />
-                                                Your browser does not support the audio element.
-                                            </audio>
-
-                                            {/* Story Protocol Badge */}
-                                            {session.storyTxHash && (
-                                                <div className="mt-3 flex items-center gap-2 text-[10px] font-mono border-t border-zinc-100 dark:border-zinc-800 pt-2">
-                                                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                                                    <a
-                                                        href={`https://aeneid.explorer.story.foundation/transactions/${session.storyTxHash}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-muted-foreground hover:text-bronze transition-colors hover:underline"
-                                                    >
-                                                        STORY IP: {session.storyTxHash.substring(0, 8)}...{session.storyTxHash.substring(session.storyTxHash.length - 6)}
-                                                    </a>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                 </div>
                             )}
                         </CardContent>
