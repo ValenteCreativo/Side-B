@@ -1,10 +1,18 @@
 "use client"
 
+import { useState } from "react"
 import { motion, useMotionValue, useTransform } from "framer-motion"
-import { Play, Pause, MoreVertical, Clock, Calendar } from "lucide-react"
+import { Play, Pause, MoreVertical, Clock, Calendar, Trash2, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { usePlayer } from "@/components/player/PlayerContext"
+import { useToast } from "@/components/ui/use-toast"
 import Image from "next/image"
 
 interface TrackCardProps {
@@ -23,6 +31,8 @@ export function TrackCard({ id, title, status, date, duration, storyTxHash, audi
     const y = useMotionValue(0)
     const rotateX = useTransform(y, [-100, 100], [10, -10])
     const rotateY = useTransform(x, [-100, 100], [-10, 10])
+    const [isDeleting, setIsDeleting] = useState(false)
+    const { toast } = useToast()
 
     const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayer()
     const isThisPlaying = currentTrack?.id === id && isPlaying
@@ -33,6 +43,39 @@ export function TrackCard({ id, title, status, date, duration, storyTxHash, audi
             togglePlay()
         } else {
             playTrack({ id, title, artist, audioUrl })
+        }
+    }
+
+    const handleDelete = async () => {
+        if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
+            return
+        }
+
+        setIsDeleting(true)
+        try {
+            const response = await fetch(`/api/sessions/${id}`, {
+                method: 'DELETE',
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to delete session')
+            }
+
+            toast({
+                title: 'Session deleted',
+                description: `"${title}" has been deleted successfully`,
+            })
+
+            // Refresh the page to update the list
+            window.location.reload()
+        } catch (error) {
+            console.error('Delete error:', error)
+            toast({
+                title: 'Error',
+                description: 'Failed to delete session. Please try again.',
+                variant: 'destructive',
+            })
+            setIsDeleting(false)
         }
     }
 
@@ -60,9 +103,41 @@ export function TrackCard({ id, title, status, date, duration, storyTxHash, audi
                     >
                         {status === 'registered' ? '✓ REGISTERED' : '⏳ PENDING'}
                     </Badge>
-                    <Button variant="ghost" size="icon" className="rounded-sm hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-bronze h-7 w-7">
-                        <MoreVertical className="h-4 w-4" />
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="rounded-sm hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-bronze h-7 w-7"
+                                disabled={isDeleting}
+                            >
+                                <MoreVertical className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                            {storyTxHash && (
+                                <DropdownMenuItem asChild>
+                                    <a
+                                        href={`https://aeneid.explorer.story.foundation/transactions/${storyTxHash}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 cursor-pointer"
+                                    >
+                                        <ExternalLink className="h-4 w-4" />
+                                        <span>View on Explorer</span>
+                                    </a>
+                                </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                                className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20 cursor-pointer"
+                            >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                <span>{isDeleting ? 'Deleting...' : 'Delete Track'}</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
 
                 {/* Large Play Button & Track Info */}

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useUser } from '@/components/auth/UserContext'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { formatDate, formatPrice, parseMoodTags, formatDuration } from '@/lib/utils'
+import { formatDate, formatPrice, parseMoodTags, formatDuration, truncateAddress } from '@/lib/utils'
 import { Music, ExternalLink } from 'lucide-react'
 import { TrackCard } from './TrackCard'
 
@@ -23,6 +23,7 @@ interface Session {
   owner?: {
     id: string
     displayName: string | null
+    walletAddress: string
   }
   collection?: {
     id: string
@@ -92,7 +93,7 @@ export function SessionList() {
           duration={session.durationSec ? formatDuration(session.durationSec) : "--:--"}
           storyTxHash={session.storyTxHash || undefined}
           audioUrl={session.audioUrl}
-          artist={session.owner?.displayName || "Unknown Artist"}
+          artist={session.owner?.displayName || truncateAddress(session.owner?.walletAddress || "")}
         />
       ))}
     </div>

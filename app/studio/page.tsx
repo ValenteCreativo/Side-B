@@ -16,10 +16,12 @@ import { VinylFlip } from '@/components/ui/VinylFlip'
 function StudioPage() {
   const { user, logout } = useUser()
   const [refreshKey, setRefreshKey] = useState(0)
+  const [isFormOpen, setIsFormOpen] = useState(false)
 
   const handleUploadSuccess = () => {
-    // Trigger refresh of session list
+    // Trigger refresh of session list and close form
     setRefreshKey(prev => prev + 1)
+    setIsFormOpen(false)
   }
 
   const handleLogout = async () => {
@@ -94,26 +96,8 @@ function StudioPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-12 max-w-7xl">
-        {/* Upload Form - Top Section */}
-        <div className="mb-12">
-          <div className="bg-background border-2 border-zinc-200 dark:border-zinc-800 shadow-refined rounded-md overflow-hidden">
-            <div className="p-6 border-b-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold tracking-tight uppercase mb-1">Upload New Session</h2>
-                  <p className="text-sm text-muted-foreground font-mono">Register your sound on Story Protocol</p>
-                </div>
-                <div className="h-2 w-2 bg-bronze rounded-full animate-pulse" />
-              </div>
-            </div>
-            <div className="p-6">
-              <UploadSessionForm onSuccess={handleUploadSuccess} />
-            </div>
-          </div>
-        </div>
-
-        {/* Session List - Bottom Section */}
-        <div key={refreshKey}>
+        {/* Session List - Top Section */}
+        <div key={refreshKey} className="mb-12">
           <div className="mb-8 flex items-center justify-between border-b-2 border-zinc-200 dark:border-zinc-800 pb-4">
             <div>
               <h2 className="text-2xl font-bold tracking-tight uppercase mb-1">Your Sessions</h2>
@@ -122,6 +106,36 @@ function StudioPage() {
             <div className="h-2 w-2 bg-bronze rounded-full animate-pulse" />
           </div>
           <SessionList />
+        </div>
+
+        {/* Upload Form - Collapsible Bottom Section */}
+        <div>
+          <div className="bg-background border-2 border-zinc-200 dark:border-zinc-800 shadow-refined rounded-md overflow-hidden">
+            <button
+              onClick={() => setIsFormOpen(!isFormOpen)}
+              className="w-full p-6 border-b-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <div className="text-left">
+                  <h2 className="text-2xl font-bold tracking-tight uppercase mb-1">Upload New Session</h2>
+                  <p className="text-sm text-muted-foreground font-mono">
+                    {isFormOpen ? 'Click to collapse form' : 'Click to expand and upload new track'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-2 w-2 bg-bronze rounded-full animate-pulse" />
+                  <span className="text-2xl text-muted-foreground">
+                    {isFormOpen ? '−' : '+'}
+                  </span>
+                </div>
+              </div>
+            </button>
+            {isFormOpen && (
+              <div className="p-6 border-t border-zinc-200 dark:border-zinc-800">
+                <UploadSessionForm onSuccess={handleUploadSuccess} />
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>

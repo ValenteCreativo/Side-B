@@ -314,7 +314,15 @@ export default function ProfilePage() {
                                             )}
 
                                             {/* Audio Player */}
-                                            <audio controls className="w-full h-8" preload="metadata">
+                                            <audio
+                                                controls
+                                                className="w-full h-10 rounded-sm"
+                                                preload="metadata"
+                                                style={{
+                                                    filter: 'brightness(0.95) contrast(1.1)',
+                                                    accentColor: 'hsl(var(--bronze))',
+                                                }}
+                                            >
                                                 <source src={session.audioUrl} type="audio/mpeg" />
                                                 Your browser does not support the audio element.
                                             </audio>
