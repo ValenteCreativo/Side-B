@@ -132,6 +132,7 @@ export async function POST(request: NextRequest) {
       audioUrl,
       priceUsd,
       durationSec,
+      commercialUse,
     } = validation.data
 
     // Get owner wallet address
@@ -171,6 +172,7 @@ export async function POST(request: NextRequest) {
         collectionId: collectionId || null,
         audioUrl,
         priceUsd,
+        commercialUse,
         durationSec: durationSec || null,
         storyAssetId,
         storyTxHash: txHash,

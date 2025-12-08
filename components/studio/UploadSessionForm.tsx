@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import { useToast } from '@/components/ui/use-toast'
 import { Loader2, Upload } from 'lucide-react'
 import { AudioUploader } from './AudioUploader'
@@ -34,6 +35,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
     moodTags: '',
     priceUsd: '',
     audioUrl: '',
+    commercialUse: true,
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,6 +73,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
           moodTags: formData.moodTags,
           audioUrl: formData.audioUrl,
           priceUsd: parseFloat(formData.priceUsd),
+          commercialUse: formData.commercialUse,
         }),
       })
 
@@ -118,6 +121,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
         moodTags: '',
         priceUsd: '',
         audioUrl: '',
+        commercialUse: true,
       })
 
       onSuccess?.()
@@ -212,6 +216,20 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
             <p className="text-xs text-muted-foreground">
               Add mood keywords separated by commas
             </p>
+          </div>
+
+          <div className="flex items-center space-x-2 pt-2">
+            <Checkbox
+              id="commercialUse"
+              checked={formData.commercialUse}
+              onCheckedChange={(checked) => setFormData({ ...formData, commercialUse: checked as boolean })}
+            />
+            <Label
+              htmlFor="commercialUse"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+            >
+              Allow commercial use (buyers can use this track in commercial projects)
+            </Label>
           </div>
 
           <div className="space-y-2">
