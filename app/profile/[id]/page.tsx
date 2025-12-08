@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Music, Users, MessageCircle, ExternalLink, Calendar } from "lucide-react"
 import { useUser } from "@/components/auth/UserContext"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 
 interface Session {
     id: string

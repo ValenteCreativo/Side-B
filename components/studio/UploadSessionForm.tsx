@@ -81,10 +81,34 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
 
       const session = await response.json()
 
-      toast({
-        title: '✅ Session created!',
-        description: `"${session.title}" has been registered on Story Protocol`,
-      })
+      // Show success toast with Story Protocol explorer link
+      const explorerUrl = session.storyTxHash
+        ? `https://aeneid.explorer.story.foundation/tx/${session.storyTxHash}`
+        : null
+
+      if (explorerUrl) {
+        toast({
+          title: '✅ Session created!',
+          description: (
+            <div className="space-y-2">
+              <p>"{session.title}" has been registered on Story Protocol</p>
+              <a
+                href={explorerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs underline hover:text-bronze transition-colors"
+              >
+                View on Story Explorer →
+              </a>
+            </div>
+          ),
+        })
+      } else {
+        toast({
+          title: '✅ Session created!',
+          description: `"${session.title}" has been registered on Story Protocol`,
+        })
+      }
 
       // Reset form
       setFormData({
