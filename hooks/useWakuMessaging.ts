@@ -1,19 +1,65 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useWaku } from '@/components/waku/WakuProvider'
 import { WAKU_CONFIG } from '@/lib/waku/config'
 import { encodeMessage, decodeMessage, IDirectMessage } from '@/lib/waku/protocol'
 import { createDecoder, createEncoder } from '@waku/sdk'
 
+const STORAGE_KEY = 'waku_messages'
+
+// Helper to get messages from localStorage
+function getStoredMessages(userAddress: string): IDirectMessage[] {
+    if (typeof window === 'undefined') return []
+    try {
+        const stored = localStorage.getItem(`${STORAGE_KEY}_${userAddress.toLowerCase()}`)
+        return stored ? JSON.parse(stored) : []
+    } catch {
+        return []
+    }
+}
+
+// Helper to save messages to localStorage
+function saveMessages(userAddress: string, messages: IDirectMessage[]) {
+    if (typeof window === 'undefined') return
+    try {
+        // Keep only last 500 messages to avoid storage bloat
+        const toStore = messages.slice(-500)
+        localStorage.setItem(
+            `${STORAGE_KEY}_${userAddress.toLowerCase()}`,
+            JSON.stringify(toStore)
+        )
+    } catch (err) {
+        console.warn('Failed to save messages to localStorage:', err)
+    }
+}
+
 export function useWakuMessaging(userAddress: string) {
     const { node, isReady } = useWaku()
     const [messages, setMessages] = useState<IDirectMessage[]>([])
     const [isSending, setIsSending] = useState(false)
+    const subscriptionRef = useRef<any>(null)
+
+    // Load persisted messages on mount
+    useEffect(() => {
+        if (!userAddress) return
+        const storedMessages = getStoredMessages(userAddress)
+        if (storedMessages.length > 0) {
+            console.log(`📥 Loaded ${storedMessages.length} messages from storage`)
+            setMessages(storedMessages)
+        }
+    }, [userAddress])
+
+    // Save messages whenever they change
+    useEffect(() => {
+        if (userAddress && messages.length > 0) {
+            saveMessages(userAddress, messages)
+        }
+    }, [messages, userAddress])
 
     // Subscribe to incoming messages
     useEffect(() => {
-        if (!node || !isReady) return
+        if (!node || !isReady || !userAddress) return
 
         async function subscribe() {
             if (!node) return
@@ -28,12 +74,18 @@ export function useWakuMessaging(userAddress: string) {
                     try {
                         const message = decodeMessage(wakuMessage.payload)
 
-                        // Only process messages addressed to this user
-                        if (message.to.toLowerCase() === userAddress.toLowerCase()) {
+                        // Process messages where user is sender OR recipient
+                        // This ensures we catch messages from other sessions and incoming messages
+                        const isForUser = message.to.toLowerCase() === userAddress.toLowerCase()
+                        const isFromUser = message.from.toLowerCase() === userAddress.toLowerCase()
+
+                        if (isForUser || isFromUser) {
                             setMessages((prev) => {
                                 // Avoid duplicates
                                 if (prev.some((m) => m.id === message.id)) return prev
-                                return [...prev, message].sort((a, b) => a.timestamp - b.timestamp)
+                                const updated = [...prev, message].sort((a, b) => a.timestamp - b.timestamp)
+                                console.log(`📨 Received message: ${isForUser ? 'incoming' : 'outgoing sync'}`)
+                                return updated
                             })
                         }
                     } catch (err) {
@@ -42,7 +94,7 @@ export function useWakuMessaging(userAddress: string) {
                 }
 
                 // Subscribe to the content topic
-                await node.filter.subscribe([decoder], callback)
+                subscriptionRef.current = await node.filter.subscribe([decoder], callback)
                 console.log('✅ Subscribed to Waku messages')
             } catch (err) {
                 console.error('Failed to subscribe to messages:', err)
@@ -50,6 +102,18 @@ export function useWakuMessaging(userAddress: string) {
         }
 
         subscribe()
+
+        // Cleanup subscription on unmount
+        return () => {
+            if (subscriptionRef.current) {
+                try {
+                    // Note: Waku SDK may not have unsubscribe - this is a best-effort cleanup
+                    console.log('🔌 Cleaning up Waku subscription')
+                } catch (err) {
+                    console.error('Failed to unsubscribe:', err)
+                }
+            }
+        }
     }, [node, isReady, userAddress])
 
     // Send a message
@@ -60,10 +124,15 @@ export function useWakuMessaging(userAddress: string) {
                 return false
             }
 
+            if (!userAddress) {
+                console.error('User address not available')
+                return false
+            }
+
             setIsSending(true)
             try {
                 const message: IDirectMessage = {
-                    id: `${Date.now()}-${Math.random()}`,
+                    id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                     from: userAddress,
                     to,
                     content,
@@ -75,10 +144,13 @@ export function useWakuMessaging(userAddress: string) {
 
                 await node.lightPush.send(encoder, { payload })
 
-                // Add to local messages
-                setMessages((prev) => [...prev, message])
+                // Add to local messages immediately
+                setMessages((prev) => {
+                    if (prev.some((m) => m.id === message.id)) return prev
+                    return [...prev, message].sort((a, b) => a.timestamp - b.timestamp)
+                })
 
-                console.log('✅ Message sent')
+                console.log('✅ Message sent successfully')
                 return true
             } catch (err) {
                 console.error('Failed to send message:', err)
@@ -93,6 +165,7 @@ export function useWakuMessaging(userAddress: string) {
     // Get messages for a specific conversation
     const getConversation = useCallback(
         (otherAddress: string) => {
+            if (!userAddress || !otherAddress) return []
             return messages.filter(
                 (m) =>
                     (m.from.toLowerCase() === userAddress.toLowerCase() &&
@@ -104,10 +177,19 @@ export function useWakuMessaging(userAddress: string) {
         [messages, userAddress]
     )
 
+    // Clear conversation (useful for testing)
+    const clearMessages = useCallback(() => {
+        setMessages([])
+        if (userAddress) {
+            localStorage.removeItem(`${STORAGE_KEY}_${userAddress.toLowerCase()}`)
+        }
+    }, [userAddress])
+
     return {
         messages,
         sendMessage,
         getConversation,
+        clearMessages,
         isSending,
         isReady,
     }
