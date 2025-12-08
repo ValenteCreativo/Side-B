@@ -245,7 +245,11 @@ export default function ProfilePage() {
                             </div>
                             <div className="flex items-center gap-6">
                                 <Avatar className="h-24 w-24 border border-zinc-200 dark:border-zinc-800 rounded-full shadow-refined">
-                                    {avatarPreview && <AvatarImage src={avatarPreview} alt="Profile" className="rounded-full" />}
+                                    <AvatarImage
+                                        src={avatarPreview || '/assets/profile-art.png'}
+                                        alt="Profile"
+                                        className="rounded-full"
+                                    />
                                     <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800 text-foreground text-2xl font-bold rounded-full">
                                         {initials}
                                     </AvatarFallback>

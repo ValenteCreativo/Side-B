@@ -274,7 +274,7 @@ function MessagesContent() {
                                                 className="w-full p-3 flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors text-left"
                                             >
                                                 <Avatar className="h-8 w-8">
-                                                    {result.avatarUrl && <AvatarImage src={result.avatarUrl} />}
+                                                    <AvatarImage src={result.avatarUrl || '/assets/profile-art.png'} />
                                                     <AvatarFallback className="text-xs bg-zinc-100 dark:bg-zinc-800">
                                                         {(result.displayName?.[0] || result.walletAddress.slice(2, 4)).toUpperCase()}
                                                     </AvatarFallback>
@@ -313,14 +313,12 @@ function MessagesContent() {
                                             key={conv.address}
                                             onClick={() => handleSelectUser(conv.address)}
                                             className={`w-full p-3 flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors text-left ${selectedUser.toLowerCase() === conv.address.toLowerCase()
-                                                    ? 'bg-bronze/5 border-l-2 border-bronze'
-                                                    : ''
+                                                ? 'bg-bronze/5 border-l-2 border-bronze'
+                                                : ''
                                                 }`}
                                         >
                                             <Avatar className="h-10 w-10">
-                                                {userInfoCache[conv.address]?.avatarUrl && (
-                                                    <AvatarImage src={userInfoCache[conv.address].avatarUrl!} />
-                                                )}
+                                                <AvatarImage src={userInfoCache[conv.address]?.avatarUrl || '/assets/profile-art.png'} />
                                                 <AvatarFallback className="text-xs bg-zinc-100 dark:bg-zinc-800">
                                                     {getDisplayName(conv.address).slice(0, 2).toUpperCase()}
                                                 </AvatarFallback>
@@ -360,9 +358,7 @@ function MessagesContent() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-10 w-10">
-                                            {selectedUserInfo?.avatarUrl && (
-                                                <AvatarImage src={selectedUserInfo.avatarUrl} />
-                                            )}
+                                            <AvatarImage src={selectedUserInfo?.avatarUrl || '/assets/profile-art.png'} />
                                             <AvatarFallback className="text-xs bg-zinc-100 dark:bg-zinc-800">
                                                 {getDisplayName(selectedUser).slice(0, 2).toUpperCase()}
                                             </AvatarFallback>

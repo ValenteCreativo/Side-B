@@ -185,7 +185,11 @@ export default function ProfilePage() {
                         <CardContent className="pt-6">
                             <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
                                 <Avatar className="h-32 w-32 border border-zinc-200 dark:border-zinc-800 shadow-refined rounded-full">
-                                    {profile.avatarUrl && <AvatarImage src={profile.avatarUrl} alt={profile.displayName || "User avatar"} className="rounded-full" />}
+                                    <AvatarImage
+                                        src={profile.avatarUrl || '/assets/profile-art.png'}
+                                        alt={profile.displayName || "User avatar"}
+                                        className="rounded-full"
+                                    />
                                     <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800 text-foreground text-4xl font-medium rounded-full">
                                         {initials}
                                     </AvatarFallback>

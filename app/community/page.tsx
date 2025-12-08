@@ -229,9 +229,11 @@ export default function CommunityPage() {
                                         <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-900 translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300 rounded-md" />
                                         <div className="relative bg-background border border-zinc-200 dark:border-zinc-800 p-6 hover:-translate-y-1 transition-transform duration-300 h-full flex flex-col items-center text-center rounded-md shadow-sm">
                                             <Avatar className="h-24 w-24 mb-6 border border-zinc-200 dark:border-zinc-800 rounded-full shadow-refined">
-                                                {musician.avatarUrl && (
-                                                    <AvatarImage src={musician.avatarUrl} alt={musician.displayName || "User"} className="rounded-full" />
-                                                )}
+                                                <AvatarImage
+                                                    src={musician.avatarUrl || '/assets/profile-art.png'}
+                                                    alt={musician.displayName || "User"}
+                                                    className="rounded-full"
+                                                />
                                                 <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800 text-foreground text-2xl font-bold rounded-full">
                                                     {initials}
                                                 </AvatarFallback>
