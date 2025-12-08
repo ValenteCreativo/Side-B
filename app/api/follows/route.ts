@@ -34,6 +34,24 @@ export async function POST(request: NextRequest) {
         followerId,
         followingId,
       },
+      include: {
+        follower: {
+          select: {
+            displayName: true,
+          },
+        },
+      },
+    })
+
+    // Create notification for user being followed
+    await prisma.notification.create({
+      data: {
+        userId: followingId,
+        type: 'FOLLOW',
+        title: 'New follower!',
+        message: `${follow.follower.displayName || 'Someone'} started following you`,
+        link: `/profile/${followerId}`,
+      },
     })
 
     return NextResponse.json(follow)

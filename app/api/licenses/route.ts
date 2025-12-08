@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
             title: true,
             audioUrl: true,
             priceUsd: true,
+            ownerId: true,
           },
         },
         buyer: {
@@ -79,6 +80,17 @@ export async function POST(request: NextRequest) {
             displayName: true,
           },
         },
+      },
+    })
+
+    // Create notification for track owner
+    await prisma.notification.create({
+      data: {
+        userId: license.session.ownerId,
+        type: 'PURCHASE',
+        title: 'New purchase!',
+        message: `${license.buyer.displayName || 'Someone'} purchased "${license.session.title}"`,
+        link: `/profile/${buyerId}`,
       },
     })
 

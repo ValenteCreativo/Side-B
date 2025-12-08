@@ -12,7 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from "next/link"
 
 export function UserNav() {
@@ -35,6 +35,9 @@ export function UserNav() {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar className="h-10 w-10 border border-white/10">
+                        {user.avatarUrl && (
+                            <AvatarImage src={user.avatarUrl} alt={displayName} />
+                        )}
                         <AvatarFallback className="bg-primary/20 text-primary font-medium">
                             {initials}
                         </AvatarFallback>
@@ -53,7 +56,7 @@ export function UserNav() {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <Link href="/profile">
+                <Link href={`/profile/${user.id}`}>
                     <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
                         <span>Profile</span>

@@ -34,6 +34,9 @@ model User {
   // Social features
   followers     Follow[]     @relation("Following")
   following     Follow[]     @relation("Followers")
+
+  // Notifications
+  notifications Notification[]
 }
 
 model Collection {
@@ -98,4 +101,20 @@ model Follow {
   following   User @relation("Following", fields: [followingId], references: [id])
 
   @@unique([followerId, followingId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   // User receiving the notification
+  type      String   // "PURCHASE" | "FOLLOW" | "MESSAGE"
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  link      String?  // Optional link to relevant page
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@index([createdAt])
 }

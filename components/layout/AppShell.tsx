@@ -3,6 +3,7 @@
 import { AppSidebar } from "./AppSidebar"
 import { MobileMenu } from "./MobileMenu"
 import { UserNav } from "./UserNav"
+import { NotificationBell } from "./NotificationBell"
 import { Music } from "lucide-react"
 import Link from "next/link"
 
@@ -23,11 +24,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                             <span className="font-semibold">Side B</span>
                         </Link>
                     </div>
-                    <UserNav />
+                    <div className="flex items-center gap-2">
+                        <NotificationBell />
+                        <UserNav />
+                    </div>
                 </header>
 
                 {/* Desktop Top Bar (User Nav only) */}
-                <header className="hidden lg:flex items-center justify-end px-6 py-3 border-b border-white/5 bg-background/95 backdrop-blur-md sticky top-0 z-40">
+                <header className="hidden lg:flex items-center justify-end gap-2 px-6 py-3 border-b border-white/5 bg-background/95 backdrop-blur-md sticky top-0 z-40">
+                    <NotificationBell />
                     <UserNav />
                 </header>
 
