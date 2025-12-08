@@ -65,6 +65,7 @@ model Session {
   moodTags     String      // JSON string array for SQLite compatibility
   durationSec  Int?
   audioUrl     String
+  imageUrl     String?     // Custom image for the track
   priceUsd     Float
 
   // Story Protocol IP registration

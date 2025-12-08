@@ -34,6 +34,7 @@ export const createSessionSchema = z.object({
   ]).transform(val => typeof val === 'string' ? val : val.join(', ')),
   durationSec: z.number().int().positive().optional(),
   audioUrl: z.string().url(),
+  imageUrl: z.string().url().optional().nullable(),
   priceUsd: z.number().positive().max(10000),
   collectionId: z.string().cuid().optional(),
 })

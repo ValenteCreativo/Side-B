@@ -130,6 +130,7 @@ export async function POST(request: NextRequest) {
       moodTags,
       collectionId,
       audioUrl,
+      imageUrl,
       priceUsd,
       durationSec,
     } = validation.data
@@ -170,6 +171,7 @@ export async function POST(request: NextRequest) {
         moodTags: Array.isArray(moodTags) ? stringifyMoodTags(moodTags) : moodTags || '',
         collectionId: collectionId || null,
         audioUrl,
+        imageUrl: imageUrl || null,
         priceUsd,
         durationSec: durationSec || null,
         storyAssetId,

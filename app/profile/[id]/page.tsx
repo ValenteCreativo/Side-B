@@ -22,6 +22,7 @@ interface Session {
     moodTags: string[]
     priceUsd: number
     audioUrl: string
+    imageUrl: string | null
     storyAssetId: string | null
     storyTxHash: string | null
     createdAt: string
@@ -333,7 +334,7 @@ export default function ProfilePage() {
                                                 {/* Album Art / Placeholder */}
                                                 <div className="relative aspect-square bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
                                                     <Image
-                                                        src={placeholderImage}
+                                                        src={session.imageUrl || placeholderImage}
                                                         alt={session.title}
                                                         fill
                                                         className="object-cover opacity-60 group-hover:opacity-80 transition-opacity"

@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/components/ui/use-toast'
 import { Loader2, Upload } from 'lucide-react'
 import { AudioUploader } from './AudioUploader'
+import { ImageUploader } from './ImageUploader'
 
 interface UploadSessionFormProps {
   onSuccess?: () => void
@@ -34,6 +35,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
     moodTags: '',
     priceUsd: '',
     audioUrl: '',
+    imageUrl: '',
     durationSec: undefined as number | undefined,
   })
 
@@ -71,6 +73,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
           contentType: formData.contentType,
           moodTags: formData.moodTags,
           audioUrl: formData.audioUrl,
+          imageUrl: formData.imageUrl || null,
           priceUsd: parseFloat(formData.priceUsd),
           durationSec: formData.durationSec,
         }),
@@ -120,6 +123,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
         moodTags: '',
         priceUsd: '',
         audioUrl: '',
+        imageUrl: '',
         durationSec: undefined,
       })
 
@@ -225,6 +229,17 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
             />
             <p className="text-xs text-muted-foreground font-mono">
               Upload your audio file (MP3, M4A, WAV, FLAC, OGG • Max 50MB)
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Cover Image (Optional)</Label>
+            <ImageUploader
+              onUploadComplete={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+              disabled={isSubmitting}
+            />
+            <p className="text-xs text-muted-foreground font-mono">
+              Upload a cover image (JPG, PNG, GIF, WEBP • Max 5MB)
             </p>
           </div>
 
