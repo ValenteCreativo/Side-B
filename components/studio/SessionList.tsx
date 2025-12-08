@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useUser } from '@/components/auth/UserContext'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { formatDate, formatPrice, parseMoodTags } from '@/lib/utils'
+import { formatDate, formatPrice, parseMoodTags, formatDuration } from '@/lib/utils'
 import { Music, ExternalLink } from 'lucide-react'
 import { TrackCard } from './TrackCard'
 
@@ -16,6 +16,7 @@ interface Session {
   moodTags: string[]
   priceUsd: number
   audioUrl: string
+  durationSec?: number | null
   storyAssetId: string | null
   storyTxHash?: string | null
   createdAt: string
@@ -108,7 +109,7 @@ export function SessionList() {
               title={session.title}
               status={session.storyAssetId ? "registered" : "pending"}
               date={formatDate(session.createdAt)}
-              duration="3:45"
+              duration={session.durationSec ? formatDuration(session.durationSec) : "--:--"}
               storyTxHash={session.storyTxHash || undefined}
               audioUrl={session.audioUrl}
               artist={session.owner?.displayName || "Unknown Artist"}

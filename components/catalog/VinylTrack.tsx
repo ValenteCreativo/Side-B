@@ -1,8 +1,10 @@
 "use client"
 
+import { useState } from "react"
 import { motion } from "framer-motion"
-import { Play, Pause } from "lucide-react"
+import { Play, Pause, ExternalLink, ChevronDown, ChevronUp } from "lucide-react"
 import Image from "next/image"
+import { Badge } from "@/components/ui/badge"
 import { AnalogWaveform } from "./AnalogWaveform"
 import { usePlayer } from "@/components/player/PlayerContext"
 
@@ -13,11 +15,16 @@ interface VinylTrackProps {
     price: string
     audioUrl: string
     imageUrl?: string
+    storyTxHash?: string | null
+    description?: string
+    moodTags?: string[]
+    contentType?: string
 }
 
-export function VinylTrack({ id, title, artist, price, audioUrl, imageUrl }: VinylTrackProps) {
+export function VinylTrack({ id, title, artist, price, audioUrl, imageUrl, storyTxHash, description, moodTags, contentType }: VinylTrackProps) {
     const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayer()
     const isThisPlaying = currentTrack?.id === id && isPlaying
+    const [isExpanded, setIsExpanded] = useState(false)
 
     const handlePlay = (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -73,6 +80,70 @@ export function VinylTrack({ id, title, artist, price, audioUrl, imageUrl }: Vin
                         <AnalogWaveform isPlaying={isThisPlaying} color="currentColor" />
                     </div>
                 </div>
+
+                {/* Expandable Details */}
+                {(description || moodTags || contentType || storyTxHash) && (
+                    <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                        <button
+                            onClick={() => setIsExpanded(!isExpanded)}
+                            className="w-full flex items-center justify-between text-xs text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            <span className="font-mono uppercase tracking-widest">Details</span>
+                            {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                        </button>
+
+                        {isExpanded && (
+                            <div className="mt-3 space-y-3 text-xs">
+                                {contentType && (
+                                    <div>
+                                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Type:</span>
+                                        <Badge variant="outline" className="ml-2 text-[10px]">{contentType.replace('_', ' ')}</Badge>
+                                    </div>
+                                )}
+
+                                {description && (
+                                    <div>
+                                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-1">Description:</span>
+                                        <p className="text-xs text-foreground/80 line-clamp-3">{description}</p>
+                                    </div>
+                                )}
+
+                                {moodTags && moodTags.length > 0 && (
+                                    <div>
+                                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-1">Mood Tags:</span>
+                                        <div className="flex flex-wrap gap-1">
+                                            {moodTags.slice(0, 3).map((tag, idx) => (
+                                                <Badge key={idx} variant="secondary" className="text-[9px] px-1.5 py-0">#{tag}</Badge>
+                                            ))}
+                                            {moodTags.length > 3 && (
+                                                <Badge variant="secondary" className="text-[9px] px-1.5 py-0">+{moodTags.length - 3}</Badge>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {storyTxHash && (
+                                    <a
+                                        href={`https://aeneid.explorer.story.foundation/transactions/${storyTxHash}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block p-2 bg-bronze/5 border border-bronze/20 rounded-sm hover:border-bronze/40 transition-colors"
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <ExternalLink className="h-3 w-3 text-bronze shrink-0" />
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Story Protocol</p>
+                                                <p className="font-mono text-[10px] text-bronze truncate">
+                                                    {storyTxHash.substring(0, 8)}...{storyTxHash.substring(storyTxHash.length - 6)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )

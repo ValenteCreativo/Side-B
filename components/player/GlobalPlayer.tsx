@@ -3,13 +3,13 @@
 import { usePlayer } from './PlayerContext'
 import { Slider } from '@/components/ui/slider'
 import { Button } from '@/components/ui/button'
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Maximize2 } from 'lucide-react'
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Maximize2, X } from 'lucide-react'
 import { formatDuration } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 
 export function GlobalPlayer() {
-    const { currentTrack, isPlaying, togglePlay, volume, setVolume, progress, duration, seek } = usePlayer()
+    const { currentTrack, isPlaying, togglePlay, stopTrack, volume, setVolume, progress, duration, seek } = usePlayer()
 
     if (!currentTrack) return null
 
@@ -86,8 +86,8 @@ export function GlobalPlayer() {
                                 className="cursor-pointer"
                             />
                         </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                            <Maximize2 className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={stopTrack} title="Close player">
+                            <X className="h-4 w-4" />
                         </Button>
                     </div>
                 </div>

@@ -231,6 +231,10 @@ function CatalogPage() {
                       artist={session.owner.displayName || truncateAddress(session.owner.walletAddress)}
                       price={formatPrice(session.priceUsd)}
                       audioUrl={session.audioUrl}
+                      storyTxHash={session.storyTxHash}
+                      description={session.description}
+                      moodTags={session.moodTags}
+                      contentType={session.contentType}
                     />
                   </div>
                 </div>

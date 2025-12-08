@@ -19,6 +19,7 @@ interface PlayerContextType {
     duration: number
     playTrack: (track: Track) => void
     togglePlay: () => void
+    stopTrack: () => void
     setVolume: (volume: number) => void
     seek: (time: number) => void
 }
@@ -94,6 +95,17 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const stopTrack = () => {
+        if (audioRef.current) {
+            audioRef.current.pause()
+            audioRef.current.currentTime = 0
+            setCurrentTrack(null)
+            setIsPlaying(false)
+            setProgress(0)
+            setDuration(0)
+        }
+    }
+
     return (
         <PlayerContext.Provider
             value={{
@@ -104,6 +116,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
                 duration,
                 playTrack,
                 togglePlay,
+                stopTrack,
                 setVolume,
                 seek,
             }}
