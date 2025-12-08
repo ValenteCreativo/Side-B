@@ -35,7 +35,6 @@ export const createSessionSchema = z.object({
   durationSec: z.number().int().positive().optional(),
   audioUrl: z.string().url(),
   priceUsd: z.number().positive().max(10000),
-  commercialUse: z.boolean().default(true),
   collectionId: z.string().cuid().optional(),
 })
 

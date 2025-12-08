@@ -63,7 +63,6 @@ model Session {
   durationSec  Int?
   audioUrl     String
   priceUsd     Float
-  commercialUse Boolean    @default(true) // License allows commercial use
 
   // Story Protocol IP registration
   storyAssetId String?     // IP Asset ID from Story Protocol
