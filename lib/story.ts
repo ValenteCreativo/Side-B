@@ -15,6 +15,7 @@ import { StoryClient, StoryConfig } from '@story-protocol/core-sdk'
 import { http } from 'viem'
 import { Address, Hex } from 'viem'
 import { privateKeyToAccount, Account } from 'viem/accounts'
+import { createHash } from 'crypto'
 
 // Story Protocol SPG NFT Collection (public testnet collection)
 // For production, create your own collection with client.nftClient.createNFTCollection()
@@ -114,8 +115,7 @@ export async function registerSessionAsIp(
     console.log(`   Description: "${description.substring(0, 50)}..."`)
 
     // Create metadata for the music session
-    // In production, upload this to IPFS and use the hash
-    const metadata = {
+    const ipMetadata = {
       title: title,
       description: description,
       contentType: contentType,
@@ -125,21 +125,43 @@ export async function registerSessionAsIp(
       createdAt: new Date().toISOString(),
     }
 
-    console.log('   Metadata:', metadata)
+    const nftMetadata = {
+      name: title,
+      description: description,
+      image: '', // Could add album art URL here
+      attributes: [
+        { trait_type: 'Content Type', value: contentType },
+        { trait_type: 'Platform', value: 'Side B Sessions' },
+      ],
+    }
+
+    console.log('   IP Metadata:', ipMetadata)
+
+    // Compute SHA-256 hashes for metadata (required by Story Protocol - bytes32 format)
+    // Docs: https://docs.story.foundation/developers/typescript-sdk/register-ip-asset
+    const ipMetadataHash = `0x${createHash('sha256')
+      .update(JSON.stringify(ipMetadata))
+      .digest('hex')}` as Hex
+
+    const nftMetadataHash = `0x${createHash('sha256')
+      .update(JSON.stringify(nftMetadata))
+      .digest('hex')}` as Hex
+
+    console.log('   IP Hash:', ipMetadataHash)
+    console.log('   NFT Hash:', nftMetadataHash)
 
     // Register IP Asset using Story Protocol
     // Docs: https://docs.story.foundation/developers/typescript-sdk/register-ip-asset
-    // Using unified registerIpAsset API with nft object structure
     const response = await client.ipAsset.registerIpAsset({
       nft: {
         type: 'mint',
         spgNftContract: SPG_NFT_CONTRACT,
       },
       ipMetadata: {
-        ipMetadataURI: '', // Can upload to IPFS for production
-        ipMetadataHash: '0x' as Hex,
-        nftMetadataURI: '', // Can upload to IPFS for production
-        nftMetadataHash: '0x' as Hex,
+        ipMetadataURI: '', // In production, upload to IPFS and use: `https://ipfs.io/ipfs/${hash}`
+        ipMetadataHash: ipMetadataHash,
+        nftMetadataURI: '', // In production, upload to IPFS and use: `https://ipfs.io/ipfs/${hash}`
+        nftMetadataHash: nftMetadataHash,
       },
     })
 
