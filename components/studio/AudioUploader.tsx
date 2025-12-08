@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
 interface AudioUploaderProps {
-    onUploadComplete: (url: string) => void
+    onUploadComplete: (url: string, durationSec?: number) => void
     disabled?: boolean
 }
 
@@ -51,11 +51,40 @@ export function AudioUploader({ onUploadComplete, disabled }: AudioUploaderProps
         return null
     }
 
+    const extractAudioDuration = (file: File): Promise<number> => {
+        return new Promise((resolve, reject) => {
+            const audio = new Audio()
+            const objectUrl = URL.createObjectURL(file)
+
+            audio.addEventListener('loadedmetadata', () => {
+                URL.revokeObjectURL(objectUrl)
+                resolve(Math.round(audio.duration))
+            })
+
+            audio.addEventListener('error', () => {
+                URL.revokeObjectURL(objectUrl)
+                reject(new Error('Failed to load audio metadata'))
+            })
+
+            audio.src = objectUrl
+        })
+    }
+
     const uploadFile = async (file: File) => {
         setIsUploading(true)
         setUploadProgress(0)
 
         try {
+            // Extract duration before upload
+            let durationSec: number | undefined
+            try {
+                durationSec = await extractAudioDuration(file)
+                console.log('📊 Audio duration extracted:', durationSec, 'seconds')
+            } catch (error) {
+                console.warn('⚠️ Could not extract audio duration:', error)
+                // Continue with upload even if duration extraction fails
+            }
+
             const formData = new FormData()
             formData.append('file', file)
 
@@ -73,7 +102,7 @@ export function AudioUploader({ onUploadComplete, disabled }: AudioUploaderProps
 
             setAudioUrl(data.url)
             setUploadedFile(file)
-            onUploadComplete(data.url)
+            onUploadComplete(data.url, durationSec)
 
             toast({
                 title: 'Upload successful',

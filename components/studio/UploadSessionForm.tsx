@@ -34,6 +34,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
     moodTags: '',
     priceUsd: '',
     audioUrl: '',
+    durationSec: undefined as number | undefined,
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,6 +72,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
           moodTags: formData.moodTags,
           audioUrl: formData.audioUrl,
           priceUsd: parseFloat(formData.priceUsd),
+          durationSec: formData.durationSec,
         }),
       })
 
@@ -118,6 +120,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
         moodTags: '',
         priceUsd: '',
         audioUrl: '',
+        durationSec: undefined,
       })
 
       onSuccess?.()
@@ -217,7 +220,7 @@ export function UploadSessionForm({ onSuccess }: UploadSessionFormProps) {
           <div className="space-y-2">
             <Label>Audio File *</Label>
             <AudioUploader
-              onUploadComplete={(url) => setFormData(prev => ({ ...prev, audioUrl: url }))}
+              onUploadComplete={(url, durationSec) => setFormData(prev => ({ ...prev, audioUrl: url, durationSec }))}
               disabled={isSubmitting}
             />
             <p className="text-xs text-muted-foreground font-mono">

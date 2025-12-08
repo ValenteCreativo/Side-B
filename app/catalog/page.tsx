@@ -212,34 +212,104 @@ function CatalogPage() {
             )}
           </div>
         ) : (
-          <div>
-            <div className="mb-8 flex items-center justify-between px-2 border-b border-zinc-200 dark:border-zinc-800 pb-4">
-              <p className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                {filteredSessions.length} {filteredSessions.length === 1 ? 'TRACK' : 'TRACKS'} AVAILABLE
-              </p>
-              <div className="h-1.5 w-1.5 bg-bronze rounded-full animate-pulse" />
-            </div>
+          <div className="space-y-12">
+            {/* Category Sections - Spotify Style */}
+            {['JAM', 'REHEARSAL', 'PRODUCED'].map((category) => {
+              const categorySessions = filteredSessions.filter(s => s.contentType === category)
 
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredSessions.map((session) => (
-                <div key={session.id} className="group relative">
-                  <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-900 translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300 rounded-md" />
-                  <div className="relative bg-background border border-zinc-200 dark:border-zinc-800 p-4 hover-lift h-full rounded-md shadow-sm">
-                    <VinylTrack
-                      id={session.id}
-                      title={session.title}
-                      artist={session.owner.displayName || truncateAddress(session.owner.walletAddress)}
-                      price={formatPrice(session.priceUsd)}
-                      audioUrl={session.audioUrl}
-                      storyTxHash={session.storyTxHash}
-                      description={session.description}
-                      moodTags={session.moodTags}
-                      contentType={session.contentType}
-                    />
+              if (categorySessions.length === 0) return null
+
+              return (
+                <section key={category} className="space-y-6">
+                  {/* Category Header */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold tracking-tight mb-1">
+                        {category === 'JAM' && '🎸 Jam Sessions'}
+                        {category === 'REHEARSAL' && '🎹 Rehearsals'}
+                        {category === 'PRODUCED' && '🎵 Produced Tracks'}
+                      </h2>
+                      <p className="text-sm text-muted-foreground font-mono">
+                        {categorySessions.length} {categorySessions.length === 1 ? 'track' : 'tracks'}
+                      </p>
+                    </div>
                   </div>
+
+                  {/* Horizontal Scrollable Grid */}
+                  <div className="relative">
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      {categorySessions.slice(0, 8).map((session) => (
+                        <div key={session.id} className="group relative">
+                          <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-900 translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300 rounded-md" />
+                          <div className="relative bg-background border border-zinc-200 dark:border-zinc-800 p-4 hover-lift h-full rounded-md shadow-sm">
+                            <VinylTrack
+                              id={session.id}
+                              title={session.title}
+                              artist={session.owner.displayName || truncateAddress(session.owner.walletAddress)}
+                              price={formatPrice(session.priceUsd)}
+                              audioUrl={session.audioUrl}
+                              storyTxHash={session.storyTxHash}
+                              description={session.description}
+                              moodTags={session.moodTags}
+                              contentType={session.contentType}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Show More Link */}
+                    {categorySessions.length > 8 && (
+                      <div className="mt-6 text-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setContentType(category)}
+                          className="font-mono text-xs"
+                        >
+                          View all {categorySessions.length} tracks
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              )
+            })}
+
+            {/* Show "All Tracks" view when filters are active */}
+            {(contentType !== 'all' || moodTag || searchQuery || selectedArtist !== 'all') && (
+              <section className="space-y-6 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold tracking-tight">
+                    Filtered Results
+                  </h2>
+                  <p className="text-sm text-muted-foreground font-mono">
+                    {filteredSessions.length} {filteredSessions.length === 1 ? 'track' : 'tracks'}
+                  </p>
                 </div>
-              ))}
-            </div>
+
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {filteredSessions.map((session) => (
+                    <div key={session.id} className="group relative">
+                      <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-900 translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300 rounded-md" />
+                      <div className="relative bg-background border border-zinc-200 dark:border-zinc-800 p-4 hover-lift h-full rounded-md shadow-sm">
+                        <VinylTrack
+                          id={session.id}
+                          title={session.title}
+                          artist={session.owner.displayName || truncateAddress(session.owner.walletAddress)}
+                          price={formatPrice(session.priceUsd)}
+                          audioUrl={session.audioUrl}
+                          storyTxHash={session.storyTxHash}
+                          description={session.description}
+                          moodTags={session.moodTags}
+                          contentType={session.contentType}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         )}
       </main>

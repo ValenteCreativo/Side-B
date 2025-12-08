@@ -1,8 +1,7 @@
 "use client"
 
-import { useState } from "react"
 import { motion } from "framer-motion"
-import { Play, Pause, ExternalLink, ChevronDown, ChevronUp } from "lucide-react"
+import { Play, Pause, ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { AnalogWaveform } from "./AnalogWaveform"
@@ -24,7 +23,6 @@ interface VinylTrackProps {
 export function VinylTrack({ id, title, artist, price, audioUrl, imageUrl, storyTxHash, description, moodTags, contentType }: VinylTrackProps) {
     const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayer()
     const isThisPlaying = currentTrack?.id === id && isPlaying
-    const [isExpanded, setIsExpanded] = useState(false)
 
     const handlePlay = (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -49,7 +47,8 @@ export function VinylTrack({ id, title, artist, price, audioUrl, imageUrl, story
             </div>
 
             {/* Album Cover / Container */}
-            <div className="absolute inset-0 bg-card z-10 flex flex-col justify-between p-6 border-r border-zinc-200 dark:border-zinc-800 rounded-md group-hover:translate-x-[-10%] transition-transform duration-500">
+            <div className="absolute inset-0 bg-card z-10 flex flex-col p-6 border-r border-zinc-200 dark:border-zinc-800 rounded-md group-hover:translate-x-[-10%] transition-transform duration-500">
+                {/* Album Art with Story Protocol Badge */}
                 <div className="relative w-full aspect-square mb-4 overflow-hidden bg-secondary rounded-sm">
                     <Image
                         src={imageUrl || "/assets/catalog-art.png"}
@@ -67,83 +66,60 @@ export function VinylTrack({ id, title, artist, price, audioUrl, imageUrl, story
                             {isThisPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-1" />}
                         </button>
                     </div>
+
+                    {/* Story Protocol Badge - Always Visible */}
+                    {storyTxHash && (
+                        <a
+                            href={`https://aeneid.explorer.story.foundation/transactions/${storyTxHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute top-2 right-2 z-10 flex items-center gap-1.5 px-2 py-1 bg-bronze/90 hover:bg-bronze text-white rounded-sm text-[10px] font-mono font-bold uppercase tracking-wider transition-colors shadow-lg backdrop-blur-sm"
+                        >
+                            <ExternalLink className="h-2.5 w-2.5" />
+                            <span>IP</span>
+                        </a>
+                    )}
+
+                    {/* Content Type Badge */}
+                    {contentType && (
+                        <div className="absolute bottom-2 left-2 z-10">
+                            <Badge variant="secondary" className="text-[9px] px-1.5 py-0.5 font-mono backdrop-blur-sm bg-background/80">
+                                {contentType}
+                            </Badge>
+                        </div>
+                    )}
                 </div>
 
-                <div className="space-y-1">
+                {/* Track Info */}
+                <div className="space-y-1 mb-4">
                     <h3 className="font-bold text-lg leading-tight line-clamp-1 tracking-tight">{title}</h3>
                     <p className="text-sm text-muted-foreground line-clamp-1 font-mono">{artist}</p>
+
+                    {/* Mood Tags - Subtle Display */}
+                    {moodTags && moodTags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 pt-1">
+                            {moodTags.slice(0, 2).map((tag, idx) => (
+                                <Badge key={idx} variant="outline" className="text-[9px] px-1.5 py-0 border-zinc-300 dark:border-zinc-700">
+                                    #{tag}
+                                </Badge>
+                            ))}
+                            {moodTags.length > 2 && (
+                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-zinc-300 dark:border-zinc-700">
+                                    +{moodTags.length - 2}
+                                </Badge>
+                            )}
+                        </div>
+                    )}
                 </div>
 
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                {/* Price & Waveform */}
+                <div className="mt-auto flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
                     <span className="font-mono text-sm font-medium">{price}</span>
                     <div className="h-8 w-16 text-bronze">
                         <AnalogWaveform isPlaying={isThisPlaying} color="currentColor" />
                     </div>
                 </div>
-
-                {/* Expandable Details */}
-                {(description || moodTags || contentType || storyTxHash) && (
-                    <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                        <button
-                            onClick={() => setIsExpanded(!isExpanded)}
-                            className="w-full flex items-center justify-between text-xs text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                            <span className="font-mono uppercase tracking-widest">Details</span>
-                            {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                        </button>
-
-                        {isExpanded && (
-                            <div className="mt-3 space-y-3 text-xs">
-                                {contentType && (
-                                    <div>
-                                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Type:</span>
-                                        <Badge variant="outline" className="ml-2 text-[10px]">{contentType.replace('_', ' ')}</Badge>
-                                    </div>
-                                )}
-
-                                {description && (
-                                    <div>
-                                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-1">Description:</span>
-                                        <p className="text-xs text-foreground/80 line-clamp-3">{description}</p>
-                                    </div>
-                                )}
-
-                                {moodTags && moodTags.length > 0 && (
-                                    <div>
-                                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground block mb-1">Mood Tags:</span>
-                                        <div className="flex flex-wrap gap-1">
-                                            {moodTags.slice(0, 3).map((tag, idx) => (
-                                                <Badge key={idx} variant="secondary" className="text-[9px] px-1.5 py-0">#{tag}</Badge>
-                                            ))}
-                                            {moodTags.length > 3 && (
-                                                <Badge variant="secondary" className="text-[9px] px-1.5 py-0">+{moodTags.length - 3}</Badge>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {storyTxHash && (
-                                    <a
-                                        href={`https://aeneid.explorer.story.foundation/transactions/${storyTxHash}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="block p-2 bg-bronze/5 border border-bronze/20 rounded-sm hover:border-bronze/40 transition-colors"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <ExternalLink className="h-3 w-3 text-bronze shrink-0" />
-                                            <div className="flex-1 min-w-0">
-                                                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Story Protocol</p>
-                                                <p className="font-mono text-[10px] text-bronze truncate">
-                                                    {storyTxHash.substring(0, 8)}...{storyTxHash.substring(storyTxHash.length - 6)}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                )}
             </div>
         </div>
     )
