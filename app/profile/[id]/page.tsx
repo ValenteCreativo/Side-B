@@ -283,9 +283,9 @@ export default function ProfilePage() {
 
                                         // Determine placeholder image based on content type
                                         const placeholderImage =
-                                            session.contentType === 'REHEARSAL' ? '/hero-art.png' :
-                                            session.contentType === 'PRODUCED' ? '/studio-art.png' :
-                                            '/catalog-art.png' // Default for JAM and others
+                                            session.contentType === 'REHEARSAL' ? '/assets/hero-art.png' :
+                                            session.contentType === 'PRODUCED' ? '/assets/studio-art.png' :
+                                            '/assets/catalog-art.png' // Default for JAM and others
                                         return (
                                             <div
                                                 key={session.id}
