@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createPublicClient, http, type Address } from 'viem'
-import { base } from 'viem/chains'
+import { base, baseSepolia } from 'viem/chains'
 import { validateQuery, walletTransactionsSchema } from '@/lib/validations'
 import { walletLimiter, getClientIdentifier, checkRateLimit } from '@/lib/rate-limit'
+import { NETWORK, isTestnet } from '@/lib/network-config'
 
 export const dynamic = 'force-dynamic'
 
 const publicClient = createPublicClient({
-  chain: base,
-  transport: http(process.env.BASE_RPC_URL || 'https://mainnet.base.org'),
+  chain: isTestnet() ? baseSepolia : base,
+  transport: http(NETWORK.rpcUrl),
 })
-
-// Base network chain ID
-const BASE_CHAIN_ID = 8453
 
 export async function GET(request: NextRequest) {
   try {
@@ -63,7 +61,7 @@ export async function GET(request: NextRequest) {
       // Etherscan API V2 endpoint - single endpoint for all chains with chainid parameter
       const response = await fetch(
         `https://api.etherscan.io/v2/api?` + new URLSearchParams({
-          chainid: BASE_CHAIN_ID.toString(),
+          chainid: NETWORK.chainId.toString(),
           module: 'account',
           action: 'txlist',
           address: address,

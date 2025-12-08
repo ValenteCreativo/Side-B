@@ -274,7 +274,7 @@ export function PurchaseModal({
                                 </Button>
 
                                 <p className="text-center text-xs text-muted-foreground font-mono">
-                                    Payment goes directly to the artist
+                                    97% goes to the artist, 3% platform fee
                                 </p>
                             </div>
                         </div>
