@@ -93,28 +93,35 @@ function StudioPage() {
       </PageHero>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-12">
-        <div className="grid gap-12 lg:grid-cols-[400px_1fr]">
-          {/* Upload Form - Floating Panel */}
-          <div className="lg:sticky lg:top-24 h-fit">
-            <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-1 shadow-refined rounded-md">
-              <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 rounded-t-sm">
-                <h3 className="font-bold uppercase tracking-widest text-sm text-bronze">New Session</h3>
-              </div>
-              <div className="p-4">
-                <UploadSessionForm onSuccess={handleUploadSuccess} />
+      <main className="container mx-auto px-6 py-12 max-w-7xl">
+        {/* Upload Form - Top Section */}
+        <div className="mb-12">
+          <div className="bg-background border-2 border-zinc-200 dark:border-zinc-800 shadow-refined rounded-md overflow-hidden">
+            <div className="p-6 border-b-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight uppercase mb-1">Upload New Session</h2>
+                  <p className="text-sm text-muted-foreground font-mono">Register your sound on Story Protocol</p>
+                </div>
+                <div className="h-2 w-2 bg-bronze rounded-full animate-pulse" />
               </div>
             </div>
+            <div className="p-6">
+              <UploadSessionForm onSuccess={handleUploadSuccess} />
+            </div>
           </div>
+        </div>
 
-          {/* Session List */}
-          <div key={refreshKey} className="min-h-[500px]">
-            <div className="mb-8 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
-              <h2 className="text-2xl font-bold tracking-tight uppercase">Your Sessions</h2>
-              <div className="h-1.5 w-1.5 bg-bronze rounded-full animate-pulse" />
+        {/* Session List - Bottom Section */}
+        <div key={refreshKey}>
+          <div className="mb-8 flex items-center justify-between border-b-2 border-zinc-200 dark:border-zinc-800 pb-4">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight uppercase mb-1">Your Sessions</h2>
+              <p className="text-sm text-muted-foreground font-mono">Manage your uploaded tracks</p>
             </div>
-            <SessionList />
+            <div className="h-2 w-2 bg-bronze rounded-full animate-pulse" />
           </div>
+          <SessionList />
         </div>
       </main>
     </div>

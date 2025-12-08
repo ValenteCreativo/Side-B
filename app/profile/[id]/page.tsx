@@ -290,7 +290,10 @@ export default function ProfilePage() {
                                                     <Badge variant="outline" className="mb-2 rounded-sm border-zinc-200 dark:border-zinc-800 font-mono text-[10px]">
                                                         {session.contentType.replace('_', ' ')}
                                                     </Badge>
-                                                    <p className="text-sm font-bold font-mono text-bronze">${session.priceUsd}</p>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-bold font-mono text-bronze">${session.priceUsd}</span>
+                                                        <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">USDC</span>
+                                                    </div>
                                                     {session._count.licenses > 0 && (
                                                         <p className="text-xs text-muted-foreground font-mono mt-1">
                                                             {session._count.licenses} {session._count.licenses === 1 ? 'LICENSE' : 'LICENSES'}

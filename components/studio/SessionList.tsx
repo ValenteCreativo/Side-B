@@ -60,63 +60,41 @@ export function SessionList() {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Sessions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center py-8">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center py-20 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-md bg-zinc-50/50 dark:bg-zinc-900/50">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-bronze border-t-transparent mx-auto mb-4" />
+          <p className="text-muted-foreground font-mono text-sm">LOADING_SESSIONS...</p>
+        </div>
+      </div>
     )
   }
 
   if (sessions.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Sessions</CardTitle>
-          <CardDescription>
-            Upload your first track to get started
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Music className="h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">No sessions yet</p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-zinc-200 dark:border-zinc-800 rounded-md bg-zinc-50/50 dark:bg-zinc-900/50">
+        <Music className="h-16 w-16 text-muted-foreground mb-6 opacity-50" />
+        <h3 className="text-xl font-bold mb-2 tracking-tight">NO_SESSIONS_YET</h3>
+        <p className="text-muted-foreground font-mono text-sm mb-2">Upload your first track above to get started</p>
+        <p className="text-xs text-muted-foreground font-mono">Your music will appear here once uploaded</p>
+      </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-light tracking-wide text-foreground/80">Your Sessions</h2>
-        <Badge variant="outline" className="font-mono text-xs border-white/10 text-muted-foreground">
-          {sessions.length} TRACKS
-        </Badge>
-      </div>
-
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {sessions.map((session) => (
-          <div key={session.id} className="h-[280px]">
-            <TrackCard
-              id={session.id}
-              title={session.title}
-              status={session.storyAssetId ? "registered" : "pending"}
-              date={formatDate(session.createdAt)}
-              duration={session.durationSec ? formatDuration(session.durationSec) : "--:--"}
-              storyTxHash={session.storyTxHash || undefined}
-              audioUrl={session.audioUrl}
-              artist={session.owner?.displayName || "Unknown Artist"}
-            />
-          </div>
-        ))}
-      </div>
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {sessions.map((session) => (
+        <TrackCard
+          key={session.id}
+          id={session.id}
+          title={session.title}
+          status={session.storyAssetId ? "registered" : "pending"}
+          date={formatDate(session.createdAt)}
+          duration={session.durationSec ? formatDuration(session.durationSec) : "--:--"}
+          storyTxHash={session.storyTxHash || undefined}
+          audioUrl={session.audioUrl}
+          artist={session.owner?.displayName || "Unknown Artist"}
+        />
+      ))}
     </div>
   )
 }

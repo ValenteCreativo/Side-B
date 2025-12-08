@@ -19,42 +19,42 @@ export function GlobalPlayer() {
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 100, opacity: 0 }}
-                className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-t border-white/10 px-4 py-3 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.5)]"
+                className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t-2 border-zinc-200 dark:border-zinc-800 px-4 py-4 shadow-refined-lg"
             >
                 <div className="container mx-auto flex items-center justify-between gap-4">
                     {/* Track Info */}
                     <div className="flex items-center gap-4 w-1/4 min-w-[200px]">
-                        <div className="relative h-14 w-14 rounded-md overflow-hidden bg-secondary/20 border border-white/5 shadow-inner">
+                        <div className="relative h-14 w-14 rounded-md overflow-hidden bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
                             {currentTrack.imageUrl ? (
-                                <Image src={currentTrack.imageUrl} alt={currentTrack.title} fill className="object-cover" />
+                                <Image src={currentTrack.imageUrl} alt={currentTrack.title} fill className="object-cover dark:invert" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-background">
-                                    <div className={`w-2 h-2 rounded-full bg-primary ${isPlaying ? 'animate-pulse' : ''}`} />
+                                <div className="w-full h-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-900">
+                                    <div className={`w-2 h-2 rounded-full bg-bronze ${isPlaying ? 'animate-pulse' : ''}`} />
                                 </div>
                             )}
                         </div>
                         <div className="overflow-hidden">
-                            <h4 className="font-medium text-sm truncate text-foreground">{currentTrack.title}</h4>
-                            <p className="text-xs text-muted-foreground truncate">{currentTrack.artist}</p>
+                            <h4 className="font-bold text-sm truncate tracking-tight">{currentTrack.title}</h4>
+                            <p className="text-xs text-muted-foreground truncate font-mono">{currentTrack.artist}</p>
                         </div>
                     </div>
 
                     {/* Controls & Progress */}
                     <div className="flex flex-col items-center gap-2 flex-1 max-w-2xl">
                         <div className="flex items-center gap-6">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors">
                                 <SkipBack className="h-4 w-4" />
                             </Button>
 
                             <Button
                                 size="icon"
-                                className="h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:scale-105 transition-transform"
+                                className="h-10 w-10 rounded-sm bg-bronze text-white hover:bg-bronze/90 shadow-refined hover:shadow-refined-lg transition-all"
                                 onClick={togglePlay}
                             >
                                 {isPlaying ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 fill-current ml-0.5" />}
                             </Button>
 
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors">
                                 <SkipForward className="h-4 w-4" />
                             </Button>
                         </div>
@@ -66,7 +66,7 @@ export function GlobalPlayer() {
                                 max={duration || 100}
                                 step={1}
                                 onValueChange={(value) => seek(value[0])}
-                                className="cursor-pointer"
+                                className="cursor-pointer [&_[role=slider]]:border-2 [&_[role=slider]]:border-bronze [&_[role=slider]]:bg-background"
                             />
                             <span className="w-10">{formatDuration(duration)}</span>
                         </div>
@@ -75,7 +75,12 @@ export function GlobalPlayer() {
                     {/* Volume & Extras */}
                     <div className="flex items-center justify-end gap-4 w-1/4 min-w-[200px]">
                         <div className="flex items-center gap-2 w-32">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground" onClick={() => setVolume(volume === 0 ? 0.8 : 0)}>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors"
+                                onClick={() => setVolume(volume === 0 ? 0.8 : 0)}
+                            >
                                 {volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                             </Button>
                             <Slider
@@ -83,10 +88,16 @@ export function GlobalPlayer() {
                                 max={1}
                                 step={0.01}
                                 onValueChange={(value) => setVolume(value[0])}
-                                className="cursor-pointer"
+                                className="cursor-pointer [&_[role=slider]]:border-2 [&_[role=slider]]:border-bronze [&_[role=slider]]:bg-background"
                             />
                         </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={stopTrack} title="Close player">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors"
+                            onClick={stopTrack}
+                            title="Close player"
+                        >
                             <X className="h-4 w-4" />
                         </Button>
                     </div>

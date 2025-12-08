@@ -44,57 +44,73 @@ export function TrackCard({ id, title, status, date, duration, storyTxHash, audi
             dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
             whileHover={{ cursor: "grab" }}
             whileDrag={{ cursor: "grabbing" }}
-            className="relative group perspective-1000"
+            className="relative group perspective-1000 h-full"
         >
-            <div className="relative bg-card border border-border hover:border-foreground transition-all duration-300 p-4 shadow-sm hover:shadow-md">
+            <div className="relative bg-background border-2 border-zinc-200 dark:border-zinc-800 hover:border-bronze transition-all duration-300 p-5 shadow-refined hover:shadow-refined-lg rounded-md h-full flex flex-col">
 
-                <div className="flex items-center gap-4 relative z-10">
-                    {/* Play Button / Status Indicator */}
-                    <button
-                        onClick={handlePlay}
-                        className={`w-12 h-12 flex items-center justify-center transition-all duration-300 border border-foreground ${isThisPlaying
-                                ? 'bg-foreground text-background'
-                                : 'bg-background text-foreground hover:bg-foreground hover:text-background'
-                            }`}
+                {/* Status Badge at Top */}
+                <div className="flex items-center justify-between mb-4">
+                    <Badge
+                        variant={status === 'registered' ? 'default' : 'outline'}
+                        className={`rounded-sm uppercase text-[10px] tracking-widest font-mono ${
+                            status === 'registered'
+                                ? 'bg-bronze text-white border-bronze'
+                                : 'border-zinc-300 dark:border-zinc-700'
+                        }`}
                     >
-                        {isThisPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
-                    </button>
-
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                            <h3 className="font-bold truncate pr-2 text-lg tracking-tight">{title}</h3>
-                            <Badge variant="outline" className="rounded-none uppercase text-[10px] tracking-widest border-foreground/20">
-                                {status}
-                            </Badge>
-                        </div>
-
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground font-mono">
-                            <span className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" /> {duration}
-                            </span>
-                            <span className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3" /> {date}
-                            </span>
-                        </div>
-                    </div>
-
-                    <Button variant="ghost" size="icon" className="rounded-none hover:bg-secondary">
+                        {status === 'registered' ? '✓ REGISTERED' : '⏳ PENDING'}
+                    </Badge>
+                    <Button variant="ghost" size="icon" className="rounded-sm hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-bronze h-7 w-7">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </div>
 
+                {/* Large Play Button & Track Info */}
+                <div className="flex items-start gap-4 mb-4">
+                    <button
+                        onClick={handlePlay}
+                        className={`w-16 h-16 flex-shrink-0 flex items-center justify-center transition-all duration-300 border-2 rounded-sm shadow-sm ${
+                            isThisPlaying
+                                ? 'bg-bronze border-bronze text-white shadow-refined'
+                                : 'bg-background border-zinc-200 dark:border-zinc-800 text-foreground hover:bg-bronze hover:border-bronze hover:text-white hover:shadow-refined'
+                        }`}
+                    >
+                        {isThisPlaying ? <Pause className="h-7 w-7" /> : <Play className="h-7 w-7 ml-0.5" />}
+                    </button>
+
+                    <div className="flex-1 min-w-0">
+                        {/* Larger, More Readable Title */}
+                        <h3 className="font-bold text-xl leading-tight mb-2 tracking-tight line-clamp-2">
+                            {title}
+                        </h3>
+                        <p className="text-xs text-muted-foreground font-mono mb-1">{artist}</p>
+                    </div>
+                </div>
+
+                {/* Track Metadata */}
+                <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono mb-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+                    <span className="flex items-center gap-1.5">
+                        <Clock className="h-3.5 w-3.5" /> {duration}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                        <Calendar className="h-3.5 w-3.5" /> {date}
+                    </span>
+                </div>
+
                 {/* Story Protocol Hash */}
                 {storyTxHash && (
-                    <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Story IP Asset</span>
-                        <a
-                            href={`https://aeneid.explorer.story.foundation/transactions/${storyTxHash}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[10px] font-mono hover:underline truncate max-w-[150px]"
-                        >
-                            {storyTxHash.slice(0, 6)}...{storyTxHash.slice(-4)}
-                        </a>
+                    <div className="mt-auto pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-mono">Story IP</span>
+                            <a
+                                href={`https://aeneid.explorer.story.foundation/transactions/${storyTxHash}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[10px] font-mono text-bronze hover:text-bronze/80 hover:underline truncate max-w-[150px] transition-colors"
+                            >
+                                {storyTxHash.slice(0, 8)}...{storyTxHash.slice(-6)}
+                            </a>
+                        </div>
                     </div>
                 )}
             </div>
