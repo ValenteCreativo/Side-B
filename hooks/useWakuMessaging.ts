@@ -185,10 +185,49 @@ export function useWakuMessaging(userAddress: string) {
         }
     }, [userAddress])
 
+    // Delete a specific message
+    const deleteMessage = useCallback((messageId: string) => {
+        setMessages((prev) => prev.filter((m) => m.id !== messageId))
+    }, [])
+
+    // Get unique conversations with last message
+    const getUniqueConversations = useCallback(() => {
+        if (!userAddress) return []
+
+        const conversationMap = new Map<string, {
+            address: string
+            lastMessage: IDirectMessage
+            unreadCount: number
+        }>()
+
+        messages.forEach((msg) => {
+            // Determine the other participant
+            const otherAddress = msg.from.toLowerCase() === userAddress.toLowerCase()
+                ? msg.to.toLowerCase()
+                : msg.from.toLowerCase()
+
+            const existing = conversationMap.get(otherAddress)
+
+            if (!existing || msg.timestamp > existing.lastMessage.timestamp) {
+                conversationMap.set(otherAddress, {
+                    address: otherAddress,
+                    lastMessage: msg,
+                    unreadCount: 0, // Could track read status in localStorage
+                })
+            }
+        })
+
+        // Convert to array and sort by most recent
+        return Array.from(conversationMap.values())
+            .sort((a, b) => b.lastMessage.timestamp - a.lastMessage.timestamp)
+    }, [messages, userAddress])
+
     return {
         messages,
         sendMessage,
         getConversation,
+        getUniqueConversations,
+        deleteMessage,
         clearMessages,
         isSending,
         isReady,

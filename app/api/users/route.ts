@@ -13,8 +13,18 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const currentUserId = searchParams.get('currentUserId')
+    const search = searchParams.get('search')
+
+    // Build where clause for search
+    const whereClause = search ? {
+      OR: [
+        { displayName: { contains: search, mode: 'insensitive' as const } },
+        { walletAddress: { contains: search, mode: 'insensitive' as const } },
+      ],
+    } : {}
 
     const users = await prisma.user.findMany({
+      where: whereClause,
       select: {
         id: true,
         walletAddress: true,
@@ -32,6 +42,7 @@ export async function GET(request: NextRequest) {
       orderBy: {
         createdAt: 'desc',
       },
+      take: search ? 10 : undefined, // Limit search results
     })
 
     // If currentUserId is provided, check if they follow each user
