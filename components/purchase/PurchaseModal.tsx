@@ -15,6 +15,7 @@ import { ShoppingCart, Loader2, CheckCircle2, AlertCircle, Wallet, CreditCard, C
 import { useEvmAddress } from '@coinbase/cdp-hooks'
 import { SendEvmTransactionButton } from '@coinbase/cdp-react'
 import { HallidayOnrampModal } from '@/components/payments/HallidayOnrampModal'
+import { NETWORK, getExplorerTxUrl } from '@/lib/network-config'
 
 interface SessionData {
     id: string
@@ -33,10 +34,6 @@ interface PurchaseModalProps {
     buyerId: string
     onSuccess?: () => void
 }
-
-// Base Mainnet USDC contract address
-const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as `0x${string}`
-const BASE_CHAIN_ID = 8453
 
 // Encode ERC20 transfer call data
 function encodeTransferData(to: string, amount: bigint): `0x${string}` {
@@ -246,11 +243,11 @@ export function PurchaseModal({
                                 {evmAddress ? (
                                     <SendEvmTransactionButton
                                         account={evmAddress}
-                                        network="base"
+                                        network={NETWORK.cdpNetwork}
                                         transaction={{
-                                            to: USDC_ADDRESS,
+                                            to: NETWORK.usdcAddress,
                                             data: transferData,
-                                            chainId: BASE_CHAIN_ID,
+                                            chainId: NETWORK.chainId,
                                             type: 'eip1559',
                                         }}
                                         onSuccess={handleTransactionSuccess}
@@ -293,7 +290,7 @@ export function PurchaseModal({
                             </p>
                             {txHash && (
                                 <a
-                                    href={`https://basescan.org/tx/${txHash}`}
+                                    href={getExplorerTxUrl(txHash)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-xs font-mono text-bronze hover:underline mt-2 inline-flex items-center gap-1"
@@ -314,12 +311,12 @@ export function PurchaseModal({
                             </p>
                             {txHash && (
                                 <a
-                                    href={`https://basescan.org/tx/${txHash}`}
+                                    href={getExplorerTxUrl(txHash)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-xs font-mono text-bronze hover:underline block"
                                 >
-                                    View transaction on BaseScan →
+                                    View transaction on {NETWORK.explorerName} →
                                 </a>
                             )}
                             <Button

@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { truncateAddress } from '@/lib/utils'
+import { NETWORK, getExplorerAddressUrl, getExplorerTxUrl, isTestnet } from '@/lib/network-config'
 import {
   Wallet,
   Send,
@@ -23,7 +24,8 @@ import {
   Loader2,
   DollarSign,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  Coins
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { formatDistanceToNow } from 'date-fns'
@@ -299,7 +301,7 @@ export default function WalletPage() {
                     className="rounded-sm border border-zinc-200 dark:border-zinc-800 hover-bronze hover:text-bronze"
                   >
                     <a
-                      href={`https://basescan.org/address/${user.walletAddress}`}
+                      href={getExplorerAddressUrl(user.walletAddress)}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -308,6 +310,13 @@ export default function WalletPage() {
                   </Button>
                 </div>
               </div>
+              {isTestnet() && (
+                <div className="mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                  <Badge variant="outline" className="rounded-sm text-[10px] border-amber-500 text-amber-600">
+                    ⚠️ {NETWORK.name} (Testnet)
+                  </Badge>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -486,19 +495,88 @@ export default function WalletPage() {
               </Card>
             </TabsContent>
 
-            {/* Bridge Tab */}
+            {/* Bridge/Swap Tab */}
             <TabsContent value="bridge">
               <Card className="rounded-md border border-zinc-200 dark:border-zinc-800 shadow-refined">
                 <CardHeader className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
-                  <CardTitle className="font-mono uppercase tracking-widest text-sm">Bridge Assets</CardTitle>
-                  <p className="text-xs text-muted-foreground">Transfer tokens between networks</p>
-                </CardHeader>
-                <CardContent className="p-12 text-center">
-                  <ArrowDownUp className="h-16 w-16 mx-auto text-muted-foreground opacity-50 mb-4" />
-                  <p className="text-muted-foreground font-mono mb-4">BRIDGE_COMING_SOON</p>
+                  <CardTitle className="font-mono uppercase tracking-widest text-sm">Get Funds</CardTitle>
                   <p className="text-xs text-muted-foreground">
-                    Bridge functionality will allow you to transfer assets between Base and other networks
+                    {isTestnet() ? 'Get test tokens for development' : 'Bridge assets between networks'}
                   </p>
+                </CardHeader>
+                <CardContent className="p-6 space-y-6">
+                  {isTestnet() ? (
+                    <>
+                      {/* Testnet Faucets */}
+                      <div className="space-y-4">
+                        <div className="p-4 border border-zinc-200 dark:border-zinc-800 rounded-sm">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-full">
+                              <Coins className="h-5 w-5 text-blue-600" />
+                            </div>
+                            <div>
+                              <p className="font-bold">Get Test ETH</p>
+                              <p className="text-xs text-muted-foreground">Free testnet ETH for gas fees</p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            className="w-full rounded-sm"
+                            asChild
+                          >
+                            <a
+                              href="https://www.coinbase.com/faucets/base-ethereum-goerli-faucet"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Open Base Faucet
+                            </a>
+                          </Button>
+                        </div>
+
+                        <div className="p-4 border border-zinc-200 dark:border-zinc-800 rounded-sm">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-full">
+                              <DollarSign className="h-5 w-5 text-green-600" />
+                            </div>
+                            <div>
+                              <p className="font-bold">Get Test USDC</p>
+                              <p className="text-xs text-muted-foreground">Free testnet USDC for purchases</p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            className="w-full rounded-sm"
+                            asChild
+                          >
+                            <a
+                              href="https://faucet.circle.com/"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Open Circle USDC Faucet
+                            </a>
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="p-4 border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-900/20 rounded-sm">
+                        <p className="text-xs text-amber-700 dark:text-amber-400">
+                          💡 <strong>Tip:</strong> After getting test tokens, copy your wallet address above and paste it into the faucet. Tokens usually arrive within a few seconds.
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8">
+                      <ArrowDownUp className="h-16 w-16 mx-auto text-muted-foreground opacity-50 mb-4" />
+                      <p className="text-muted-foreground font-mono mb-4">BRIDGE_COMING_SOON</p>
+                      <p className="text-xs text-muted-foreground">
+                        Bridge functionality will allow you to transfer assets between Base and other networks
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -563,7 +641,7 @@ export default function WalletPage() {
                                   {tx.status.toUpperCase()}
                                 </Badge>
                                 <a
-                                  href={`https://basescan.org/tx/${tx.hash}`}
+                                  href={getExplorerTxUrl(tx.hash)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-muted-foreground hover:text-bronze transition-refined"

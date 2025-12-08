@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createPublicClient, http, formatEther, type Address } from 'viem'
-import { base } from 'viem/chains'
+import { baseSepolia, base } from 'viem/chains'
 import { validateQuery, walletBalanceSchema } from '@/lib/validations'
+import { NETWORK, NETWORK_ENV } from '@/lib/network-config'
 
 export const dynamic = 'force-dynamic'
 
-const publicClient = createPublicClient({
-  chain: base,
-  transport: http(process.env.BASE_RPC_URL || 'https://mainnet.base.org'),
-})
+// Use appropriate chain based on network environment
+const chain = NETWORK_ENV === 'testnet' ? baseSepolia : base
 
-// USDC contract on Base
-const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as Address
+const publicClient = createPublicClient({
+  chain,
+  transport: http(NETWORK.rpcUrl),
+})
 
 const ERC20_ABI = [
   {
@@ -59,14 +60,14 @@ export async function GET(request: NextRequest) {
     // Get USDC balance
     try {
       const usdcBalance = await publicClient.readContract({
-        address: USDC_ADDRESS,
+        address: NETWORK.usdcAddress,
         abi: ERC20_ABI,
         functionName: 'balanceOf',
         args: [address as Address],
       })
 
       const usdcDecimals = await publicClient.readContract({
-        address: USDC_ADDRESS,
+        address: NETWORK.usdcAddress,
         abi: ERC20_ABI,
         functionName: 'decimals',
       })
@@ -82,9 +83,21 @@ export async function GET(request: NextRequest) {
       })
     } catch (error) {
       console.error('Failed to fetch USDC balance:', error)
+      // Add USDC with 0 balance if contract call fails
+      balances.push({
+        symbol: 'USDC',
+        name: 'USD Coin',
+        balance: '0.00',
+        usdValue: 0,
+        decimals: 6,
+      })
     }
 
-    return NextResponse.json({ balances })
+    return NextResponse.json({
+      balances,
+      network: NETWORK.name,
+      chainId: NETWORK.chainId,
+    })
   } catch (error) {
     console.error('Failed to fetch balances:', error)
     return NextResponse.json({ error: 'Failed to fetch balances' }, { status: 500 })
