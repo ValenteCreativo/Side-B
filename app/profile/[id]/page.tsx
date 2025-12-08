@@ -316,11 +316,12 @@ export default function ProfilePage() {
                                             {/* Audio Player */}
                                             <audio
                                                 controls
-                                                className="w-full h-10 rounded-sm"
+                                                className="w-full h-12 rounded-sm border border-zinc-200 dark:border-zinc-800 shadow-sm"
                                                 preload="metadata"
                                                 style={{
-                                                    filter: 'brightness(0.95) contrast(1.1)',
+                                                    backgroundColor: 'hsl(var(--background))',
                                                     accentColor: 'hsl(var(--bronze))',
+                                                    filter: 'brightness(1.05) contrast(1.05)',
                                                 }}
                                             >
                                                 <source src={session.audioUrl} type="audio/mpeg" />
