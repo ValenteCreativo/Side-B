@@ -20,6 +20,7 @@ export async function GET(
       select: {
         id: true,
         walletAddress: true,
+        role: true,
         displayName: true,
         bio: true,
         avatarUrl: true,

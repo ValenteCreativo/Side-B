@@ -32,6 +32,7 @@ interface Session {
 interface ProfileData {
     id: string
     walletAddress: string
+    role: string
     displayName: string | null
     bio: string | null
     avatarUrl: string | null
@@ -57,6 +58,8 @@ export default function ProfilePage() {
     const [profile, setProfile] = useState<ProfileData | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isFollowing, setIsFollowing] = useState(false)
+    const [isPurchasing, setIsPurchasing] = useState(false)
+    const [selectedTrack, setSelectedTrack] = useState<Session | null>(null)
 
     const userId = params.id as string
 
@@ -117,6 +120,62 @@ export default function ProfilePage() {
         }
     }
 
+    const handlePurchase = async (session: Session) => {
+        if (!user) {
+            toast({
+                title: "Sign in required",
+                description: "Please sign in to purchase tracks",
+                variant: "destructive",
+            })
+            return
+        }
+
+        if (user.id === profile?.id) {
+            toast({
+                title: "Cannot purchase",
+                description: "You cannot purchase your own tracks",
+                variant: "destructive",
+            })
+            return
+        }
+
+        setSelectedTrack(session)
+        setIsPurchasing(true)
+
+        try {
+            const response = await fetch("/api/licenses", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    sessionId: session.id,
+                    buyerId: user.id,
+                }),
+            })
+
+            if (!response.ok) {
+                const error = await response.json()
+                throw new Error(error.error || "Failed to purchase license")
+            }
+
+            toast({
+                title: "Purchase successful!",
+                description: `You now own a license for "${session.title}"`,
+            })
+
+            // Refresh profile to update license count
+            fetchProfile()
+        } catch (error: any) {
+            toast({
+                title: "Purchase failed",
+                description: error.message || "Failed to complete purchase",
+                variant: "destructive",
+            })
+        } finally {
+            setIsPurchasing(false)
+            setSelectedTrack(null)
+        }
+    }
+
     if (isLoading) {
         return (
             <AppShell>
@@ -163,9 +222,11 @@ export default function ProfilePage() {
                                         <div>
                                             <div className="flex items-center gap-3 mb-1">
                                                 <h1 className="text-3xl font-bold tracking-tight">
-                                                    {profile.displayName || "Anonymous Musician"}
+                                                    {profile.displayName || "Anonymous User"}
                                                 </h1>
-                                                <Badge variant="outline" className="rounded-sm border-zinc-200 dark:border-zinc-800 text-muted-foreground font-mono text-[10px]">MUSICIAN</Badge>
+                                                <Badge variant="outline" className="rounded-sm border-zinc-200 dark:border-zinc-800 text-muted-foreground font-mono text-[10px]">
+                                                    {profile.role || "MUSICIAN"}
+                                                </Badge>
                                             </div>
                                             <p className="text-muted-foreground font-light">
                                                 {profile.bio || "No bio yet"}
@@ -389,14 +450,24 @@ export default function ProfilePage() {
                                                                     {session._count.licenses} sold
                                                                 </span>
                                                             )}
-                                                            <Button
-                                                                size="sm"
-                                                                variant="outline"
-                                                                className="rounded-sm h-8 px-3 border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze"
-                                                                onClick={() => router.push(`/catalog?track=${session.id}`)}
-                                                            >
-                                                                <ShoppingCart className="h-3.5 w-3.5" />
-                                                            </Button>
+                                                            {!isOwnProfile && (
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    className="rounded-sm h-8 px-3 border-zinc-200 dark:border-zinc-800 hover:border-bronze hover:text-bronze"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation()
+                                                                        handlePurchase(session)
+                                                                    }}
+                                                                    disabled={isPurchasing && selectedTrack?.id === session.id}
+                                                                >
+                                                                    {isPurchasing && selectedTrack?.id === session.id ? (
+                                                                        <span className="text-[10px]">...</span>
+                                                                    ) : (
+                                                                        <ShoppingCart className="h-3.5 w-3.5" />
+                                                                    )}
+                                                                </Button>
+                                                            )}
                                                         </div>
                                                     </div>
 
