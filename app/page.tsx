@@ -239,6 +239,12 @@ export default function Home() {
           </div>
           <div className="flex gap-8">
             <Link
+              href="/pricing"
+              className="text-xs uppercase tracking-widest text-muted-foreground hover:text-bronze transition-colors"
+            >
+              Pricing
+            </Link>
+            <Link
               href="/about"
               className="text-xs uppercase tracking-widest text-muted-foreground hover:text-bronze transition-colors"
             >
