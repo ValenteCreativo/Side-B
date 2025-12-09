@@ -59,23 +59,26 @@ export async function GET(request: NextRequest) {
 
     if (etherscanApiKey) {
       // Etherscan API V2 endpoint - single endpoint for all chains with chainid parameter
-      const response = await fetch(
-        `https://api.etherscan.io/v2/api?` + new URLSearchParams({
-          chainid: NETWORK.chainId.toString(),
-          module: 'account',
-          action: 'txlist',
-          address: address,
-          startblock: fromBlock.toString(),
-          endblock: currentBlock.toString(),
-          page: '1',
-          offset: '50',
-          sort: 'desc',
-          apikey: etherscanApiKey,
-        }).toString()
-      )
+      const apiUrl = `https://api.etherscan.io/v2/api?` + new URLSearchParams({
+        chainid: NETWORK.chainId.toString(),
+        module: 'account',
+        action: 'txlist',
+        address: address,
+        startblock: fromBlock.toString(),
+        endblock: currentBlock.toString(),
+        page: '1',
+        offset: '50',
+        sort: 'desc',
+        apikey: etherscanApiKey,
+      }).toString()
+
+      console.log('[Transactions API] Fetching from:', apiUrl.replace(etherscanApiKey, 'REDACTED'))
+
+      const response = await fetch(apiUrl)
 
       if (response.ok) {
         const data = await response.json()
+        console.log('[Transactions API] Response status:', data.status, 'Result count:', data.result?.length || 0)
 
         if (data.status === '1' && data.result) {
           const transactions = data.result.map((tx: any) => ({
@@ -89,8 +92,19 @@ export async function GET(request: NextRequest) {
           }))
 
           return NextResponse.json({ transactions })
+        } else {
+          // API returned status 0 or no results
+          console.log('[Transactions API] No transactions or error:', data.message || data.result)
+          return NextResponse.json({
+            transactions: [],
+            message: data.message || 'No transactions found for this address'
+          })
         }
+      } else {
+        console.error('[Transactions API] HTTP error:', response.status, await response.text())
       }
+    } else {
+      console.warn('[Transactions API] No ETHERSCAN_API_KEY configured')
     }
 
     // Fallback: Return empty array if Etherscan API key is not configured

@@ -1,6 +1,6 @@
 "use client"
 
-import { AppShell } from "@/components/ui/AppShell"
+import { AppShell } from "@/components/layout/AppShell"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DollarSign, Github, Shield, Zap } from "lucide-react"
 import { PageHero } from "@/components/ui/PageHero"
