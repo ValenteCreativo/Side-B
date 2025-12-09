@@ -139,7 +139,7 @@ export default function Home() {
         <div className="container mx-auto px-6">
           <div className="max-w-5xl mx-auto text-center">
             <h2 className="text-display mb-12 tracking-tight">
-              NOT CONTENT. <br />
+              NOT CONTENT.  <br />
               <span className="text-bronze">ART.</span>
             </h2>
             <p className="text-xl md:text-3xl font-light leading-relaxed text-muted-foreground max-w-3xl mx-auto">
