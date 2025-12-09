@@ -73,50 +73,50 @@ export default function Home() {
               front={
                 <div className="relative w-full h-full flex items-center justify-center">
                   {/* Centro del disco sin texto, limpio */}
-<div className="w-2 h-2 rounded-full bg-bronze/80" />
+                  <div className="w-2 h-2 rounded-full bg-bronze/80" />
 
-{/* Sello holográfico centrado */}
-{!vinylFlipped && (
-  <div className="absolute inset-0 flex items-center justify-center">
-    <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--bronze)/0.6)] bg-[linear-gradient(120deg,rgba(255,255,255,0.08),hsl(var(--bronze)/0.45),rgba(148,163,184,0.3))] px-6 py-2 text-[9px] font-mono uppercase tracking-[0.25em] backdrop-blur-sm shadow-[0_0_18px_rgba(251,191,36,0.45)] group-hover:shadow-[0_0_26px_rgba(251,191,36,0.75)] group-hover:-translate-y-0.5 group-hover:brightness-110 transition-all">
-      <span className="h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse" />
-      <span>PLAY THE RECORD</span>
-    </div>
-  </div>
-)}
+                  {/* Sello holográfico centrado */}
+                  {!vinylFlipped && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--bronze)/0.6)] bg-[linear-gradient(120deg,rgba(255,255,255,0.08),hsl(var(--bronze)/0.45),rgba(148,163,184,0.3))] px-6 py-2 text-[9px] font-mono uppercase tracking-[0.25em] backdrop-blur-sm shadow-[0_0_18px_rgba(251,191,36,0.45)] group-hover:shadow-[0_0_26px_rgba(251,191,36,0.75)] group-hover:-translate-y-0.5 group-hover:brightness-110 transition-all">
+                        <span className="h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse" />
+                        <span>PLAY THE RECORD</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               }
               back={
                 <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-  {/* MUSIC / IS / ART en líneas, desencriptado al voltear */}
-  <EncryptedText
-    text="MUSIC"
-    delay={200}
-    speed={90}
-    trigger={vinylFlipped}
-    loop={false}
-    loopDelay={15000}
-    className="font-mono text-xl md:text-2xl font-bold tracking-[0.5em] text-center"
-  />
-  <EncryptedText
-    text="IS"
-    delay={400}
-    speed={90}
-    trigger={vinylFlipped}
-    loop={false}
-    loopDelay={15000}
-    className="font-mono text-xl md:text-2xl font-bold tracking-[0.5em] text-center"
-  />
-  <EncryptedText
-    text="ART"
-    delay={600}
-    speed={90}
-    trigger={vinylFlipped}
-    loop={false}
-    loopDelay={15000}
-    className="font-mono text-xl md:text-2xl font-bold tracking-[0.5em] text-center"
-  />
-</div>
+                  {/* MUSIC / IS / ART en líneas, desencriptado al voltear */}
+                  <EncryptedText
+                    text="MUSIC"
+                    delay={200}
+                    speed={90}
+                    trigger={vinylFlipped}
+                    loop={false}
+                    loopDelay={15000}
+                    className="font-mono text-xl md:text-2xl font-bold tracking-[0.5em] text-center"
+                  />
+                  <EncryptedText
+                    text="IS"
+                    delay={400}
+                    speed={90}
+                    trigger={vinylFlipped}
+                    loop={false}
+                    loopDelay={15000}
+                    className="font-mono text-xl md:text-2xl font-bold tracking-[0.5em] text-center"
+                  />
+                  <EncryptedText
+                    text="ART"
+                    delay={600}
+                    speed={90}
+                    trigger={vinylFlipped}
+                    loop={false}
+                    loopDelay={15000}
+                    className="font-mono text-xl md:text-2xl font-bold tracking-[0.5em] text-center"
+                  />
+                </div>
               }
             />
           </motion.div>
@@ -144,18 +144,18 @@ export default function Home() {
             </h2>
             <p className="text-xl md:text-3xl font-light leading-relaxed text-muted-foreground max-w-3xl mx-auto">
               Streaming pays in fractions. Real income mostly comes if you turn yourself into content. But the hours you
-              spend in rehearsal rooms, the late nights experimenting, the creative process itself—
+              spend in rehearsal rooms, the late nights experimenting, the voice memos, the creative process itself—
               <span className="text-foreground font-bold">that has value</span>.
             </p>
             <p className="text-xl md:text-2xl font-light leading-relaxed text-muted-foreground max-w-3xl mx-auto mt-8">
-  Side B Sessions honors the craft. Sign in with your email. Upload your sound.
-  Register it as intellectual property. License it globally.
-</p>
-<p className="text-xl md:text-2xl font-light leading-relaxed max-w-3xl mx-auto mt-4">
-  <span className="text-bronze font-bold">
-    Earn from your art, not your follower count.
-  </span>
-</p>
+              Side B Sessions honors the craft. Sign in with your email. Upload your sound.
+              Register it as intellectual property. License it globally.
+            </p>
+            <p className="text-xl md:text-2xl font-light leading-relaxed max-w-3xl mx-auto mt-4">
+              <span className="text-bronze font-bold">
+                Earn from your art, not your follower count.
+              </span>
+            </p>
           </div>
         </div>
       </section>

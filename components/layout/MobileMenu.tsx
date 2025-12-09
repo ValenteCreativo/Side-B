@@ -17,9 +17,12 @@ import {
   TrendingUp,
   MessageSquare,
   Wallet,
+  LogIn,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn, truncateAddress } from "@/lib/utils"
+import { useUser } from "@/components/auth/UserContext"
+import { AuthModal } from "@/components/auth/AuthModal"
 
 const menuItems = [
   { icon: Home, label: "Home", href: "/" },
@@ -36,7 +39,9 @@ const menuItems = [
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
   const pathname = usePathname()
+  const { user } = useUser()
 
   return (
     <>
@@ -125,11 +130,45 @@ export function MobileMenu() {
                     )
                   })}
                 </nav>
+
+                {/* Auth Section */}
+                <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
+                  {!user ? (
+                    <Button
+                      variant="default"
+                      className="w-full justify-center"
+                      onClick={() => {
+                        setIsOpen(false)
+                        setShowAuthModal(true)
+                      }}
+                    >
+                      <LogIn className="h-4 w-4 mr-2" />
+                      SIGN UP / LOGIN
+                    </Button>
+                  ) : (
+                    <div className="flex items-center gap-3 px-3 py-2 bg-zinc-50 dark:bg-zinc-900/50 rounded-md border border-zinc-200 dark:border-zinc-800">
+                      <div className="w-8 h-8 rounded-full bg-bronze/10 flex items-center justify-center flex-shrink-0 border border-bronze/20">
+                        <User className="h-4 w-4 text-bronze" />
+                      </div>
+                      <div className="flex flex-col overflow-hidden">
+                        <span className="text-xs text-muted-foreground">Signed in as</span>
+                        <span className="font-mono text-sm truncate font-medium">
+                          {truncateAddress(user.walletAddress)}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      <AuthModal
+        open={showAuthModal}
+        onOpenChange={setShowAuthModal}
+      />
     </>
   )
 }
