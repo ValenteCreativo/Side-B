@@ -1,12 +1,16 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Mic2, Users, Globe } from "lucide-react"
 import { motion } from "framer-motion"
 import { VinylFlip } from "@/components/ui/VinylFlip"
+import { EncryptedText } from "@/components/ui/encryptedtext"
 
 export default function Home() {
+  const [vinylFlipped, setVinylFlipped] = useState(false)
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-bronze selection:text-white">
       {/* Hero Section */}
@@ -65,17 +69,54 @@ export default function Home() {
             <VinylFlip
               variant="transparent"
               className="w-80 h-80 md:w-96 md:h-96"
-              front={null}
-              back={
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="font-mono text-xl font-bold tracking-widest leading-relaxed text-center select-none">
-                    MUSIC
-                    <br />
-                    IS
-                    <br />
-                    ART
-                  </span>
+              onFlipChange={setVinylFlipped}
+              front={
+                <div className="relative w-full h-full flex items-center justify-center">
+                  {/* Centro del disco sin texto, limpio */}
+<div className="w-2 h-2 rounded-full bg-bronze/80" />
+
+{/* Sello holográfico centrado */}
+{!vinylFlipped && (
+  <div className="absolute inset-0 flex items-center justify-center">
+    <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--bronze)/0.6)] bg-[linear-gradient(120deg,rgba(255,255,255,0.08),hsl(var(--bronze)/0.45),rgba(148,163,184,0.3))] px-6 py-2 text-[9px] font-mono uppercase tracking-[0.25em] backdrop-blur-sm shadow-[0_0_18px_rgba(251,191,36,0.45)] group-hover:shadow-[0_0_26px_rgba(251,191,36,0.75)] group-hover:-translate-y-0.5 group-hover:brightness-110 transition-all">
+      <span className="h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse" />
+      <span>PLAY THE RECORD</span>
+    </div>
+  </div>
+)}
                 </div>
+              }
+              back={
+                <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+  {/* MUSIC / IS / ART en líneas, desencriptado al voltear */}
+  <EncryptedText
+    text="MUSIC"
+    delay={200}
+    speed={90}
+    trigger={vinylFlipped}
+    loop={false}
+    loopDelay={15000}
+    className="font-mono text-xl md:text-2xl font-bold tracking-[0.5em] text-center"
+  />
+  <EncryptedText
+    text="IS"
+    delay={400}
+    speed={90}
+    trigger={vinylFlipped}
+    loop={false}
+    loopDelay={15000}
+    className="font-mono text-xl md:text-2xl font-bold tracking-[0.5em] text-center"
+  />
+  <EncryptedText
+    text="ART"
+    delay={600}
+    speed={90}
+    trigger={vinylFlipped}
+    loop={false}
+    loopDelay={15000}
+    className="font-mono text-xl md:text-2xl font-bold tracking-[0.5em] text-center"
+  />
+</div>
               }
             />
           </motion.div>
@@ -107,10 +148,14 @@ export default function Home() {
               <span className="text-foreground font-bold">that has value</span>.
             </p>
             <p className="text-xl md:text-2xl font-light leading-relaxed text-muted-foreground max-w-3xl mx-auto mt-8">
-              Side B Sessions honors the craft. Sign in with your email. Upload your sound. Register it
-              as intellectual property. License it globally.{" "}
-              <span className="text-bronze font-bold">Earn from your art, not your follower count.</span>
-            </p>
+  Side B Sessions honors the craft. Sign in with your email. Upload your sound.
+  Register it as intellectual property. License it globally.
+</p>
+<p className="text-xl md:text-2xl font-light leading-relaxed max-w-3xl mx-auto mt-4">
+  <span className="text-bronze font-bold">
+    Earn from your art, not your follower count.
+  </span>
+</p>
           </div>
         </div>
       </section>
@@ -152,13 +197,13 @@ export default function Home() {
                 <span className="text-bronze">your creative vision.</span>
               </h2>
               <p className="text-xl md:text-2xl font-light leading-relaxed text-muted-foreground">
-                Films. Podcasts. Games. Content. Find original, licensable music with verified ownership.
-                No stock libraries. No generic loops. Just independent artists creating real sound.
+                Films. Podcasts. Games. Content. Find original, licensable music with verified ownership. No stock
+                libraries. No generic loops. Just independent artists creating real sound.
                 <br />
                 <br />
                 Every track comes with IP on-chain and clear{" "}
-                <span className="text-foreground font-semibold">commercial licensing terms</span>,
-                so you can use it in your projects without legal gray areas.
+                <span className="text-foreground font-semibold">commercial licensing terms</span>, so you can use it in
+                your projects without legal gray areas.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -184,14 +229,14 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-12 bg-zinc-50 dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800">
         <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="flex flex-col items-start md:items-center gap-1">
-  <div className="text-[10px] font-mono text-muted-foreground tracking-[0.25em] uppercase">
-    © 2025 SIDE B SESSIONS
-  </div>
-  <div className="text-[9px] font-mono text-muted-foreground/70 tracking-widest">
-    From México with <span className="text-bronze">❤️‍🔥</span>
-  </div>
-</div>
+          <div className="flex flex-col items-start md:items-center gap-1">
+            <div className="text-[10px] font-mono text-muted-foreground tracking-[0.25em] uppercase">
+              © 2025 SIDE B SESSIONS
+            </div>
+            <div className="text-[9px] font-mono text-muted-foreground/70 tracking-widest">
+              From México with <span className="text-bronze">❤️‍🔥</span>
+            </div>
+          </div>
           <div className="flex gap-8">
             <Link
               href="/about"
