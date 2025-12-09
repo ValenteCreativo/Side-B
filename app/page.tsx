@@ -143,18 +143,20 @@ export default function Home() {
               <span className="text-bronze">ART.</span>
             </h2>
             <p className="text-xl md:text-3xl font-light leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-              Streaming pays in fractions. Real income mostly comes if you turn yourself into content. But the hours you
-              spend in rehearsal rooms, the late nights experimenting, the voice memos, the creative process itself—
-              <span className="text-foreground font-bold">that has value</span>.
+              Streaming pays in fractions.
+              <br />
+              The industry demands attention, not art.
+              <br />
+              But the late-night experiments, the voice memos, the happy accidents —
+              <br />
+              <span className="text-foreground font-bold">that&apos;s where music is born.</span>
             </p>
             <p className="text-xl md:text-2xl font-light leading-relaxed text-muted-foreground max-w-3xl mx-auto mt-8">
-              Side B Sessions honors the craft. Sign in with your email. Upload your sound.
-              Register it as intellectual property. License it globally.
+              Side B Sessions honors the craft. Upload your sound. Register your rights. Let your art be licensed —
+              globally.
             </p>
             <p className="text-xl md:text-2xl font-light leading-relaxed max-w-3xl mx-auto mt-4">
-              <span className="text-bronze font-bold">
-                Earn from your art, not your follower count.
-              </span>
+              <span className="text-bronze font-bold">Earn from your art, not your follower count.</span>
             </p>
           </div>
         </div>
@@ -166,7 +168,7 @@ export default function Home() {
           <FeatureCard
             icon={<Mic2 className="h-10 w-10 text-bronze" />}
             title="REGISTER & EARN"
-            description="Upload your sessions, register them as IP on-chain, and open them up for licensing to filmmakers, game devs, and creators."
+            description="Register your music on-chain and unlock automatic commercial licensing for filmmakers, game devs, and creators."
             link="/studio"
           />
           <FeatureCard
@@ -178,7 +180,7 @@ export default function Home() {
           <FeatureCard
             icon={<Globe className="h-10 w-10 text-bronze" />}
             title="GLOBAL IP RIGHTS"
-            description="Blockchain-verified ownership and clear licensing terms, powered by Story Protocol. Keep your rights, choose how your music is used."
+            description="You keep the copyright. Your art works for you."
             link="/rights"
           />
         </div>
@@ -197,13 +199,12 @@ export default function Home() {
                 <span className="text-bronze">your creative vision.</span>
               </h2>
               <p className="text-xl md:text-2xl font-light leading-relaxed text-muted-foreground">
-                Films. Podcasts. Games. Content. Find original, licensable music with verified ownership. No stock
-                libraries. No generic loops. Just independent artists creating real sound.
+                Films. Podcasts. Games. Find real music by real artists. No stock libraries. No generic loops. Just
+                independent artists creating real sound.
                 <br />
                 <br />
-                Every track comes with IP on-chain and clear{" "}
-                <span className="text-foreground font-semibold">commercial licensing terms</span>, so you can use it in
-                your projects without legal gray areas.
+                <span className="text-foreground font-semibold">Commercial rights included.</span> Use great music
+                without bots or legal gray areas.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
