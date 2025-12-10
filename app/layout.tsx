@@ -11,12 +11,14 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
-  title: "Side B Sessions - Independent Music Marketplace",
-  description: "An independent music marketplace for musicians to register and license their music as IP on Story Protocol",
+  title: "Side B Sessions — Not Content. Art.",
+  description:
+    "A new home for independent music. Artists keep ownership. Creators get commercial-ready licenses. On-chain IP powered by Story Protocol.",
   icons: {
     icon: "/assets/catalog-art.png",
   },
 };
+
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
