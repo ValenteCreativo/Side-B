@@ -85,7 +85,7 @@ export function CoinbaseAuth({ onSuccess }: CoinbaseAuthProps) {
 
       toast({
         title: 'Authentication successful',
-        description: 'Your wallet has been created',
+        description: 'Welcome to Side B',
       })
 
       // Wait a moment for the wallet address to be available
@@ -139,7 +139,7 @@ export function CoinbaseAuth({ onSuccess }: CoinbaseAuthProps) {
         <CardTitle>Sign in with Email</CardTitle>
         <CardDescription>
           {!flowId
-            ? "Enter your email to receive a verification code"
+            ? "Enter your email to sign in or create account"
             : "Enter the 6-digit code sent to your email"
           }
         </CardDescription>
@@ -160,7 +160,7 @@ export function CoinbaseAuth({ onSuccess }: CoinbaseAuthProps) {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Sending...' : 'Send Verification Code'}
+              {isLoading ? 'Sending...' : 'Continue with Email'}
             </Button>
           </form>
         ) : (

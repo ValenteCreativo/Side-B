@@ -65,7 +65,7 @@ export function AuthModal({ open, onOpenChange, defaultRole }: AuthModalProps) {
     if (!selectedRole) return 'Select your role to get started with Side B'
     if (!authMethod) return 'Choose your preferred authentication method'
     return authMethod === 'email'
-      ? 'Create a new wallet with your email'
+      ? 'Sign in or create account with your email'
       : 'Connect your existing wallet'
   }
 
@@ -121,7 +121,7 @@ export function AuthModal({ open, onOpenChange, defaultRole }: AuthModalProps) {
                 <div>
                   <div className="font-semibold">Sign in with Email</div>
                   <div className="text-xs text-muted-foreground">
-                    Create a new wallet automatically
+                    Login or create account with email
                   </div>
                 </div>
               </Button>
