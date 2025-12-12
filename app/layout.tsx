@@ -11,9 +11,9 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
-  title: "Side B Sessions — Not Content. Art.",
+  title: "Side B Sessions — Marketplace for Independent Musicians",
   description:
-    "A new home for independent music. Artists keep ownership. Creators get commercial-ready licenses. On-chain IP powered by Story Protocol.",
+    "Marketplace for independent musicians. Artists keep ownership. Creators get commercial-ready licenses. On-chain IP powered by Story Protocol.",
   icons: {
     icon: "/assets/catalog-art.png",
   },
