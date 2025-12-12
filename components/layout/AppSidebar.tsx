@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import { useUser } from "@/components/auth/UserContext"
 import { AuthModal } from "@/components/auth/AuthModal"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 // Public pages - visible to all users
 const publicMenuItems = [
@@ -55,6 +56,7 @@ const sharedMenuItems = [
 export function AppSidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [showAuthModal, setShowAuthModal] = useState(false)
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false)
     const [musicianToolsOpen, setMusicianToolsOpen] = useState(false)
     const [creatorToolsOpen, setCreatorToolsOpen] = useState(false)
     const pathname = usePathname()
@@ -167,19 +169,20 @@ export function AppSidebar() {
                         </CollapsibleContent>
                     </Collapsible>
                 ) : !user ? (
-                    <Collapsible>
-                        <CollapsibleTrigger className="w-full opacity-40 cursor-not-allowed" disabled>
-                            <div className="flex items-center gap-4 px-4 py-3 text-muted-foreground rounded-sm">
-                                <Lock className="h-5 w-5 flex-shrink-0" />
-                                {!isCollapsed && (
-                                    <>
-                                        <span className="whitespace-nowrap flex-1 text-left font-medium">Musician Tools</span>
-                                        <ChevronDown className="h-4 w-4" />
-                                    </>
-                                )}
-                            </div>
-                        </CollapsibleTrigger>
-                    </Collapsible>
+                    <div
+                        className="w-full opacity-40 cursor-pointer hover:opacity-60 transition-opacity"
+                        onClick={() => setShowLoginPrompt(true)}
+                    >
+                        <div className="flex items-center gap-4 px-4 py-3 text-muted-foreground rounded-sm">
+                            <Lock className="h-5 w-5 flex-shrink-0" />
+                            {!isCollapsed && (
+                                <>
+                                    <span className="whitespace-nowrap flex-1 text-left font-medium">Musician Tools</span>
+                                    <ChevronDown className="h-4 w-4" />
+                                </>
+                            )}
+                        </div>
+                    </div>
                 ) : null}
 
                 {/* Creator Tools - Collapsible */}
@@ -226,19 +229,20 @@ export function AppSidebar() {
                         </CollapsibleContent>
                     </Collapsible>
                 ) : !user ? (
-                    <Collapsible>
-                        <CollapsibleTrigger className="w-full opacity-40 cursor-not-allowed" disabled>
-                            <div className="flex items-center gap-4 px-4 py-3 text-muted-foreground rounded-sm">
-                                <Lock className="h-5 w-5 flex-shrink-0" />
-                                {!isCollapsed && (
-                                    <>
-                                        <span className="whitespace-nowrap flex-1 text-left font-medium">Creator Tools</span>
-                                        <ChevronDown className="h-4 w-4" />
-                                    </>
-                                )}
-                            </div>
-                        </CollapsibleTrigger>
-                    </Collapsible>
+                    <div
+                        className="w-full opacity-40 cursor-pointer hover:opacity-60 transition-opacity"
+                        onClick={() => setShowLoginPrompt(true)}
+                    >
+                        <div className="flex items-center gap-4 px-4 py-3 text-muted-foreground rounded-sm">
+                            <Lock className="h-5 w-5 flex-shrink-0" />
+                            {!isCollapsed && (
+                                <>
+                                    <span className="whitespace-nowrap flex-1 text-left font-medium">Creator Tools</span>
+                                    <ChevronDown className="h-4 w-4" />
+                                </>
+                            )}
+                        </div>
+                    </div>
                 ) : null}
 
                 {/* Shared pages - only show when logged in */}
@@ -340,6 +344,30 @@ export function AppSidebar() {
                     {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                 </Button>
             </div>
+
+            {/* Login Prompt Dialog */}
+            <Dialog open={showLoginPrompt} onOpenChange={setShowLoginPrompt}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Login Required</DialogTitle>
+                        <DialogDescription>
+                            Please sign in to access this feature
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-4 py-4">
+                        <Button
+                            onClick={() => {
+                                setShowLoginPrompt(false)
+                                setShowAuthModal(true)
+                            }}
+                            className="w-full"
+                        >
+                            <LogIn className="h-4 w-4 mr-2" />
+                            Sign In
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
 
             {/* Auth Modal */}
             <AuthModal

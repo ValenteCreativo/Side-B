@@ -26,6 +26,7 @@ import { cn, truncateAddress } from "@/lib/utils"
 import { useUser } from "@/components/auth/UserContext"
 import { AuthModal } from "@/components/auth/AuthModal"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 // Public pages - visible to all users
 const publicMenuItems = [
@@ -57,6 +58,7 @@ const sharedMenuItems = [
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
   const [musicianToolsOpen, setMusicianToolsOpen] = useState(false)
   const [creatorToolsOpen, setCreatorToolsOpen] = useState(false)
   const pathname = usePathname()
@@ -194,15 +196,16 @@ export function MobileMenu() {
                       </CollapsibleContent>
                     </Collapsible>
                   ) : !user ? (
-                    <Collapsible>
-                      <CollapsibleTrigger className="w-full opacity-40 cursor-not-allowed" disabled>
-                        <div className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md text-muted-foreground border border-transparent">
-                          <Lock className="h-5 w-5 flex-shrink-0" />
-                          <span className="tracking-wide flex-1 text-left">Musician Tools</span>
-                          <ChevronDown className="h-4 w-4" />
-                        </div>
-                      </CollapsibleTrigger>
-                    </Collapsible>
+                    <div
+                      className="w-full opacity-40 cursor-pointer hover:opacity-60 transition-opacity"
+                      onClick={() => setShowLoginPrompt(true)}
+                    >
+                      <div className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md text-muted-foreground border border-transparent">
+                        <Lock className="h-5 w-5 flex-shrink-0" />
+                        <span className="tracking-wide flex-1 text-left">Musician Tools</span>
+                        <ChevronDown className="h-4 w-4" />
+                      </div>
+                    </div>
                   ) : null}
 
                   {/* Creator Tools - Collapsible */}
@@ -249,15 +252,16 @@ export function MobileMenu() {
                       </CollapsibleContent>
                     </Collapsible>
                   ) : !user ? (
-                    <Collapsible>
-                      <CollapsibleTrigger className="w-full opacity-40 cursor-not-allowed" disabled>
-                        <div className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md text-muted-foreground border border-transparent">
-                          <Lock className="h-5 w-5 flex-shrink-0" />
-                          <span className="tracking-wide flex-1 text-left">Creator Tools</span>
-                          <ChevronDown className="h-4 w-4" />
-                        </div>
-                      </CollapsibleTrigger>
-                    </Collapsible>
+                    <div
+                      className="w-full opacity-40 cursor-pointer hover:opacity-60 transition-opacity"
+                      onClick={() => setShowLoginPrompt(true)}
+                    >
+                      <div className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md text-muted-foreground border border-transparent">
+                        <Lock className="h-5 w-5 flex-shrink-0" />
+                        <span className="tracking-wide flex-1 text-left">Creator Tools</span>
+                        <ChevronDown className="h-4 w-4" />
+                      </div>
+                    </div>
                   ) : null}
 
                   {/* Shared pages - only show when logged in */}
@@ -331,6 +335,30 @@ export function MobileMenu() {
           </>
         )}
       </AnimatePresence>
+
+      {/* Login Prompt Dialog */}
+      <Dialog open={showLoginPrompt} onOpenChange={setShowLoginPrompt}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Login Required</DialogTitle>
+            <DialogDescription>
+              Please sign in to access this feature
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 py-4">
+            <Button
+              onClick={() => {
+                setShowLoginPrompt(false)
+                setShowAuthModal(true)
+              }}
+              className="w-full"
+            >
+              <LogIn className="h-4 w-4 mr-2" />
+              Sign In
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <AuthModal
         open={showAuthModal}
