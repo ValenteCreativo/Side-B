@@ -11,10 +11,15 @@ const MAX_FILE_SIZE = 50 * 1024 * 1024
 // Accepted audio formats
 const ACCEPTED_FORMATS = [
     'audio/mpeg',      // .mp3
-    'audio/mp4',       // .m4a (iPhone)
+    'audio/mp4',       // .m4a
+    'audio/x-m4a',     // .m4a (alternative MIME - mobile devices)
     'audio/wav',       // .wav
+    'audio/x-wav',     // .wav (alternative MIME - mobile devices)
     'audio/flac',      // .flac
     'audio/ogg',       // .ogg
+    'audio/aac',       // .aac (mobile recordings)
+    'audio/3gpp',      // .3gp (mobile recordings)
+    'audio/quicktime', // .mov audio (iOS)
 ]
 
 export async function POST(request: NextRequest) {
@@ -51,10 +56,18 @@ export async function POST(request: NextRequest) {
             )
         }
 
+        console.log('📁 Audio upload request:', {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            sizeInMB: (file.size / 1024 / 1024).toFixed(2)
+        })
+
         // Validate file type
         if (!ACCEPTED_FORMATS.includes(file.type)) {
+            console.error('❌ Invalid MIME type:', file.type, 'Expected one of:', ACCEPTED_FORMATS)
             return NextResponse.json(
-                { error: `Invalid file type. Accepted: ${ACCEPTED_FORMATS.join(', ')}` },
+                { error: `Invalid file type "${file.type}". Accepted: ${ACCEPTED_FORMATS.join(', ')}` },
                 { status: 400 }
             )
         }

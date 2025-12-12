@@ -18,6 +18,9 @@ const ACCEPTED_FORMATS = {
     'audio/x-wav': ['.wav'], // Alternative WAV MIME type
     'audio/flac': ['.flac'],
     'audio/ogg': ['.ogg'],
+    'audio/aac': ['.aac'],   // Mobile recordings
+    'audio/3gpp': ['.3gp'],  // Mobile recordings
+    'audio/quicktime': ['.mov'], // iOS audio
 }
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB
