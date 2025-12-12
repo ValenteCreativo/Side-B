@@ -44,16 +44,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/catalog">
                 <Button size="lg" className="rounded-sm text-lg px-8 py-6 shadow-refined hover-lift">
-                  EXPLORE CATALOG <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/studio">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="rounded-sm text-lg px-8 py-6 hover-bronze hover:text-bronze"
-                >
-                  ENTER STUDIO
+                  ENTER APP <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
             </div>
