@@ -193,7 +193,7 @@ export function MobileMenu() {
                         })}
                       </CollapsibleContent>
                     </Collapsible>
-                  ) : !user && (
+                  ) : !user ? (
                     <Collapsible>
                       <CollapsibleTrigger className="w-full opacity-40 cursor-not-allowed" disabled>
                         <div className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md text-muted-foreground border border-transparent">
@@ -203,7 +203,7 @@ export function MobileMenu() {
                         </div>
                       </CollapsibleTrigger>
                     </Collapsible>
-                  )}
+                  ) : null}
 
                   {/* Creator Tools - Collapsible */}
                   {user?.role === 'CREATOR' ? (
@@ -248,7 +248,7 @@ export function MobileMenu() {
                         })}
                       </CollapsibleContent>
                     </Collapsible>
-                  ) : !user && (
+                  ) : !user ? (
                     <Collapsible>
                       <CollapsibleTrigger className="w-full opacity-40 cursor-not-allowed" disabled>
                         <div className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md text-muted-foreground border border-transparent">
@@ -258,7 +258,7 @@ export function MobileMenu() {
                         </div>
                       </CollapsibleTrigger>
                     </Collapsible>
-                  )}
+                  ) : null}
 
                   {/* Shared pages - only show when logged in */}
                   {user && sharedMenuItems.map((item) => {

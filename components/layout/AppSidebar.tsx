@@ -166,7 +166,7 @@ export function AppSidebar() {
                             })}
                         </CollapsibleContent>
                     </Collapsible>
-                ) : !user && (
+                ) : !user ? (
                     <Collapsible>
                         <CollapsibleTrigger className="w-full opacity-40 cursor-not-allowed" disabled>
                             <div className="flex items-center gap-4 px-4 py-3 text-muted-foreground rounded-sm">
@@ -180,7 +180,7 @@ export function AppSidebar() {
                             </div>
                         </CollapsibleTrigger>
                     </Collapsible>
-                )}
+                ) : null}
 
                 {/* Creator Tools - Collapsible */}
                 {user?.role === 'CREATOR' ? (
@@ -225,7 +225,7 @@ export function AppSidebar() {
                             })}
                         </CollapsibleContent>
                     </Collapsible>
-                ) : !user && (
+                ) : !user ? (
                     <Collapsible>
                         <CollapsibleTrigger className="w-full opacity-40 cursor-not-allowed" disabled>
                             <div className="flex items-center gap-4 px-4 py-3 text-muted-foreground rounded-sm">
@@ -239,7 +239,7 @@ export function AppSidebar() {
                             </div>
                         </CollapsibleTrigger>
                     </Collapsible>
-                )}
+                ) : null}
 
                 {/* Shared pages - only show when logged in */}
                 {user && sharedMenuItems.map((item) => {
