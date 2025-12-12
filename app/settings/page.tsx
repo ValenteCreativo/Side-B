@@ -10,16 +10,19 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Camera, Save, Settings as SettingsIcon, Loader2 } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Camera, Save, Settings as SettingsIcon, Loader2, Music, Film } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { PageHero } from "@/components/ui/PageHero"
 import { VinylFlip } from "@/components/ui/VinylFlip"
+import { UserRole } from "@/lib/types"
 
 export default function ProfilePage() {
     const { user, refreshUser } = useUser()
     const { toast } = useToast()
     const [isLoading, setIsLoading] = useState(false)
     const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
+    const [isSwitchingRole, setIsSwitchingRole] = useState(false)
     const [avatarPreview, setAvatarPreview] = useState<string | null>(user?.avatarUrl || null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -161,6 +164,39 @@ export default function ProfilePage() {
 
     const handleAvatarClick = () => {
         fileInputRef.current?.click()
+    }
+
+    const handleRoleSwitch = async (newRole: UserRole) => {
+        if (!user || user.role === newRole) return
+
+        setIsSwitchingRole(true)
+        try {
+            const response = await fetch("/api/users", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: user.id,
+                    role: newRole,
+                }),
+            })
+
+            if (!response.ok) throw new Error("Failed to switch role")
+
+            await refreshUser()
+
+            toast({
+                title: "Role updated",
+                description: `You are now a ${newRole === 'MUSICIAN' ? 'Musician' : 'Creator'}`,
+            })
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to switch role. Please try again.",
+                variant: "destructive",
+            })
+        } finally {
+            setIsSwitchingRole(false)
+        }
     }
 
     if (!user) {
@@ -377,6 +413,70 @@ export default function ProfilePage() {
                                 readOnly
                                 className="font-mono text-sm bg-zinc-50 dark:bg-zinc-900/50 rounded-sm border-zinc-200 dark:border-zinc-800 shadow-sm text-muted-foreground"
                             />
+                        </div>
+
+                        {/* Role Switch */}
+                        <div className="bg-background border border-zinc-200 dark:border-zinc-800 p-6 shadow-refined rounded-md">
+                            <div className="mb-6">
+                                <h3 className="text-xl font-bold uppercase tracking-tight">Profile Role</h3>
+                                <p className="text-sm text-muted-foreground font-mono">SWITCH_BETWEEN_MUSICIAN_AND_CREATOR</p>
+                            </div>
+                            <div className="space-y-4">
+                                <p className="text-sm text-muted-foreground">
+                                    Choose how you want to use Side B. You can switch between roles at any time.
+                                </p>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRoleSwitch('MUSICIAN')}
+                                        disabled={isSwitchingRole || user.role === 'MUSICIAN'}
+                                        className={`flex flex-col items-center gap-3 p-6 rounded-md border-2 transition-all duration-300 ${
+                                            user.role === 'MUSICIAN'
+                                                ? 'border-bronze bg-bronze/10 shadow-refined'
+                                                : 'border-zinc-200 dark:border-zinc-800 hover:border-bronze/50 hover:bg-zinc-50 dark:hover:bg-zinc-900/50'
+                                        } ${isSwitchingRole ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                    >
+                                        <Music className={`h-10 w-10 ${user.role === 'MUSICIAN' ? 'text-bronze' : 'text-muted-foreground'}`} />
+                                        <div className="text-center">
+                                            <div className="font-bold text-lg mb-1">Musician</div>
+                                            <div className="text-xs text-muted-foreground">Upload & register music</div>
+                                        </div>
+                                        {user.role === 'MUSICIAN' && (
+                                            <Badge className="bg-bronze text-white border-bronze rounded-sm">
+                                                ACTIVE
+                                            </Badge>
+                                        )}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRoleSwitch('CREATOR')}
+                                        disabled={isSwitchingRole || user.role === 'CREATOR'}
+                                        className={`flex flex-col items-center gap-3 p-6 rounded-md border-2 transition-all duration-300 ${
+                                            user.role === 'CREATOR'
+                                                ? 'border-bronze bg-bronze/10 shadow-refined'
+                                                : 'border-zinc-200 dark:border-zinc-800 hover:border-bronze/50 hover:bg-zinc-50 dark:hover:bg-zinc-900/50'
+                                        } ${isSwitchingRole ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                    >
+                                        <Film className={`h-10 w-10 ${user.role === 'CREATOR' ? 'text-bronze' : 'text-muted-foreground'}`} />
+                                        <div className="text-center">
+                                            <div className="font-bold text-lg mb-1">Creator</div>
+                                            <div className="text-xs text-muted-foreground">License music for projects</div>
+                                        </div>
+                                        {user.role === 'CREATOR' && (
+                                            <Badge className="bg-bronze text-white border-bronze rounded-sm">
+                                                ACTIVE
+                                            </Badge>
+                                        )}
+                                    </button>
+                                </div>
+                                {isSwitchingRole && (
+                                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <span>Switching role...</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Submit Button */}
