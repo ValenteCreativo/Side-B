@@ -101,7 +101,10 @@ export default function ProfilePage() {
             const response = await fetch("/api/follows", {
                 method: isFollowing ? "DELETE" : "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ followingId: userId }),
+                body: JSON.stringify({
+                    followerId: user.id,
+                    followingId: userId
+                }),
             })
 
             if (!response.ok) throw new Error("Failed to update follow status")
