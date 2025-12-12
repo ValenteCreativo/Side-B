@@ -30,7 +30,7 @@ export const paymentLimiter = redis
 export const uploadLimiter = redis
     ? new Ratelimit({
         redis,
-        limiter: Ratelimit.slidingWindow(5, '1 h'), // 5 uploads per hour
+        limiter: Ratelimit.slidingWindow(10, '1 h'), // 10 uploads per hour
         analytics: true,
         prefix: 'ratelimit:upload',
     })
