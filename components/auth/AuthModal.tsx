@@ -27,42 +27,68 @@ interface AuthModalProps {
 export function AuthModal({ open, onOpenChange, defaultRole }: AuthModalProps) {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(defaultRole || null)
   const [authMethod, setAuthMethod] = useState<AuthMethod>(null)
+  const [pendingWalletAddress, setPendingWalletAddress] = useState<string | null>(null)
+  const [isCheckingUser, setIsCheckingUser] = useState(false)
   const { login } = useUser()
 
   const handleWalletConnected = async (walletAddress: string) => {
-    if (!selectedRole) {
-      console.error('No role selected')
-      return
-    }
-
     try {
-      await login(walletAddress as Address, selectedRole)
-      onOpenChange(false)
+      setIsCheckingUser(true)
+
+      // Check if user already exists
+      const checkResponse = await fetch(`/api/users/check?address=${walletAddress}`)
+      const checkData = await checkResponse.json()
+
+      if (checkData.exists && checkData.user) {
+        // Existing user - login directly
+        await login(walletAddress as Address, checkData.user.role)
+        onOpenChange(false)
+      } else {
+        // New user - show role selection
+        setPendingWalletAddress(walletAddress)
+        setAuthMethod(null) // Go back to show role selection
+      }
     } catch (error) {
       console.error('Login failed:', error)
+    } finally {
+      setIsCheckingUser(false)
     }
   }
 
-  const handleRoleSelect = (role: UserRole) => {
-    setSelectedRole(role)
+  const handleRoleSelect = async (role: UserRole) => {
+    if (pendingWalletAddress) {
+      // Complete signup for new user
+      try {
+        await login(pendingWalletAddress as Address, role)
+        onOpenChange(false)
+        setPendingWalletAddress(null)
+      } catch (error) {
+        console.error('Signup failed:', error)
+      }
+    } else {
+      // Just select role for initial flow
+      setSelectedRole(role)
+    }
   }
 
   const handleBack = () => {
-    if (authMethod) {
+    if (pendingWalletAddress) {
+      // User is in signup flow, go back to auth
+      setPendingWalletAddress(null)
+      setAuthMethod('email') // or remember which method they used
+    } else if (authMethod) {
       setAuthMethod(null)
-    } else {
-      setSelectedRole(null)
     }
   }
 
   const getTitle = () => {
-    if (!selectedRole) return 'Choose Your Role'
-    if (!authMethod) return 'How would you like to sign in?'
-    return `Sign in as ${selectedRole === 'MUSICIAN' ? 'Musician' : 'Creator'}`
+    if (pendingWalletAddress) return 'Choose Your Role'
+    if (!authMethod) return 'Sign in to Side B'
+    return 'Authenticate'
   }
 
   const getDescription = () => {
-    if (!selectedRole) return 'Select your role to get started with Side B'
+    if (pendingWalletAddress) return 'Welcome! Select your role to complete signup'
     if (!authMethod) return 'Choose your preferred authentication method'
     return authMethod === 'email'
       ? 'Sign in or create account with your email'
@@ -77,8 +103,8 @@ export function AuthModal({ open, onOpenChange, defaultRole }: AuthModalProps) {
           <DialogDescription>{getDescription()}</DialogDescription>
         </DialogHeader>
 
-        {!selectedRole ? (
-          // Step 1: Role Selection
+        {pendingWalletAddress ? (
+          // New user - Role Selection after authentication
           <div className="grid gap-4 py-4">
             <Button
               variant="outline"
@@ -109,7 +135,7 @@ export function AuthModal({ open, onOpenChange, defaultRole }: AuthModalProps) {
             </Button>
           </div>
         ) : !authMethod ? (
-          // Step 2: Auth Method Selection
+          // Step 1: Auth Method Selection (first screen for all users)
           <div className="space-y-4">
             <div className="grid gap-4 py-4">
               <Button
@@ -140,17 +166,9 @@ export function AuthModal({ open, onOpenChange, defaultRole }: AuthModalProps) {
                 </div>
               </Button>
             </div>
-
-            <Button
-              variant="ghost"
-              onClick={handleBack}
-              className="w-full"
-            >
-              ← Change Role
-            </Button>
           </div>
         ) : (
-          // Step 3: Authentication
+          // Step 2: Authentication
           <div className="space-y-4">
             {authMethod === 'email' ? (
               <CoinbaseAuth onSuccess={handleWalletConnected} />
