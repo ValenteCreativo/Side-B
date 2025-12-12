@@ -18,11 +18,14 @@ import {
   MessageSquare,
   Wallet,
   LogIn,
+  ChevronDown,
+  Lock
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn, truncateAddress } from "@/lib/utils"
 import { useUser } from "@/components/auth/UserContext"
 import { AuthModal } from "@/components/auth/AuthModal"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 // Public pages - visible to all users
 const publicMenuItems = [
@@ -54,6 +57,8 @@ const sharedMenuItems = [
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [musicianToolsOpen, setMusicianToolsOpen] = useState(false)
+  const [creatorToolsOpen, setCreatorToolsOpen] = useState(false)
   const pathname = usePathname()
   const { user } = useUser()
 
@@ -145,95 +150,114 @@ export function MobileMenu() {
                     )
                   })}
 
-                  {/* Role-specific pages for musicians */}
-                  {user?.role === 'MUSICIAN' && musicianMenuItems.map((item) => {
-                    const isActive = pathname === item.href
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setIsOpen(false)}
-                        className="block"
-                      >
-                        <div
-                          className={cn(
-                            "flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md transition-all duration-200",
-                            isActive
-                              ? "text-foreground bg-bronze/15 border border-bronze/60 shadow-sm"
-                              : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/80 border border-transparent",
-                          )}
-                        >
-                          <item.icon
-                            className={cn(
-                              "h-5 w-5 flex-shrink-0",
-                              isActive ? "text-bronze" : "text-muted-foreground",
-                            )}
-                          />
-                          <span
-                            className={cn(
-                              "tracking-wide",
-                              isActive && "font-semibold",
-                            )}
-                          >
-                            {item.label}
-                          </span>
+                  {/* Musician Tools - Collapsible */}
+                  {user?.role === 'MUSICIAN' ? (
+                    <Collapsible open={musicianToolsOpen} onOpenChange={setMusicianToolsOpen}>
+                      <CollapsibleTrigger className="w-full">
+                        <div className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/80 border border-transparent transition-all duration-200">
+                          <Mic2 className="h-5 w-5 flex-shrink-0" />
+                          <span className="tracking-wide flex-1 text-left">Musician Tools</span>
+                          <ChevronDown className={cn("h-4 w-4 transition-transform", musicianToolsOpen && "rotate-180")} />
                         </div>
-                      </Link>
-                    )
-                  })}
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="space-y-1 pl-4">
+                        {musicianMenuItems.map((item) => {
+                          const isActive = pathname === item.href
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setIsOpen(false)}
+                              className="block"
+                            >
+                              <div
+                                className={cn(
+                                  "flex items-center gap-3 py-2 px-3 text-sm font-medium rounded-md transition-all duration-200",
+                                  isActive
+                                    ? "text-foreground bg-bronze/15 border border-bronze/60 shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/80 border border-transparent",
+                                )}
+                              >
+                                <item.icon
+                                  className={cn(
+                                    "h-4 w-4 flex-shrink-0",
+                                    isActive ? "text-bronze" : "text-muted-foreground",
+                                  )}
+                                />
+                                <span className={cn("tracking-wide", isActive && "font-semibold")}>
+                                  {item.label}
+                                </span>
+                              </div>
+                            </Link>
+                          )
+                        })}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ) : !user && (
+                    <Collapsible>
+                      <CollapsibleTrigger className="w-full opacity-40 cursor-not-allowed" disabled>
+                        <div className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md text-muted-foreground border border-transparent">
+                          <Lock className="h-5 w-5 flex-shrink-0" />
+                          <span className="tracking-wide flex-1 text-left">Musician Tools</span>
+                          <ChevronDown className="h-4 w-4" />
+                        </div>
+                      </CollapsibleTrigger>
+                    </Collapsible>
+                  )}
 
-                  {/* Role-specific pages for creators */}
-                  {user?.role === 'CREATOR' && creatorMenuItems.map((item) => {
-                    const isActive = pathname === item.href
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setIsOpen(false)}
-                        className="block"
-                      >
-                        <div
-                          className={cn(
-                            "flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md transition-all duration-200",
-                            isActive
-                              ? "text-foreground bg-bronze/15 border border-bronze/60 shadow-sm"
-                              : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/80 border border-transparent",
-                          )}
-                        >
-                          <item.icon
-                            className={cn(
-                              "h-5 w-5 flex-shrink-0",
-                              isActive ? "text-bronze" : "text-muted-foreground",
-                            )}
-                          />
-                          <span
-                            className={cn(
-                              "tracking-wide",
-                              isActive && "font-semibold",
-                            )}
-                          >
-                            {item.label}
-                          </span>
+                  {/* Creator Tools - Collapsible */}
+                  {user?.role === 'CREATOR' ? (
+                    <Collapsible open={creatorToolsOpen} onOpenChange={setCreatorToolsOpen}>
+                      <CollapsibleTrigger className="w-full">
+                        <div className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/80 border border-transparent transition-all duration-200">
+                          <FileCheck className="h-5 w-5 flex-shrink-0" />
+                          <span className="tracking-wide flex-1 text-left">Creator Tools</span>
+                          <ChevronDown className={cn("h-4 w-4 transition-transform", creatorToolsOpen && "rotate-180")} />
                         </div>
-                      </Link>
-                    )
-                  })}
-
-                  {/* Show grayed-out locked items for non-logged-in users */}
-                  {!user && (
-                    <>
-                      {musicianMenuItems.concat(creatorMenuItems.filter(item => !musicianMenuItems.some(m => m.href === item.href))).map((item) => (
-                        <div
-                          key={item.href}
-                          className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md opacity-40 cursor-not-allowed border border-transparent"
-                        >
-                          <item.icon className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
-                          <span className="tracking-wide text-muted-foreground">
-                            {item.label}
-                          </span>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="space-y-1 pl-4">
+                        {creatorMenuItems.map((item) => {
+                          const isActive = pathname === item.href
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setIsOpen(false)}
+                              className="block"
+                            >
+                              <div
+                                className={cn(
+                                  "flex items-center gap-3 py-2 px-3 text-sm font-medium rounded-md transition-all duration-200",
+                                  isActive
+                                    ? "text-foreground bg-bronze/15 border border-bronze/60 shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/80 border border-transparent",
+                                )}
+                              >
+                                <item.icon
+                                  className={cn(
+                                    "h-4 w-4 flex-shrink-0",
+                                    isActive ? "text-bronze" : "text-muted-foreground",
+                                  )}
+                                />
+                                <span className={cn("tracking-wide", isActive && "font-semibold")}>
+                                  {item.label}
+                                </span>
+                              </div>
+                            </Link>
+                          )
+                        })}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ) : !user && (
+                    <Collapsible>
+                      <CollapsibleTrigger className="w-full opacity-40 cursor-not-allowed" disabled>
+                        <div className="flex items-center gap-3 py-3 px-3 text-base font-medium rounded-md text-muted-foreground border border-transparent">
+                          <Lock className="h-5 w-5 flex-shrink-0" />
+                          <span className="tracking-wide flex-1 text-left">Creator Tools</span>
+                          <ChevronDown className="h-4 w-4" />
                         </div>
-                      ))}
-                    </>
+                      </CollapsibleTrigger>
+                    </Collapsible>
                   )}
 
                   {/* Shared pages - only show when logged in */}
