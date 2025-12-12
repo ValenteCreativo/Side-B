@@ -23,15 +23,29 @@ import { Button } from "@/components/ui/button"
 import { useUser } from "@/components/auth/UserContext"
 import { AuthModal } from "@/components/auth/AuthModal"
 
-const menuItems = [
+// Public pages - visible to all users
+const publicMenuItems = [
     { icon: Disc, label: "Catalog", href: "/catalog" },
     { icon: Users, label: "Community", href: "/community" },
     { icon: User, label: "My Profile", href: "/my-profile" },
+]
+
+// Musician-only pages
+const musicianMenuItems = [
     { icon: Mic2, label: "My Studio", href: "/studio" },
-    { icon: FileCheck, label: "My Licenses", href: "/licenses" },
-    { icon: MessageSquare, label: "Messages", href: "/messages" },
-    { icon: Wallet, label: "Wallet", href: "/wallet" },
     { icon: TrendingUp, label: "Analytics", href: "/analytics" },
+    { icon: Wallet, label: "Balance", href: "/wallet" },
+]
+
+// Creator-only pages
+const creatorMenuItems = [
+    { icon: FileCheck, label: "My Licenses", href: "/licenses" },
+    { icon: Wallet, label: "Balance", href: "/wallet" },
+]
+
+// Shared pages (shown to all logged-in users)
+const sharedMenuItems = [
+    { icon: MessageSquare, label: "Messages", href: "/messages" },
     { icon: Settings, label: "Settings", href: "/settings" },
 ]
 
@@ -69,7 +83,135 @@ export function AppSidebar() {
 
             {/* Navigation */}
             <nav className="flex-1 py-8 px-4 space-y-2 overflow-y-auto custom-scrollbar">
-                {menuItems.map((item) => {
+                {/* Public pages - always visible */}
+                {publicMenuItems.map((item) => {
+                    const isActive = pathname === item.href
+                    return (
+                        <Link key={item.href} href={item.href}>
+                            <div className={cn(
+                                "flex items-center gap-4 px-4 py-3 transition-all duration-300 group relative rounded-sm",
+                                isActive
+                                    ? "text-foreground font-medium bg-white dark:bg-zinc-900 shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/50"
+                            )}>
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="activeNav"
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-bronze rounded-r-full"
+                                    />
+                                )}
+                                <item.icon className={cn("h-5 w-5 flex-shrink-0 transition-colors", isActive ? "text-bronze" : "group-hover:text-foreground")} />
+                                <AnimatePresence>
+                                    {!isCollapsed && (
+                                        <motion.span
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -10 }}
+                                            className="whitespace-nowrap"
+                                        >
+                                            {item.label}
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </Link>
+                    )
+                })}
+
+                {/* Role-specific pages */}
+                {user?.role === 'MUSICIAN' && musicianMenuItems.map((item) => {
+                    const isActive = pathname === item.href
+                    return (
+                        <Link key={item.href} href={item.href}>
+                            <div className={cn(
+                                "flex items-center gap-4 px-4 py-3 transition-all duration-300 group relative rounded-sm",
+                                isActive
+                                    ? "text-foreground font-medium bg-white dark:bg-zinc-900 shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/50"
+                            )}>
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="activeNav"
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-bronze rounded-r-full"
+                                    />
+                                )}
+                                <item.icon className={cn("h-5 w-5 flex-shrink-0 transition-colors", isActive ? "text-bronze" : "group-hover:text-foreground")} />
+                                <AnimatePresence>
+                                    {!isCollapsed && (
+                                        <motion.span
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -10 }}
+                                            className="whitespace-nowrap"
+                                        >
+                                            {item.label}
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </Link>
+                    )
+                })}
+
+                {user?.role === 'CREATOR' && creatorMenuItems.map((item) => {
+                    const isActive = pathname === item.href
+                    return (
+                        <Link key={item.href} href={item.href}>
+                            <div className={cn(
+                                "flex items-center gap-4 px-4 py-3 transition-all duration-300 group relative rounded-sm",
+                                isActive
+                                    ? "text-foreground font-medium bg-white dark:bg-zinc-900 shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900/50"
+                            )}>
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="activeNav"
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-bronze rounded-r-full"
+                                    />
+                                )}
+                                <item.icon className={cn("h-5 w-5 flex-shrink-0 transition-colors", isActive ? "text-bronze" : "group-hover:text-foreground")} />
+                                <AnimatePresence>
+                                    {!isCollapsed && (
+                                        <motion.span
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -10 }}
+                                            className="whitespace-nowrap"
+                                        >
+                                            {item.label}
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </Link>
+                    )
+                })}
+
+                {/* Show grayed-out locked items for non-logged-in users */}
+                {!user && (
+                    <>
+                        {musicianMenuItems.concat(creatorMenuItems.filter(item => !musicianMenuItems.some(m => m.href === item.href))).map((item) => (
+                            <div key={item.href} className="flex items-center gap-4 px-4 py-3 opacity-40 cursor-not-allowed rounded-sm">
+                                <item.icon className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
+                                <AnimatePresence>
+                                    {!isCollapsed && (
+                                        <motion.span
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -10 }}
+                                            className="whitespace-nowrap text-muted-foreground"
+                                        >
+                                            {item.label}
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        ))}
+                    </>
+                )}
+
+                {/* Shared pages - only show when logged in */}
+                {user && sharedMenuItems.map((item) => {
                     const isActive = pathname === item.href
                     return (
                         <Link key={item.href} href={item.href}>
