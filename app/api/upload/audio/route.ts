@@ -63,13 +63,30 @@ export async function POST(request: NextRequest) {
             sizeInMB: (file.size / 1024 / 1024).toFixed(2)
         })
 
-        // Validate file type
-        if (!ACCEPTED_FORMATS.includes(file.type)) {
-            console.error('❌ Invalid MIME type:', file.type, 'Expected one of:', ACCEPTED_FORMATS)
+        // Validate file type (with iOS fallback)
+        const fileExtension = file.name.split('.').pop()?.toLowerCase()
+        const validExtensions = ['mp3', 'm4a', 'wav', 'flac', 'ogg', 'aac', '3gp', 'mov']
+
+        // iOS sometimes sends empty MIME type, so check extension as fallback
+        const isValidMimeType = ACCEPTED_FORMATS.includes(file.type)
+        const isValidExtension = fileExtension && validExtensions.includes(fileExtension)
+
+        if (!isValidMimeType && !isValidExtension) {
+            console.error('❌ Invalid file:', {
+                type: file.type,
+                extension: fileExtension,
+                acceptedTypes: ACCEPTED_FORMATS,
+                acceptedExtensions: validExtensions
+            })
             return NextResponse.json(
-                { error: `Invalid file type "${file.type}". Accepted: ${ACCEPTED_FORMATS.join(', ')}` },
+                { error: `Invalid file type. Accepted formats: ${validExtensions.join(', ')}` },
                 { status: 400 }
             )
+        }
+
+        // Log if we're using extension fallback (iOS issue)
+        if (!isValidMimeType && isValidExtension) {
+            console.warn('⚠️ MIME type validation failed, using extension fallback (iOS device detected)')
         }
 
         // Validate file size
@@ -102,9 +119,25 @@ export async function POST(request: NextRequest) {
             type: file.type,
         })
     } catch (error) {
-        console.error('Audio upload error:', error)
+        console.error('❌ Audio upload error:', error)
+
+        // Provide more specific error messages
+        let errorMessage = 'Failed to upload audio file'
+        if (error instanceof Error) {
+            // Check for common Vercel Blob errors
+            if (error.message.includes('BLOB_READ_WRITE_TOKEN')) {
+                errorMessage = 'Server configuration error. Please contact support.'
+            } else if (error.message.includes('network') || error.message.includes('fetch')) {
+                errorMessage = 'Network error during upload. Please try again.'
+            } else if (error.message.includes('timeout')) {
+                errorMessage = 'Upload timed out. Please try again with a better connection.'
+            } else {
+                errorMessage = `Upload failed: ${error.message}`
+            }
+        }
+
         return NextResponse.json(
-            { error: 'Failed to upload audio file' },
+            { error: errorMessage },
             { status: 500 }
         )
     }

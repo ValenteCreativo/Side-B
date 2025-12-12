@@ -77,17 +77,30 @@ export function AudioUploader({ onUploadComplete, disabled }: AudioUploaderProps
         setIsUploading(true)
         setUploadProgress(0)
 
+        console.log('🚀 Starting upload:', {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            platform: navigator.platform,
+            userAgent: navigator.userAgent.substring(0, 50)
+        })
+
         try {
-            // Extract duration before upload
+            // Extract duration before upload (non-blocking)
             let durationSec: number | undefined
             try {
-                durationSec = await extractAudioDuration(file)
+                const durationPromise = extractAudioDuration(file)
+                const timeoutPromise = new Promise<number>((_, reject) =>
+                    setTimeout(() => reject(new Error('Duration extraction timeout')), 5000)
+                )
+                durationSec = await Promise.race([durationPromise, timeoutPromise])
                 console.log('📊 Audio duration extracted:', durationSec, 'seconds')
             } catch (error) {
-                console.warn('⚠️ Could not extract audio duration:', error)
+                console.warn('⚠️ Could not extract audio duration (continuing anyway):', error)
                 // Continue with upload even if duration extraction fails
             }
 
+            console.log('📤 Uploading file to server...')
             const formData = new FormData()
             formData.append('file', file)
 
@@ -96,8 +109,11 @@ export function AudioUploader({ onUploadComplete, disabled }: AudioUploaderProps
                 body: formData,
             })
 
+            console.log('📡 Server response status:', response.status)
+
             if (!response.ok) {
                 const error = await response.json()
+                console.error('❌ Server error:', error)
                 throw new Error(error.error || 'Upload failed')
             }
 
@@ -112,10 +128,23 @@ export function AudioUploader({ onUploadComplete, disabled }: AudioUploaderProps
                 description: `${file.name} uploaded successfully`,
             })
         } catch (error) {
-            console.error('Upload error:', error)
+            console.error('❌ Upload error:', error)
+
+            // More detailed error message
+            let errorMessage = 'Failed to upload audio'
+            if (error instanceof Error) {
+                errorMessage = error.message
+                // Add helpful context for common errors
+                if (error.message.includes('network') || error.message.includes('fetch')) {
+                    errorMessage = 'Network error. Check your connection and try again.'
+                } else if (error.message.includes('timeout')) {
+                    errorMessage = 'Upload timed out. Try a smaller file or better connection.'
+                }
+            }
+
             toast({
                 title: 'Upload failed',
-                description: error instanceof Error ? error.message : 'Failed to upload audio',
+                description: errorMessage,
                 variant: 'destructive',
             })
             setUploadedFile(null)
