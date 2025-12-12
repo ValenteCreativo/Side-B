@@ -320,7 +320,7 @@ export default function ProfilePage() {
                                     <p className="font-mono text-muted-foreground">NO_TRACKS_UPLOADED_YET</p>
                                 </div>
                             ) : (
-                                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                <div className="flex gap-6 overflow-x-auto pb-4 -mx-6 px-6 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 scrollbar-hide snap-x snap-mandatory sm:snap-none">
                                     {profile.sessions.map((session) => {
                                         const isThisPlaying = currentTrack?.id === session.id && isPlaying
 
@@ -330,9 +330,9 @@ export default function ProfilePage() {
                                                 session.contentType === 'PRODUCED' ? '/assets/studio-art.png' :
                                                     '/assets/catalog-art.png' // Default for JAM and others
                                         return (
+                                            <div key={session.id} className="flex-shrink-0 w-[280px] sm:w-auto snap-start">
                                             <div
-                                                key={session.id}
-                                                className="group relative bg-background border-2 border-zinc-200 dark:border-zinc-800 hover:border-bronze transition-all duration-300 rounded-md shadow-refined hover:shadow-refined-lg overflow-hidden"
+                                                className="group relative bg-background border-2 border-zinc-200 dark:border-zinc-800 hover:border-bronze transition-all duration-300 rounded-md shadow-refined hover:shadow-refined-lg overflow-hidden h-full"
                                             >
                                                 {/* Album Art / Placeholder */}
                                                 <div className="relative aspect-square bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
@@ -464,6 +464,7 @@ export default function ProfilePage() {
                                                         </div>
                                                     )}
                                                 </div>
+                                            </div>
                                             </div>
                                         )
                                     })}

@@ -82,10 +82,10 @@ export function SessionList() {
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="flex gap-6 overflow-x-auto pb-4 -mx-6 px-6 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 scrollbar-hide snap-x snap-mandatory sm:snap-none">
       {sessions.map((session) => (
+        <div key={session.id} className="flex-shrink-0 w-[280px] sm:w-auto snap-start">
         <TrackCard
-          key={session.id}
           id={session.id}
           title={session.title}
           status={session.storyAssetId ? "registered" : "pending"}
@@ -95,6 +95,7 @@ export function SessionList() {
           audioUrl={session.audioUrl}
           artist={session.owner?.displayName || truncateAddress(session.owner?.walletAddress || "")}
         />
+        </div>
       ))}
     </div>
   )

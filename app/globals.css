@@ -247,6 +247,16 @@
   .glass-strong {
     @apply backdrop-blur-2xl bg-white/90 dark:bg-zinc-900/90;
   }
+
+  /* Hide scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Smooth scrolling */

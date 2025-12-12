@@ -277,9 +277,10 @@ function CatalogPage() {
 
                   {/* Horizontal Scrollable Grid */}
                   <div className="relative">
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {/* Mobile: Horizontal scroll, Desktop: Grid */}
+                    <div className="flex gap-6 overflow-x-auto pb-4 -mx-6 px-6 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 scrollbar-hide snap-x snap-mandatory sm:snap-none">
                       {categorySessions.slice(0, 8).map((session) => (
-                        <div key={session.id} className="group relative">
+                        <div key={session.id} className="group relative flex-shrink-0 w-[280px] sm:w-auto snap-start">
                           <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-900 translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300 rounded-md" />
                           <div className="relative bg-background border border-zinc-200 dark:border-zinc-800 p-4 hover-lift h-full rounded-md shadow-sm">
                             <VinylTrack
@@ -333,9 +334,10 @@ function CatalogPage() {
                   </p>
                 </div>
 
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {/* Mobile: Horizontal scroll, Desktop: Grid */}
+                <div className="flex gap-6 overflow-x-auto pb-4 -mx-6 px-6 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 scrollbar-hide snap-x snap-mandatory sm:snap-none">
                   {filteredSessions.map((session) => (
-                    <div key={session.id} className="group relative">
+                    <div key={session.id} className="group relative flex-shrink-0 w-[280px] sm:w-auto snap-start">
                       <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-900 translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300 rounded-md" />
                       <div className="relative bg-background border border-zinc-200 dark:border-zinc-800 p-4 hover-lift h-full rounded-md shadow-sm">
                         <VinylTrack
