@@ -208,8 +208,8 @@ export default function WalletPage() {
       <AppShell>
         <div className="min-h-screen bg-background">
           <PageHero
-            title="WALLET"
-            subtitle="YOUR_BALANCE"
+            title="BALANCE"
+            subtitle="YOUR_FUNDS"
             description="Manage your funds and transactions securely"
             sideText="SIDE B"
           >
@@ -245,8 +245,8 @@ export default function WalletPage() {
     <AppShell>
       <div className="min-h-screen bg-background">
         <PageHero
-          title="WALLET"
-          subtitle="YOUR_BALANCE"
+          title="BALANCE"
+          subtitle="YOUR_FUNDS"
           description="Manage your funds and transactions securely"
           sideText="SIDE B"
         >
@@ -329,15 +329,15 @@ export default function WalletPage() {
               </TabsTrigger>
               <TabsTrigger value="send" className="rounded-sm data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-bronze data-[state=active]:shadow-sm transition-refined">
                 <Send className="h-4 w-4 mr-2" />
-                SEND
+                WITHDRAW
               </TabsTrigger>
               <TabsTrigger value="onramp" className="rounded-sm data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-bronze data-[state=active]:shadow-sm transition-refined">
                 <DollarSign className="h-4 w-4 mr-2" />
-                ON/OFF RAMP
+                ADD FUNDS
               </TabsTrigger>
               <TabsTrigger value="bridge" className="rounded-sm data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-bronze data-[state=active]:shadow-sm transition-refined">
                 <ArrowDownUp className="h-4 w-4 mr-2" />
-                BRIDGE
+                GET FUNDS
               </TabsTrigger>
               <TabsTrigger value="history" className="rounded-sm data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-bronze data-[state=active]:shadow-sm transition-refined">
                 <History className="h-4 w-4 mr-2" />
@@ -374,7 +374,7 @@ export default function WalletPage() {
                     </div>
                   ) : (
                     <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
-                      {balances.map((token, index) => (
+                      {balances.filter(token => token.symbol !== 'ETH').map((token, index) => (
                         <div key={index} className="p-4 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-refined">
                           <div className="flex items-center justify-between">
                             <div>
@@ -398,7 +398,7 @@ export default function WalletPage() {
             <TabsContent value="send">
               <Card className="rounded-md border border-zinc-200 dark:border-zinc-800 shadow-refined">
                 <CardHeader className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
-                  <CardTitle className="font-mono uppercase tracking-widest text-sm">Send Tokens</CardTitle>
+                  <CardTitle className="font-mono uppercase tracking-widest text-sm">Withdraw Funds</CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-6">
                   <div className="space-y-2">
@@ -451,9 +451,9 @@ export default function WalletPage() {
                 <CardHeader className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
                   <CardTitle className="font-mono uppercase tracking-widest flex items-center gap-2 text-sm">
                     <DollarSign className="h-4 w-4 text-bronze" />
-                    Halliday On/Off-Ramp
+                    Add Funds
                   </CardTitle>
-                  <p className="text-xs text-muted-foreground">Buy crypto with fiat or sell crypto for fiat</p>
+                  <p className="text-xs text-muted-foreground">Add money to your balance or cash out</p>
                 </CardHeader>
                 <CardContent className="p-6 space-y-6">
                   <div className="space-y-2">
