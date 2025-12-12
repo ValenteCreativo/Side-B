@@ -57,13 +57,23 @@ function CatalogPage() {
 
   // Convert sessions to playlist format
   const sessionsToPlaylist = (sessions: Session[]) => {
-    return sessions.map(s => ({
-      id: s.id,
-      title: s.title,
-      artist: s.owner.displayName || truncateAddress(s.owner.walletAddress),
-      audioUrl: s.audioUrl,
-      price: formatPrice(s.priceUsd),
-    }))
+    return sessions.map(s => {
+      // Category-specific placeholder images
+      const getPlaceholderImage = () => {
+        if (s.contentType === 'REHEARSAL') return '/assets/hero-art.png'
+        if (s.contentType === 'PRODUCED') return '/assets/studio-art.png'
+        return '/assets/catalog-art.png' // JAM or default
+      }
+
+      return {
+        id: s.id,
+        title: s.title,
+        artist: s.owner.displayName || truncateAddress(s.owner.walletAddress),
+        audioUrl: s.audioUrl,
+        imageUrl: getPlaceholderImage(),
+        price: formatPrice(s.priceUsd),
+      }
+    })
   }
 
   useEffect(() => {

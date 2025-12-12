@@ -45,7 +45,7 @@ export function VinylTrack({ id, title, artist, artistId, price, audioUrl, image
         if (currentTrack?.id === id) {
             togglePlay()
         } else {
-            playTrack({ id, title, artist, audioUrl, imageUrl, price }, playlist)
+            playTrack({ id, title, artist, audioUrl, imageUrl: imageUrl || getPlaceholderImage(), price }, playlist)
         }
     }
 
