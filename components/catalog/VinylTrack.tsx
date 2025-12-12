@@ -25,9 +25,10 @@ interface VinylTrackProps {
     ownerId?: string
     currentUserId?: string
     onPurchase?: (id: string) => void
+    playlist?: Array<{ id: string; title: string; artist: string; audioUrl: string; imageUrl?: string; price?: string }>
 }
 
-export function VinylTrack({ id, title, artist, artistId, price, audioUrl, imageUrl, storyTxHash, description, moodTags, contentType, ownerId, currentUserId, onPurchase }: VinylTrackProps) {
+export function VinylTrack({ id, title, artist, artistId, price, audioUrl, imageUrl, storyTxHash, description, moodTags, contentType, ownerId, currentUserId, onPurchase, playlist }: VinylTrackProps) {
     const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayer()
     const isThisPlaying = currentTrack?.id === id && isPlaying
     const [showAllTags, setShowAllTags] = useState(false)
@@ -44,7 +45,7 @@ export function VinylTrack({ id, title, artist, artistId, price, audioUrl, image
         if (currentTrack?.id === id) {
             togglePlay()
         } else {
-            playTrack({ id, title, artist, audioUrl, imageUrl })
+            playTrack({ id, title, artist, audioUrl, imageUrl, price }, playlist)
         }
     }
 

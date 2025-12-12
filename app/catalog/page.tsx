@@ -55,6 +55,17 @@ function CatalogPage() {
   const [purchaseModalOpen, setPurchaseModalOpen] = useState(false)
   const [selectedSession, setSelectedSession] = useState<Session | null>(null)
 
+  // Convert sessions to playlist format
+  const sessionsToPlaylist = (sessions: Session[]) => {
+    return sessions.map(s => ({
+      id: s.id,
+      title: s.title,
+      artist: s.owner.displayName || truncateAddress(s.owner.walletAddress),
+      audioUrl: s.audioUrl,
+      price: formatPrice(s.priceUsd),
+    }))
+  }
+
   useEffect(() => {
     loadSessions()
   }, [])
@@ -275,6 +286,7 @@ function CatalogPage() {
                               ownerId={session.owner.id}
                               currentUserId={user?.id}
                               onPurchase={handlePurchase}
+                              playlist={sessionsToPlaylist(categorySessions)}
                             />
                           </div>
                         </div>
@@ -330,6 +342,7 @@ function CatalogPage() {
                           ownerId={session.owner.id}
                           currentUserId={user?.id}
                           onPurchase={handlePurchase}
+                          playlist={sessionsToPlaylist(filteredSessions)}
                         />
                       </div>
                     </div>

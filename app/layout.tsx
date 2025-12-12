@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { CoinbaseProvider } from "@/components/providers/CoinbaseProvider";
 import { PlayerProvider } from "@/components/player/PlayerContext";
 import { GlobalPlayer } from "@/components/player/GlobalPlayer";
+import { ExpandedPlayer } from "@/components/player/ExpandedPlayer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <PlayerProvider>
               {children}
               <GlobalPlayer />
+              <ExpandedPlayer />
               <Toaster />
             </PlayerProvider>
           </UserProvider>

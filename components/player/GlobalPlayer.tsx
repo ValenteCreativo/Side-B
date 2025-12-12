@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 
 export function GlobalPlayer() {
-    const { currentTrack, isPlaying, togglePlay, stopTrack, volume, setVolume, progress, duration, seek } = usePlayer()
+    const { currentTrack, isPlaying, togglePlay, stopTrack, volume, setVolume, progress, duration, seek, nextTrack, previousTrack, playlist, setExpanded } = usePlayer()
 
     if (!currentTrack) return null
 
@@ -67,7 +67,13 @@ export function GlobalPlayer() {
 
                         {/* Controls */}
                         <div className="flex items-center justify-center gap-4">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors disabled:opacity-30"
+                                onClick={previousTrack}
+                                disabled={playlist.length === 0}
+                            >
                                 <SkipBack className="h-3 w-3" />
                             </Button>
 
@@ -79,7 +85,13 @@ export function GlobalPlayer() {
                                 {isPlaying ? <Pause className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4 fill-current ml-0.5" />}
                             </Button>
 
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors disabled:opacity-30"
+                                onClick={nextTrack}
+                                disabled={playlist.length === 0}
+                            >
                                 <SkipForward className="h-3 w-3" />
                             </Button>
                         </div>
@@ -107,7 +119,13 @@ export function GlobalPlayer() {
                         {/* Controls & Progress */}
                         <div className="flex flex-col items-center gap-2 flex-1 max-w-2xl">
                             <div className="flex items-center gap-6">
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors disabled:opacity-30"
+                                    onClick={previousTrack}
+                                    disabled={playlist.length === 0}
+                                >
                                     <SkipBack className="h-4 w-4" />
                                 </Button>
 
@@ -119,7 +137,13 @@ export function GlobalPlayer() {
                                     {isPlaying ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 fill-current ml-0.5" />}
                                 </Button>
 
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors disabled:opacity-30"
+                                    onClick={nextTrack}
+                                    disabled={playlist.length === 0}
+                                >
                                     <SkipForward className="h-4 w-4" />
                                 </Button>
                             </div>
@@ -156,6 +180,15 @@ export function GlobalPlayer() {
                                     className="cursor-pointer [&_[role=slider]]:border-2 [&_[role=slider]]:border-bronze [&_[role=slider]]:bg-background"
                                 />
                             </div>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-bronze hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-sm transition-colors"
+                                onClick={() => setExpanded(true)}
+                                title="Expand player"
+                            >
+                                <Maximize2 className="h-4 w-4" />
+                            </Button>
                             <Button
                                 variant="ghost"
                                 size="icon"
