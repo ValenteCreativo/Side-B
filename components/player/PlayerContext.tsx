@@ -54,10 +54,12 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             setIsPlaying(false)
             // Auto-play next track if available
             setTimeout(() => {
-                if (currentTrack && playlist.length > 0) {
-                    const currentIndex = playlist.findIndex(t => t.id === currentTrack.id)
-                    if (currentIndex !== -1 && currentIndex < playlist.length - 1) {
-                        const next = playlist[currentIndex + 1]
+                const currentPlaylist = playlist
+                const current = currentTrack
+                if (current && currentPlaylist.length > 0) {
+                    const currentIndex = currentPlaylist.findIndex(t => t.id === current.id)
+                    if (currentIndex !== -1 && currentIndex < currentPlaylist.length - 1) {
+                        const next = currentPlaylist[currentIndex + 1]
                         if (audioRef.current) {
                             audioRef.current.src = next.audioUrl
                             audioRef.current.play()
@@ -77,9 +79,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             audio.removeEventListener('timeupdate', updateProgress)
             audio.removeEventListener('loadedmetadata', updateDuration)
             audio.removeEventListener('ended', onEnded)
-            audio.pause()
         }
-    }, [currentTrack, playlist])
+    }, [])
 
     useEffect(() => {
         if (audioRef.current) {
