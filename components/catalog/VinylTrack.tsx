@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Play, Pause, ExternalLink, ShoppingCart } from "lucide-react"
+import { Play, Pause, ExternalLink, ShoppingCart, Twitter } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
@@ -47,6 +47,14 @@ export function VinylTrack({ id, title, artist, artistId, price, audioUrl, image
         } else {
             playTrack({ id, title, artist, audioUrl, imageUrl: imageUrl || getPlaceholderImage(), price }, playlist)
         }
+    }
+
+    const handleShare = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        const url = `${window.location.origin}/catalog` // You can make this more specific per track if needed
+        const text = `I just discovered this wonderful ${contentType?.toLowerCase() || 'jam'} "${title}" by ${artist} on Side B Sessions! Do you wanna hear it?`
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
+        window.open(twitterUrl, '_blank', 'width=550,height=420')
     }
 
     return (
@@ -152,6 +160,15 @@ export function VinylTrack({ id, title, artist, artistId, price, audioUrl, image
                         <div className="h-8 w-12 text-bronze">
                             <AnalogWaveform isPlaying={isThisPlaying} color="currentColor" />
                         </div>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="rounded-sm h-8 w-8 p-0 border-zinc-200 dark:border-zinc-800 hover:border-[#1DA1F2] hover:text-[#1DA1F2]"
+                            onClick={handleShare}
+                            title="Share on Twitter"
+                        >
+                            <Twitter className="h-3.5 w-3.5" />
+                        </Button>
                         {onPurchase && currentUserId && ownerId !== currentUserId && (
                             <Button
                                 size="sm"

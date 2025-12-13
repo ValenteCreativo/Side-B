@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Music, Users, MessageCircle, ExternalLink, Calendar, Play, Pause, ShoppingCart } from "lucide-react"
+import { Music, Users, MessageCircle, ExternalLink, Calendar, Play, Pause, ShoppingCart, Twitter } from "lucide-react"
 import { useUser } from "@/components/auth/UserContext"
 import { useToast } from "@/components/ui/use-toast"
 import { usePlayer } from "@/components/player/PlayerContext"
@@ -431,6 +431,21 @@ export default function ProfilePage() {
                                                                     {session._count.licenses} sold
                                                                 </span>
                                                             )}
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                className="rounded-sm h-8 w-8 p-0 border-zinc-200 dark:border-zinc-800 hover:border-[#1DA1F2] hover:text-[#1DA1F2]"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation()
+                                                                    const url = `${window.location.origin}/profile/${profile?.id}`
+                                                                    const text = `I just discovered this wonderful ${session.contentType?.toLowerCase() || 'jam'} "${session.title}" by ${profile?.displayName || 'this artist'} on Side B Sessions! Do you wanna hear it?`
+                                                                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
+                                                                    window.open(twitterUrl, '_blank', 'width=550,height=420')
+                                                                }}
+                                                                title="Share on Twitter"
+                                                            >
+                                                                <Twitter className="h-3.5 w-3.5" />
+                                                            </Button>
                                                             {!isOwnProfile && (
                                                                 <Button
                                                                     size="sm"
